@@ -39,3 +39,9 @@ $ pnpm i mongoose @nestjs/mongoose
 $ cd apps/compiler-service
 $ nx g @nrwl/nest:resource user
 ```
+
+## Config
+
+```
+$ pnpm i @nestjs/config
+```
