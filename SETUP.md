@@ -18,3 +18,11 @@ $ pnpx create-nx-workspace
 $ pnpm i @nrwl/nest
 $ pnpm nx g @nrwl/nest:app compiler-service
 ```
+
+## Types Library
+
+```
+$ pnpm nx g @nrwl/nest:lib types --buildable
+                  # We need nest types
+                                 # Incremental builds
+```
