@@ -26,3 +26,16 @@ $ pnpm nx g @nrwl/nest:lib types --buildable
                   # We need nest types
                                  # Incremental builds
 ```
+
+## Mongoose
+
+```
+$ pnpm i mongoose @nestjs/mongoose
+```
+
+## User Module
+
+```
+$ cd apps/compiler-service
+$ nx g @nrwl/nest:resource user
+```
