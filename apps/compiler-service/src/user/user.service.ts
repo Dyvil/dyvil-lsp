@@ -1,25 +1,32 @@
 import {Injectable} from '@nestjs/common';
-import {CreateUserDto, UpdateUserDto} from '@software-tools/types';
+import {InjectModel} from '@nestjs/mongoose';
+import {CreateUserDto, UpdateUserDto, User, UserDocument} from '@software-tools/types';
+import {Model} from 'mongoose';
 
 @Injectable()
 export class UserService {
-  create(dto: CreateUserDto) {
-    return 'This action adds a new user';
+  constructor(
+    @InjectModel(User.name) private model: Model<User>,
+  ) {
   }
 
-  findAll() {
-    return `This action returns all user`;
+  create(dto: CreateUserDto): Promise<User> {
+    return this.model.create(dto);
   }
 
-  findOne(id: string) {
-    return `This action returns a #${id} user`;
+  findAll(): Promise<UserDocument[]> {
+    return this.model.find().exec();
   }
 
-  update(id: string, dto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  findOne(id: string): Promise<UserDocument | null> {
+    return this.model.findById(id).exec();
   }
 
-  remove(id: string) {
-    return `This action removes a #${id} user`;
+  async update(id: string, dto: UpdateUserDto): Promise<UserDocument | null> {
+    return this.model.findByIdAndUpdate(id, dto, {new: true}).exec();
+  }
+
+  remove(id: string): Promise<UserDocument | null> {
+    return this.model.findByIdAndDelete(id).exec();
   }
 }
