@@ -3,11 +3,9 @@ import {Injectable} from '@angular/core';
 import type {CreateUserDto, UserDto} from '@software-tools/types';
 import {environment} from '../../environments/environment';
 
-const baseUrl = environment.apiUrl + '/api/user';
+const baseUrl = environment.apiUrl + '/user';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class UserService {
 
   constructor(
