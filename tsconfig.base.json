@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@software-tools/compiler": ["libs/compiler/src/index.ts"],
       "@software-tools/types": ["libs/types/src/index.ts"]
     }
   },
