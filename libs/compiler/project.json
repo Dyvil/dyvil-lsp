@@ -4,6 +4,18 @@
   "sourceRoot": "libs/compiler/src",
   "projectType": "library",
   "targets": {
+    "antlr4ts": {
+      "command": "antlr4ts -visitor -no-listener -o parser Dyvil.g4",
+      "options": {
+        "cwd": "libs/compiler/src"
+      },
+      "inputs": [
+        "{projectRoot}/src/Dyvil.g4"
+      ],
+      "outputs": [
+        "{projectRoot}/src/parser/**"
+      ]
+    },
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
