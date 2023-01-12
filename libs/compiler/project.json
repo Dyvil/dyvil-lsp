@@ -16,6 +16,18 @@
         "{projectRoot}/src/parser/**"
       ]
     },
+    "build": {
+      "dependsOn": ["antlr4ts"],
+      "executor": "@nrwl/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/compiler",
+        "tsConfig": "libs/compiler/tsconfig.lib.json",
+        "packageJson": "libs/compiler/package.json",
+        "main": "libs/compiler/src/index.ts",
+        "assets": ["libs/compiler/*.md"]
+      }
+    },
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
