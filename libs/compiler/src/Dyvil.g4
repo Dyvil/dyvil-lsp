@@ -10,3 +10,6 @@ parameter: name=ID ':' type;
 type: 'int' | 'boolean' | 'string' | 'void' | name=ID;
 
 ID: [a-zA-Z0-9_]+;
+WS: [ \t\r\n]+ -> skip;
+LC: '//' ~[\r\n]* -> skip;
+BC: '/*' .*? '*/' -> skip;

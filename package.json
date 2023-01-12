@@ -7,6 +7,7 @@
     "postinstall": "node ./decorate-angular-cli.js",
     "serve:web": "nx serve web",
     "serve:compiler-service": "nx serve compiler-service",
+    "compiler:main": "ts-node libs/compiler/src/main.ts",
     "build": "nx build",
     "test": "nx test"
   },
