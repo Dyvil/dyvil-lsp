@@ -2,8 +2,9 @@ grammar Dyvil;
 
 file: class;
 
-class: 'class' name=ID '{' (field | method)* '}';
+class: 'class' name=ID '{' (field | ctor | method)* '}';
 field: 'var' name=ID ':' type ';'?;
+ctor: 'init' '(' (parameters+=parameter ','?)* ')' '{'  '}';
 method: 'func' name=ID '(' (parameters+=parameter ','?)* ')' ':' returnType=type '{'  '}';
 parameter: name=ID ':' type;
 

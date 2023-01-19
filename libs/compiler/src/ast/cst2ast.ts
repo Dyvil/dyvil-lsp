@@ -1,13 +1,24 @@
-import {ClassContext, FieldContext, MethodContext, ParameterContext, TypeContext} from '../parser/DyvilParser';
-import {ClassNode, FieldNode, MethodNode, ParameterNode} from './declarations';
+import {
+  ClassContext,
+  CtorContext,
+  FieldContext,
+  MethodContext,
+  ParameterContext,
+  TypeContext,
+} from '../parser/DyvilParser';
+import {ClassNode, ConstructorNode, FieldNode, MethodNode, ParameterNode} from './declarations';
 import {ClassTypeNode, PrimitiveName, PrimitiveTypeNode, TypeNode} from './types';
 
 export function classNode(ctx: ClassContext): ClassNode {
-  return new ClassNode(ctx._name.text, ctx.field().map(fieldNode), ctx.method().map(methodNode));
+  return new ClassNode(ctx._name.text, ctx.field().map(fieldNode), ctx.ctor().map(constructorNode), ctx.method().map(methodNode));
 }
 
 export function fieldNode(ctx: FieldContext): FieldNode {
   return new FieldNode(ctx._name.text, typeNode(ctx.type()));
+}
+
+export function constructorNode(ctx: CtorContext): ConstructorNode {
+  return new ConstructorNode(ctx.parameter().map(parameterNode));
 }
 
 export function methodNode(ctx: MethodContext): MethodNode {

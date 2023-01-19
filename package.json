@@ -8,6 +8,7 @@
     "serve:web": "nx serve web",
     "serve:compiler-service": "nx serve compiler-service",
     "compiler:main": "ts-node libs/compiler/src/main.ts",
+    "compiler:antlr": "nx antlr4ts compiler",
     "build": "nx build",
     "test": "nx test"
   },

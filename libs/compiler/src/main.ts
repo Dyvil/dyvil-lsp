@@ -8,6 +8,9 @@ const text = `
 class Main {
   var x: int
 
+  init() {
+  }
+
   func new(): Main {
   }
 

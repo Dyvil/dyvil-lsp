@@ -6,6 +6,7 @@ export class ClassNode extends Node<'class'> {
   constructor(
     public name: string,
     public fields: FieldNode[] = [],
+    public constructors: ConstructorNode[] = [],
     public methods: MethodNode[] = [],
   ) {
     super('class');
@@ -16,7 +17,24 @@ export class ClassNode extends Node<'class'> {
     class ${this.name} {
       ${this.fields.map(field => field.toString(format)).join('\n')}
 
+      ${this.constructors.map(field => field.toString(format)).join('\n\n')}
+
       ${this.methods.map(method => method.toString(format)).join('\n\n')}
+    }`;
+  }
+}
+
+export class ConstructorNode extends Node<'constructor'> {
+  constructor(
+    public parameters: ParameterNode[] = [],
+  ) {
+    super('constructor');
+  }
+
+  toString(format?: StringFormat): string {
+    return autoIndent`
+    ${format === 'js' ? 'constructor' : 'init'}(${this.parameters.map(param => param.toString(format)).join(', ')}) {
+      // TODO body
     }`;
   }
 }
