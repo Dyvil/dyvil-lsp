@@ -1,5 +1,5 @@
 import {stripIndents} from 'nx/src/utils/strip-indents';
-import {autoIndent, Node} from './node';
+import {autoIndent, Node, StringFormat} from './node';
 import {TypeNode} from './types';
 
 export class ClassNode extends Node<'class'> {
@@ -11,12 +11,12 @@ export class ClassNode extends Node<'class'> {
     super('class');
   }
 
-  toString(): string {
+  toString(format?: StringFormat): string {
     return autoIndent`
     class ${this.name} {
-      ${this.fields.map(field => field.toString()).join('\n')}
+      ${this.fields.map(field => field.toString(format)).join('\n')}
 
-      ${this.methods.map(method => method.toString()).join('\n')}
+      ${this.methods.map(method => method.toString(format)).join('\n\n')}
     }`;
   }
 }
@@ -30,7 +30,17 @@ export class FieldNode extends Node<'field'> {
     super('field');
   }
 
-  toString(): string {
+  toString(format?: StringFormat): string {
+    if (format === 'js') {
+      return autoIndent`
+      get ${this.name}() {
+        return this._${this.name};
+      }
+
+      set ${this.name}(value) {
+        this._${this.name} = value;
+      }`;
+    }
     return `var ${this.name}: ${this.type.toString()}`;
   }
 }
@@ -45,7 +55,13 @@ export class MethodNode extends Node<'method'> {
     super('method');
   }
 
-  toString(): string {
+  toString(format?: StringFormat): string {
+    if (format === 'js') {
+      return autoIndent`
+      ${this.name}(${this.parameters.map(param => param.toString(format)).join(', ')}) {
+        // TODO body
+      }`;
+    }
     return autoIndent`
     func ${this.name}(${this.parameters.map(parameter => parameter.toString()).join(', ')}): ${this.returnType.toString()} {
       // TODO body
@@ -61,7 +77,10 @@ export class ParameterNode extends Node<'parameter'> {
     super('parameter');
   }
 
-  toString(): string {
+  toString(format?: StringFormat): string {
+    if (format === 'js') {
+      return this.name;
+    }
     return `${this.name}: ${this.type.toString()}`;
   }
 }

@@ -1,5 +1,7 @@
 import {Scope} from './scope';
 
+export type StringFormat = 'plain' | 'js';
+
 export class Node<K extends string> {
   constructor(
     public kind: K,
@@ -23,7 +25,7 @@ export class Node<K extends string> {
     return this;
   }
 
-  toString(): string {
+  toString(format?: StringFormat): string {
     return this.kind;
   }
 }
@@ -34,6 +36,9 @@ export function autoIndent(strings: TemplateStringsArray, ...values: any[]): str
   }
   const indent = strings[0].match(/^\n([ \t]*)/)[1];
   return strings.map((string, i) => {
+    if (i === 0) {
+      string = string.substring(1 + indent.length);
+    }
     string = string.replace(new RegExp('^' + indent, 'gm'), '');
     const lastLine = string.substring(string.lastIndexOf('\n') + 1);
     const lastLineIndent = lastLine.match(/^\s*/)[0];
