@@ -1,4 +1,5 @@
-import {Node} from './node';
+import {stripIndents} from 'nx/src/utils/strip-indents';
+import {autoIndent, Node} from './node';
 import {TypeNode} from './types';
 
 export class ClassNode extends Node<'class'> {
@@ -9,6 +10,15 @@ export class ClassNode extends Node<'class'> {
   ) {
     super('class');
   }
+
+  toString(): string {
+    return autoIndent`
+    class ${this.name} {
+      ${this.fields.map(field => field.toString()).join('\n')}
+
+      ${this.methods.map(method => method.toString()).join('\n')}
+    }`;
+  }
 }
 
 export class FieldNode extends Node<'field'> {
@@ -18,6 +28,10 @@ export class FieldNode extends Node<'field'> {
     // value?: ExpressionNode,
   ) {
     super('field');
+  }
+
+  toString(): string {
+    return `var ${this.name}: ${this.type.toString()}`;
   }
 }
 
@@ -30,6 +44,13 @@ export class MethodNode extends Node<'method'> {
   ) {
     super('method');
   }
+
+  toString(): string {
+    return autoIndent`
+    func ${this.name}(${this.parameters.map(parameter => parameter.toString()).join(', ')}): ${this.returnType.toString()} {
+      // TODO body
+    }`;
+  }
 }
 
 export class ParameterNode extends Node<'parameter'> {
@@ -38,5 +59,9 @@ export class ParameterNode extends Node<'parameter'> {
     public type: TypeNode,
   ) {
     super('parameter');
+  }
+
+  toString(): string {
+    return `${this.name}: ${this.type.toString()}`;
   }
 }

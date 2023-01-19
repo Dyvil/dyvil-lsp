@@ -15,6 +15,10 @@ export class ClassTypeNode extends Node<'type:class'> {
     this.class = scope.resolve(this.name, ClassNode);
     return this;
   }
+
+  toString(): string {
+    return this.name;
+  }
 }
 
 export type PrimitiveName = 'int' | 'boolean' | 'string' | 'void';
@@ -24,6 +28,10 @@ export class PrimitiveTypeNode extends Node<'type:primitive'> {
     public name: PrimitiveName,
   ) {
     super('type:primitive');
+  }
+
+  toString(): string {
+    return this.name;
   }
 }
 

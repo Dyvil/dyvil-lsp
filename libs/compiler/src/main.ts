@@ -25,3 +25,4 @@ console.dir(class1, {depth: null});
 const scope = new SimpleScope([class1]);
 class1 = class1.resolve(scope);
 console.dir(class1, {depth: null});
+console.log(class1.toString());
