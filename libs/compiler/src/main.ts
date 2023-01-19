@@ -1,6 +1,5 @@
 import {CharStreams, CommonTokenStream} from 'antlr4ts';
-import {classNode} from './ast/cst2ast';
-import {SimpleScope} from './ast/scope';
+import {SimpleScope} from './ast';
 import {DyvilLexer} from './parser/DyvilLexer';
 import {DyvilParser} from './parser/DyvilParser';
 
@@ -23,7 +22,7 @@ const lexer = new DyvilLexer(inputStream);
 const tokenStream = new CommonTokenStream(lexer);
 const parser = new DyvilParser(tokenStream);
 const file = parser.file();
-let class1 = classNode(file.class());
+let class1 = file.class().cn;
 console.dir(class1, {depth: null});
 const scope = new SimpleScope([class1]);
 class1 = class1.resolve(scope);

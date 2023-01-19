@@ -66,8 +66,8 @@ export class FieldNode extends Node<'field'> {
 export class MethodNode extends Node<'method'> {
   constructor(
     public name: string,
-    public returnType: TypeNode,
     public parameters: ParameterNode[] = [],
+    public returnType: TypeNode,
     // body?: ExpressionNode,
   ) {
     super('method');
