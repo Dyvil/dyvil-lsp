@@ -144,13 +144,22 @@ export class Parameter extends Node<'parameter'> {
 export class Variable extends Node<'variable'> {
   constructor(
     public name: string,
-    public type: AnyType,
+    public type: AnyType | undefined,
     public value: AnyExpression,
   ) {
     super('variable');
   }
 
   toString(format?: StringFormat): string {
-    return `var ${this.name}: ${this.type.toString(format)} = ${this.value.toString(format)}`;
+    if (format === 'js') {
+      return `let ${this.name} = ${this.value.toString(format)}`;
+    }
+    return `var ${this.name}${this.type ? ': ' + this.type.toString(format) : ''} = ${this.value.toString(format)}`;
+  }
+
+  resolve(scope: Scope): this {
+    const it = super.resolve(scope);
+    it.type ||= it.value.getType();
+    return it;
   }
 }

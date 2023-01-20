@@ -35,7 +35,7 @@ parameter returns [ast.Parameter pn]:
   { $pn = new ast.Parameter($ID.text!, $type.tn) }
 ;
 variable returns [ast.Variable v]:
-  'var' ID ':' type '=' expression { $v = new ast.Variable($ID.text!, $type.tn, $expression.e) }
+  'var' ID (':' types+=type)? '=' expression { $v = new ast.Variable($ID.text!, $types[0]?.tn, $expression.e) }
 ;
 
 type returns [ast.AnyType tn] @after { $tn.location = makeRange($start, $stop); }:
@@ -77,10 +77,11 @@ expression returns [ast.AnyExpression e] @after { $e.location = makeRange($start
 ;
 literal returns [ast.Literal l]: (NUMBER | STRING | 'true' | 'false') { $l = new ast.Literal($text) } ;
 
-ID: [a-zA-Z0-9_]+;
-NUMBER: [+-]?[0-9]+([.][0-9]+)?;
-STRING: '"' ('\\' . | ~["\r\n\\])* '"';
-OPERATOR: [+\-*/%&|<>!:^=]+;
 WS: [ \t\r\n]+ -> skip;
 LC: '//' ~[\r\n]* -> skip;
 BC: '/*' .*? '*/' -> skip;
+
+NUMBER: [+-]?[0-9]+([.][0-9]+)?;
+ID: [a-zA-Z0-9_]+;
+STRING: '"' ('\\' . | ~["\r\n\\])* '"';
+OPERATOR: [+\-*/%&|<>!:^=]+;

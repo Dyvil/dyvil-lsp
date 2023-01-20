@@ -11,7 +11,7 @@ abstract class Expression<K extends string> extends Node<`expr:${K}`> {
   }
 
   getType(): AnyType {
-    throw new Error('Not implemented');
+    throw new Error(`${this.constructor.name}.getType not implemented`);
   }
 }
 
@@ -92,6 +92,10 @@ export class PropertyAccess extends Expression<'propertyAccess'> {
     this.object = this.object.resolve(scope);
     this._field = this.object.getType().lookup(this.property, Field);
     return this;
+  }
+
+  getType(): AnyType {
+    return this._field?.type || ErrorType;
   }
 }
 

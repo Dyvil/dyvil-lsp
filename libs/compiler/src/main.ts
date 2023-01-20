@@ -6,14 +6,17 @@ import {DyvilParser} from './parser/DyvilParser';
 const text = `
 class Greeter {
   var name: string = "World"
+  var count: int = 0
 
   init(name: string) {
     this.name = name
   }
 
   func greet(): void {
-    var greeting: string = "Hello, " + this.name + "!"
+    var greeting = "Hello, " + this.name + "!"
     println(greeting)
+    var newCount = this.count + 1
+    this.count = newCount
   }
 }
 `;
