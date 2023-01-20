@@ -1,14 +1,14 @@
 import {AnyExpression} from './expressions';
 import {autoIndent, Node, StringFormat} from './node';
 import {Block} from './statements';
-import {TypeNode} from './types';
+import {AnyType} from './types';
 
-export class ClassNode extends Node<'class'> {
+export class Class extends Node<'class'> {
   constructor(
     public name: string,
-    public fields: FieldNode[] = [],
-    public constructors: ConstructorNode[] = [],
-    public methods: MethodNode[] = [],
+    public fields: Field[] = [],
+    public constructors: Constructor[] = [],
+    public methods: Method[] = [],
   ) {
     super('class');
   }
@@ -25,9 +25,9 @@ export class ClassNode extends Node<'class'> {
   }
 }
 
-export class ConstructorNode extends Node<'constructor'> {
+export class Constructor extends Node<'constructor'> {
   constructor(
-    public parameters: ParameterNode[] = [],
+    public parameters: Parameter[] = [],
     public body: Block,
   ) {
     super('constructor');
@@ -38,10 +38,10 @@ export class ConstructorNode extends Node<'constructor'> {
   }
 }
 
-export class FieldNode extends Node<'field'> {
+export class Field extends Node<'field'> {
   constructor(
     public name: string,
-    public type: TypeNode,
+    public type: AnyType,
     public value?: AnyExpression,
   ) {
     super('field');
@@ -62,11 +62,11 @@ export class FieldNode extends Node<'field'> {
   }
 }
 
-export class MethodNode extends Node<'method'> {
+export class Method extends Node<'method'> {
   constructor(
     public name: string,
-    public parameters: ParameterNode[] = [],
-    public returnType: TypeNode,
+    public parameters: Parameter[] = [],
+    public returnType: AnyType,
     public body: Block,
   ) {
     super('method');
@@ -77,10 +77,10 @@ export class MethodNode extends Node<'method'> {
   }
 }
 
-export class ParameterNode extends Node<'parameter'> {
+export class Parameter extends Node<'parameter'> {
   constructor(
     public name: string,
-    public type: TypeNode,
+    public type: AnyType,
   ) {
     super('parameter');
   }
@@ -93,10 +93,10 @@ export class ParameterNode extends Node<'parameter'> {
   }
 }
 
-export class VarDeclaration extends Node<'variable'> {
+export class Variable extends Node<'variable'> {
   constructor(
     public name: string,
-    public type: TypeNode,
+    public type: AnyType,
     public value: AnyExpression,
   ) {
     super('variable');

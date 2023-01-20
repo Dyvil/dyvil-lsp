@@ -1,9 +1,9 @@
-import {ClassNode} from './declarations';
+import {Class} from './declarations';
 import {Node} from './node';
 import {Scope} from './scope';
 
-export class ClassTypeNode extends Node<'type:class'> {
-  _class?: ClassNode;
+export class ClassType extends Node<'type:class'> {
+  _class?: Class;
 
   constructor(
     public name: string,
@@ -12,7 +12,7 @@ export class ClassTypeNode extends Node<'type:class'> {
   }
 
   resolve(scope: Scope): this {
-    this._class = scope.resolve(this.name, ClassNode);
+    this._class = scope.resolve(this.name, Class);
     return this;
   }
 
@@ -23,7 +23,7 @@ export class ClassTypeNode extends Node<'type:class'> {
 
 export type PrimitiveName = 'int' | 'boolean' | 'string' | 'void';
 
-export class PrimitiveTypeNode extends Node<'type:primitive'> {
+export class PrimitiveType extends Node<'type:primitive'> {
   constructor(
     public name: PrimitiveName,
   ) {
@@ -35,6 +35,6 @@ export class PrimitiveTypeNode extends Node<'type:primitive'> {
   }
 }
 
-export const ErrorTypeNode = new Node('type:error');
+export const ErrorType = new Node('type:error');
 
-export type TypeNode = ClassTypeNode | PrimitiveTypeNode | typeof ErrorTypeNode;
+export type AnyType = ClassType | PrimitiveType | typeof ErrorType;

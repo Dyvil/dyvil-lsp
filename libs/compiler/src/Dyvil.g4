@@ -7,36 +7,36 @@ import {PrimitiveName} from '../ast';
 
 file: class;
 
-class returns [ast.ClassNode cn]:
+class returns [ast.Class cn]:
   'class' name=ID '{' (fields+=field | constructors+=ctor | methods+=method)* '}'
-  { $cn = new ast.ClassNode($name.text, $fields.map(f => f.fn), $constructors.map(c => c.cn), $methods.map(m => m.mn)) }
+  { $cn = new ast.Class($name.text, $fields.map(f => f.fn), $constructors.map(c => c.cn), $methods.map(m => m.mn)) }
 ;
-field returns [ast.FieldNode fn]:
+field returns [ast.Field fn]:
   'var' name=ID ':' type ('=' expression)? ';'?
-  { $fn = new ast.FieldNode($name.text, $type.tn, $expression.e) }
+  { $fn = new ast.Field($name.text, $type.tn, $expression.e) }
 ;
-ctor returns [ast.ConstructorNode cn]:
+ctor returns [ast.Constructor cn]:
   'init' '(' (parameters+=parameter ','?)* ')' blockStatement
-  { $cn = new ast.ConstructorNode($parameters.map(p => p.pn), $blockStatement.bs) }
+  { $cn = new ast.Constructor($parameters.map(p => p.pn), $blockStatement.bs) }
 ;
-method returns [ast.MethodNode mn]:
+method returns [ast.Method mn]:
   'func' name=ID '(' (parameters+=parameter ','?)* ')' ':' type blockStatement
-  { $mn = new ast.MethodNode($name.text, $parameters.map(p => p.pn), $type.tn, $blockStatement.bs) }
+  { $mn = new ast.Method($name.text, $parameters.map(p => p.pn), $type.tn, $blockStatement.bs) }
 ;
-parameter returns [ast.ParameterNode pn]:
+parameter returns [ast.Parameter pn]:
   name=ID ':' type
-  { $pn = new ast.ParameterNode($name.text, $type.tn) }
+  { $pn = new ast.Parameter($name.text, $type.tn) }
 ;
 
-type returns [ast.TypeNode tn]:
-  primitiveType { $tn = new ast.PrimitiveTypeNode($primitiveType.text as PrimitiveName) }
+type returns [ast.AnyType tn]:
+  primitiveType { $tn = new ast.PrimitiveType($primitiveType.text as PrimitiveName) }
   |
-  className=ID { $tn = new ast.ClassTypeNode($className.text) }
+  className=ID { $tn = new ast.ClassType($className.text) }
 ;
 primitiveType: 'int' | 'boolean' | 'string' | 'void';
 
 statement returns [ast.AnyStatement s]:
-  'var' name=ID ':' type '=' expression { $s = new ast.VarStatement(new ast.VarDeclaration($name.text, $type.tn, $expression.e)) }
+  'var' name=ID ':' type '=' expression { $s = new ast.VarStatement(new ast.Variable($name.text, $type.tn, $expression.e)) }
   |
   expression { $s = new ast.ExpressionStatement($expression.e) }
   |

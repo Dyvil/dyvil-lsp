@@ -1,4 +1,4 @@
-import {VarDeclaration} from './declarations';
+import {Variable} from './declarations';
 import {Node, StringFormat} from './node';
 import {Scope} from './scope';
 
@@ -23,7 +23,7 @@ export class Literal extends Expression<'literal'> {
 }
 
 export class VariableReference extends Expression<'variable'> {
-  _variable?: VarDeclaration;
+  _variable?: Variable;
 
   constructor(
     public name: string,
@@ -36,7 +36,7 @@ export class VariableReference extends Expression<'variable'> {
   }
 
   resolve(scope: Scope): this {
-    this._variable = scope.resolve(this.name, VarDeclaration);
+    this._variable = scope.resolve(this.name, Variable);
     return this;
   }
 }

@@ -1,4 +1,4 @@
-import {VarDeclaration} from './declarations';
+import {Variable} from './declarations';
 import {AnyExpression} from './expressions';
 import {autoIndent, Node, StringFormat} from './node';
 import {Scope, SimpleScope} from './scope';
@@ -13,7 +13,7 @@ class Statement<K extends string> extends Node<`statement:${K}`> {
 
 export class VarStatement extends Statement<'variable'> {
   constructor(
-    public variable: VarDeclaration,
+    public variable: Variable,
   ) {
     super('variable');
   }
@@ -50,7 +50,7 @@ export class Block extends Statement<'block'> {
   }
 
   resolve(scope: Scope): this {
-    const variables: VarDeclaration[] = [];
+    const variables: Variable[] = [];
     const newScope = new SimpleScope(variables, scope);
     for (let i = 0; i < this.statements.length; i++) {
       const statement = this.statements[i] = this.statements[i].resolve(newScope);
