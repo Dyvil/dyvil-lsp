@@ -1,12 +1,17 @@
 import {Variable} from './declarations';
 import {Node, StringFormat} from './node';
 import {Scope} from './scope';
+import {AnyType, ErrorType, PrimitiveType} from './types';
 
 abstract class Expression<K extends string> extends Node<`expr:${K}`> {
   protected constructor(
     kind: K,
   ) {
     super(`expr:${kind}`);
+  }
+
+  getType(): AnyType {
+    throw new Error('Not implemented');
   }
 }
 
@@ -19,6 +24,17 @@ export class Literal extends Expression<'literal'> {
 
   toString(): string {
     return this.representation;
+  }
+
+  getType(): AnyType {
+    switch (this.representation.charAt(0)) {
+      case '"':
+        return new PrimitiveType('string');
+      case 't': case 'f':
+        return new PrimitiveType('boolean');
+      default: // 0-9
+        return new PrimitiveType('int');
+    }
   }
 }
 
@@ -38,6 +54,10 @@ export class VariableReference extends Expression<'variable'> {
   resolve(scope: Scope): this {
     this._variable = scope.resolve(this.name, Variable);
     return this;
+  }
+
+  getType(): AnyType {
+    return this._variable?.type ?? ErrorType;
   }
 }
 
@@ -93,6 +113,29 @@ export class BinaryOperation extends Expression<'binary'> {
   toString(format?: StringFormat): string {
     return `${this.lhs.toString(format)} ${this.operator} ${this.rhs.toString(format)}`;
   }
+
+  getType(): AnyType {
+    switch (this.operator) {
+      case '+':
+        let lhsType = this.lhs.getType();
+        let rhsType = this.rhs.getType();
+        if (lhsType.kind === 'type:primitive' && lhsType.name === 'string') {
+          return lhsType;
+        }
+        if (rhsType.kind === 'type:primitive' && rhsType.name === 'string') {
+          return rhsType;
+        }
+        return new PrimitiveType('int');
+      case '&&': case '||': case '==': case '!=': case '<': case '<=': case '>': case '>=':
+        return new PrimitiveType('boolean');
+      case '-': case '*': case '/': case '%':
+      case '<<': case '>>': case '>>>':
+      case '&': case '|': case '^':
+        return new PrimitiveType('int');
+      default:
+        return ErrorType;
+    }
+  }
 }
 
 export class ParenthesizedExpression extends Expression<'parenthesized'> {
@@ -104,6 +147,10 @@ export class ParenthesizedExpression extends Expression<'parenthesized'> {
 
   toString(format?: StringFormat): string {
     return `(${this.expression.toString(format)})`;
+  }
+
+  getType(): AnyType {
+    return this.expression.getType();
   }
 }
 
