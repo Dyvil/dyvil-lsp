@@ -5,7 +5,7 @@
   "projectType": "library",
   "targets": {
     "antlr4ts": {
-      "command": "antlr4ts -visitor -listener -o parser Dyvil.g4",
+      "command": "antlr4ts -no-visitor -no-listener -o parser Dyvil.g4",
       "options": {
         "cwd": "libs/compiler/src"
       },
