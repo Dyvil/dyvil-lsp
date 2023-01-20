@@ -3,7 +3,7 @@ import {Node} from './node';
 import {Scope} from './scope';
 
 export class ClassTypeNode extends Node<'type:class'> {
-  class?: ClassNode;
+  _class?: ClassNode;
 
   constructor(
     public name: string,
@@ -12,7 +12,7 @@ export class ClassTypeNode extends Node<'type:class'> {
   }
 
   resolve(scope: Scope): this {
-    this.class = scope.resolve(this.name, ClassNode);
+    this._class = scope.resolve(this.name, ClassNode);
     return this;
   }
 

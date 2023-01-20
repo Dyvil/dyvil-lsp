@@ -1,4 +1,6 @@
+import {VarDeclaration} from './declarations';
 import {Node, StringFormat} from './node';
+import {Scope} from './scope';
 
 abstract class Expression<K extends string> extends Node<`expr:${K}`> {
   protected constructor(
@@ -21,6 +23,8 @@ export class Literal extends Expression<'literal'> {
 }
 
 export class VariableReference extends Expression<'variable'> {
+  _variable?: VarDeclaration;
+
   constructor(
     public name: string,
   ) {
@@ -29,6 +33,11 @@ export class VariableReference extends Expression<'variable'> {
 
   toString(): string {
     return this.name;
+  }
+
+  resolve(scope: Scope): this {
+    this._variable = scope.resolve(this.name, VarDeclaration);
+    return this;
   }
 }
 
@@ -106,4 +115,4 @@ export type AnyExpression =
   | MethodCall
   | BinaryOperation
   | ParenthesizedExpression
-;
+  ;

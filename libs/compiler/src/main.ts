@@ -12,7 +12,8 @@ class Greeter {
   }
 
   func greet(): void {
-    println("Hello, " + this.name + "!")
+    var greeting: string = "Hello, " + this.name + "!"
+    println(greeting)
   }
 }
 `;

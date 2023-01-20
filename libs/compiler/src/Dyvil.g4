@@ -36,6 +36,8 @@ type returns [ast.TypeNode tn]:
 primitiveType: 'int' | 'boolean' | 'string' | 'void';
 
 statement returns [ast.AnyStatement s]:
+  'var' name=ID ':' type '=' expression { $s = new ast.VarStatement(new ast.VarDeclaration($name.text, $type.tn, $expression.e)) }
+  |
   expression { $s = new ast.ExpressionStatement($expression.e) }
   |
   blockStatement {$s = $blockStatement.bs }

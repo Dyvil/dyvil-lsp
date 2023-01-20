@@ -58,7 +58,7 @@ export class FieldNode extends Node<'field'> {
         this._${this.name} = value;
       }`;
     }
-    return `var ${this.name}: ${this.type.toString()}${this.value ? ' = ' + this.value.toString(format) : ''}`;
+    return `var ${this.name}: ${this.type.toString(format)}${this.value ? ' = ' + this.value.toString(format) : ''}`;
   }
 }
 
@@ -89,6 +89,20 @@ export class ParameterNode extends Node<'parameter'> {
     if (format === 'js') {
       return this.name;
     }
-    return `${this.name}: ${this.type.toString()}`;
+    return `${this.name}: ${this.type.toString(format)}`;
+  }
+}
+
+export class VarDeclaration extends Node<'variable'> {
+  constructor(
+    public name: string,
+    public type: TypeNode,
+    public value: AnyExpression,
+  ) {
+    super('variable');
+  }
+
+  toString(format?: StringFormat): string {
+    return `var ${this.name}: ${this.type.toString(format)} = ${this.value.toString(format)}`;
   }
 }
