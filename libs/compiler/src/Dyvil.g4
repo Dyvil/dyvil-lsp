@@ -5,7 +5,7 @@ import * as ast from '../ast';
 import {PrimitiveName} from '../ast';
 }
 
-file: class;
+file: class EOF;
 
 class returns [ast.Class cn]:
   'class' name=ID '{' (fields+=field | constructors+=ctor | methods+=method)* '}'
