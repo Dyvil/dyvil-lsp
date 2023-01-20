@@ -27,6 +27,9 @@ parameter returns [ast.Parameter pn]:
   name=ID ':' type
   { $pn = new ast.Parameter($name.text, $type.tn) }
 ;
+variable returns [ast.Variable v]:
+  'var' name=ID ':' type '=' expression { $v = new ast.Variable($name.text, $type.tn, $expression.e) }
+;
 
 type returns [ast.AnyType tn]:
   primitiveType { $tn = new ast.PrimitiveType($primitiveType.text as PrimitiveName) }
@@ -36,7 +39,7 @@ type returns [ast.AnyType tn]:
 primitiveType: 'int' | 'boolean' | 'string' | 'void';
 
 statement returns [ast.AnyStatement s]:
-  'var' name=ID ':' type '=' expression { $s = new ast.VarStatement(new ast.Variable($name.text, $type.tn, $expression.e)) }
+  variable { $s = new ast.VarStatement($variable.v) }
   |
   expression { $s = new ast.ExpressionStatement($expression.e) }
   |
