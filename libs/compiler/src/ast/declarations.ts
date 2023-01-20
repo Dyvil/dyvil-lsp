@@ -50,6 +50,8 @@ export class Field extends Node<'field'> {
   toString(format?: StringFormat): string {
     if (format === 'js') {
       return autoIndent`
+      _${this.name}${this.value ? ' = ' + this.value.toString(format) : ''};
+
       get ${this.name}() {
         return this._${this.name};
       }
