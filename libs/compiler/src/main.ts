@@ -4,16 +4,15 @@ import {DyvilLexer} from './parser/DyvilLexer';
 import {DyvilParser} from './parser/DyvilParser';
 
 const text = `
-class Main {
-  var x: int
+class Greeter {
+  var name: string = "World"
 
-  init() {
+  init(name: string) {
+    this.name = name
   }
 
-  func new(): Main {
-  }
-
-  func main(args: string): void {
+  func greet(): void {
+    println("Hello, " + this.name + "!")
   }
 }
 `;

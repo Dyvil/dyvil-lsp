@@ -1,5 +1,6 @@
-import {stripIndents} from 'nx/src/utils/strip-indents';
+import {AnyExpression} from './expressions';
 import {autoIndent, Node, StringFormat} from './node';
+import {Block} from './statements';
 import {TypeNode} from './types';
 
 export class ClassNode extends Node<'class'> {
@@ -27,15 +28,13 @@ export class ClassNode extends Node<'class'> {
 export class ConstructorNode extends Node<'constructor'> {
   constructor(
     public parameters: ParameterNode[] = [],
+    public body: Block,
   ) {
     super('constructor');
   }
 
   toString(format?: StringFormat): string {
-    return autoIndent`
-    ${format === 'js' ? 'constructor' : 'init'}(${this.parameters.map(param => param.toString(format)).join(', ')}) {
-      // TODO body
-    }`;
+    return `${format === 'js' ? 'constructor' : 'init'}(${this.parameters.map(param => param.toString(format)).join(', ')}) ${this.body.toString(format)}`;
   }
 }
 
@@ -43,7 +42,7 @@ export class FieldNode extends Node<'field'> {
   constructor(
     public name: string,
     public type: TypeNode,
-    // value?: ExpressionNode,
+    public value?: AnyExpression,
   ) {
     super('field');
   }
@@ -59,7 +58,7 @@ export class FieldNode extends Node<'field'> {
         this._${this.name} = value;
       }`;
     }
-    return `var ${this.name}: ${this.type.toString()}`;
+    return `var ${this.name}: ${this.type.toString()}${this.value ? ' = ' + this.value.toString(format) : ''}`;
   }
 }
 
@@ -68,22 +67,13 @@ export class MethodNode extends Node<'method'> {
     public name: string,
     public parameters: ParameterNode[] = [],
     public returnType: TypeNode,
-    // body?: ExpressionNode,
+    public body: Block,
   ) {
     super('method');
   }
 
   toString(format?: StringFormat): string {
-    if (format === 'js') {
-      return autoIndent`
-      ${this.name}(${this.parameters.map(param => param.toString(format)).join(', ')}) {
-        // TODO body
-      }`;
-    }
-    return autoIndent`
-    func ${this.name}(${this.parameters.map(parameter => parameter.toString()).join(', ')}): ${this.returnType.toString()} {
-      // TODO body
-    }`;
+    return `${format !== 'js' ? 'func ' : ''}${this.name}(${this.parameters.map(param => param.toString(format)).join(', ')})${format !== 'js' ? ': ' + this.returnType.toString(format) : ''} ${this.body.toString(format)}`;
   }
 }
 
