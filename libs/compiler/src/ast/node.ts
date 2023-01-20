@@ -19,6 +19,7 @@ export class Node<K extends string> {
           }
         }
       } else if (value instanceof Node) {
+        // @ts-ignore
         this[key] = value.resolve(scope);
       }
     }
@@ -34,14 +35,14 @@ export function autoIndent(strings: TemplateStringsArray, ...values: any[]): str
   if (!strings[0].startsWith('\n')) {
     throw new Error('must start with a newline');
   }
-  const indent = strings[0].match(/^\n([ \t]*)/)[1];
+  const indent = strings[0].match(/^\n([ \t]*)/)![1];
   return strings.map((string, i) => {
     if (i === 0) {
       string = string.substring(1 + indent.length);
     }
     string = string.replace(new RegExp('^' + indent, 'gm'), '');
     const lastLine = string.substring(string.lastIndexOf('\n') + 1);
-    const lastLineIndent = lastLine.match(/^\s*/)[0];
+    const lastLineIndent = lastLine.match(/^\s*/)![0];
     const value = values[i] ?? '';
     const indentedValue = value.toString().replace(/\n/g, `\n${lastLineIndent}`);
     return string + indentedValue;
