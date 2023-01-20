@@ -1,9 +1,11 @@
 import {AnyExpression} from './expressions';
 import {autoIndent, Node, StringFormat} from './node';
+import {Scope} from './scope';
 import {Block} from './statements';
 import {AnyType} from './types';
+import {Type as Ctor} from '@nestjs/common';
 
-export class Class extends Node<'class'> {
+export class Class extends Node<'class'> implements Scope {
   constructor(
     public name: string,
     public fields: Field[] = [],
@@ -22,6 +24,14 @@ export class Class extends Node<'class'> {
 
       ${this.methods.map(method => method.toString(format)).join('\n\n')}
     }`;
+  }
+
+  lookup<N extends Node<any>>(name: string, kind: Ctor<N>): N | undefined {
+    for (let declaration of [...this.fields, ...this.methods]) {
+      if (declaration.name === name && declaration instanceof kind) {
+        return declaration as N;
+      }
+    }
   }
 }
 

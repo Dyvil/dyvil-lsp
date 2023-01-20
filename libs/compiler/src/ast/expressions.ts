@@ -1,4 +1,4 @@
-import {Variable} from './declarations';
+import {Field, Method, Variable} from './declarations';
 import {Node, StringFormat} from './node';
 import {Scope} from './scope';
 import {AnyType, ErrorType, PrimitiveType} from './types';
@@ -52,7 +52,7 @@ export class VariableReference extends Expression<'variable'> {
   }
 
   resolve(scope: Scope): this {
-    this._variable = scope.resolve(this.name, Variable);
+    this._variable = scope.lookup(this.name, Variable);
     return this;
   }
 
@@ -75,6 +75,8 @@ export class FunctionCall extends Expression<'functionCall'> {
 }
 
 export class PropertyAccess extends Expression<'propertyAccess'> {
+  _field?: Field;
+
   constructor(
     public object: AnyExpression,
     public property: string,
@@ -85,9 +87,17 @@ export class PropertyAccess extends Expression<'propertyAccess'> {
   toString(format?: StringFormat): string {
     return `${this.object.toString(format)}.${this.property}`;
   }
+
+  resolve(scope: Scope): this {
+    this.object = this.object.resolve(scope);
+    this._field = this.object.getType().lookup(this.property, Field);
+    return this;
+  }
 }
 
 export class MethodCall extends Expression<'methodCall'> {
+  _method?: Method;
+
   constructor(
     public object: AnyExpression,
     public method: string,
@@ -98,6 +108,13 @@ export class MethodCall extends Expression<'methodCall'> {
 
   toString(format?: StringFormat): string {
     return `${this.object.toString(format)}.${this.method}(${this.args.map(arg => arg.toString(format)).join(', ')})`;
+  }
+
+  resolve(scope: Scope): this {
+    this.object = this.object.resolve(scope);
+    this.args = this.args.map(arg => arg.resolve(scope));
+    this._method = this.object.getType().lookup(this.method, Method);
+    return this;
   }
 }
 
