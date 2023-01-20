@@ -20,14 +20,12 @@ class Greeter {
   }
 }
 `;
-const inputStream = CharStreams.fromString(text);
+const inputStream = CharStreams.fromString(text, 'Greeter.dyv');
 const lexer = new DyvilLexer(inputStream);
 const tokenStream = new CommonTokenStream(lexer);
 const parser = new DyvilParser(tokenStream);
-const file = parser.file();
-let class1 = file.class().cn;
-const scope = new SimpleScope([class1]);
-class1 = class1.resolve(scope);
-console.dir(class1, {depth: null});
-console.log(class1.toString());
-console.log(class1.toString('js'));
+let file = parser.file().cu;
+file = file.resolve(new SimpleScope([]));
+console.dir(file, {depth: null});
+console.log(file.toString());
+console.log(file.toString('js'));

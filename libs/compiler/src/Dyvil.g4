@@ -2,7 +2,6 @@ grammar Dyvil;
 
 @parser::header {
 import * as ast from '../ast';
-import {PrimitiveName} from '../ast';
 
 function makeRange(start: Token, stop?: Token) {
   return new ast.Range(
@@ -12,7 +11,9 @@ function makeRange(start: Token, stop?: Token) {
 }
 }
 
-file: class EOF;
+file returns [ast.CompilationUnit cu]:
+  (classes+=class)* EOF { $cu = new ast.CompilationUnit(this._input.sourceName, $classes.map(c => c.cn)); }
+;
 
 class returns [ast.Class cn]:
   'class' ID '{' (fields+=field | constructors+=ctor | methods+=method)* '}'
@@ -39,7 +40,7 @@ variable returns [ast.Variable v]:
 ;
 
 type returns [ast.AnyType tn] @after { $tn.location = makeRange($start, $stop); }:
-  primitiveType { $tn = new ast.PrimitiveType($primitiveType.text! as PrimitiveName) }
+  primitiveType { $tn = new ast.PrimitiveType($primitiveType.text! as ast.PrimitiveName) }
   |
   ID { $tn = new ast.ClassType($ID.text!) }
 ;

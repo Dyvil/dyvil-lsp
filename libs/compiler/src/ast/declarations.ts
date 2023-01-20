@@ -1,11 +1,31 @@
 import {AnyExpression} from './expressions';
+import {log, Range, Severity} from './lint';
 import {autoIndent, Node, StringFormat} from './node';
 import {Ctor, Name, Scope, SimpleScope} from './scope';
 import {Block} from './statements';
 import {AnyType, ClassType} from './types';
 
+export class CompilationUnit extends Node<'unit'> {
+  static enclosing = Symbol('enclosing compilation unit');
+
+  constructor(
+    public path: string,
+    public classes: Class[],
+  ) {
+    super('unit');
+  }
+
+  report(range: Range, problem: string, severity: Severity = 'error'): void {
+    log(this.path, range, problem, severity);
+  }
+
+  toString(format?: StringFormat): string {
+    return this.classes.join('\n\n');
+  }
+}
+
 export class Class extends Node<'class'> implements Scope {
-  static enclosing = Symbol('enclosing');
+  static enclosing = Symbol('enclosing class');
 
   constructor(
     public name: string,
@@ -61,7 +81,7 @@ export class Constructor extends Node<'constructor'> {
       if (enclosingClass) {
         let classType = new ClassType(enclosingClass.name);
         classType._class = enclosingClass;
-        this._thisParameter =  new Parameter('this', classType);
+        this._thisParameter = new Parameter('this', classType);
       }
     }
     const newScope = new SimpleScope(this._thisParameter ? [this._thisParameter, ...this.parameters] : this.parameters, scope);
@@ -117,7 +137,7 @@ export class Method extends Node<'method'> {
       if (enclosingClass) {
         let classType = new ClassType(enclosingClass.name);
         classType._class = enclosingClass;
-        this._thisParameter =  new Parameter('this', classType);
+        this._thisParameter = new Parameter('this', classType);
       }
     }
     const newScope = new SimpleScope(this._thisParameter ? [this._thisParameter, ...this.parameters] : this.parameters, scope);
