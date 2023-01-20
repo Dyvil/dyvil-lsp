@@ -23,7 +23,6 @@ const tokenStream = new CommonTokenStream(lexer);
 const parser = new DyvilParser(tokenStream);
 const file = parser.file();
 let class1 = file.class().cn;
-console.dir(class1, {depth: null});
 const scope = new SimpleScope([class1]);
 class1 = class1.resolve(scope);
 console.dir(class1, {depth: null});

@@ -1,19 +1,21 @@
-import {Type} from '@nestjs/common';
 import {Node} from './node';
 
+export type Name = string | symbol;
+export type Ctor<T> = { new(...args: any[]): T };
+
 export interface Scope {
-  lookup<N extends Node<any>>(name: string, kind: Type<N>): N | undefined;
+  lookup<N extends Node<any>>(name: Name, kind: Ctor<N>): N | undefined;
 }
 
 export class SimpleScope implements Scope {
   constructor(
-    readonly declarations: (Node<any> & { name: string })[],
+    private readonly declarations: Record<Name, Node<any>> | (Node<any> & { name: string })[],
     private readonly parent?: Scope,
   ) {
   }
 
-  lookup<N extends Node<any>>(name: string, kind: Type<N>): N | undefined {
-    const decl = this.declarations.find((decl) => decl.name === name && decl instanceof kind);
-    return decl ? decl as unknown as N : this.parent?.lookup(name, kind);
+  lookup<N extends Node<any>>(name: Name, kind: Ctor<N>): N | undefined {
+    const decl = Array.isArray(this.declarations) ? this.declarations.find(d => d.name === name) : this.declarations[name];
+    return decl && decl instanceof kind ? decl : this.parent?.lookup(name, kind);
   }
 }

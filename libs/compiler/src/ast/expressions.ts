@@ -1,4 +1,4 @@
-import {Field, Method, Variable} from './declarations';
+import {Field, Method, Parameter, Variable} from './declarations';
 import {Node, StringFormat} from './node';
 import {Scope} from './scope';
 import {AnyType, ErrorType, PrimitiveType} from './types';
@@ -39,7 +39,7 @@ export class Literal extends Expression<'literal'> {
 }
 
 export class VariableReference extends Expression<'variable'> {
-  _variable?: Variable;
+  _variable?: Variable | Parameter;
 
   constructor(
     public name: string,
@@ -52,7 +52,7 @@ export class VariableReference extends Expression<'variable'> {
   }
 
   resolve(scope: Scope): this {
-    this._variable = scope.lookup(this.name, Variable);
+    this._variable = scope.lookup(this.name, Variable) || scope.lookup(this.name, Parameter);
     return this;
   }
 

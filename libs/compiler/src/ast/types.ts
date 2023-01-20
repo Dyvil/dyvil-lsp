@@ -1,8 +1,6 @@
 import {Class} from './declarations';
 import {Node} from './node';
-import {Scope} from './scope';
-
-import type {Type as Ctor} from '@nestjs/common';
+import {Ctor, Name, Scope} from './scope';
 
 export class Type<K extends string> extends Node<`type:${K}`> implements Scope {
   constructor(
@@ -11,7 +9,7 @@ export class Type<K extends string> extends Node<`type:${K}`> implements Scope {
     super(`type:${kind}`);
   }
 
-  lookup<N extends Node<any>>(name: string, kind: Ctor<N>): N | undefined {
+  lookup<N extends Node<any>>(name: Name, kind: Ctor<N>): N | undefined {
     return;
   }
 }
@@ -30,7 +28,7 @@ export class ClassType extends Type<'class'> {
     return this;
   }
 
-  lookup<N extends Node<any>>(name: string, kind: Ctor<N>): N | undefined {
+  lookup<N extends Node<any>>(name: Name, kind: Ctor<N>): N | undefined {
     return this._class?.lookup(name, kind);
   }
 

@@ -1,11 +1,12 @@
 import {AnyExpression} from './expressions';
 import {autoIndent, Node, StringFormat} from './node';
-import {Scope} from './scope';
+import {Ctor, Name, Scope, SimpleScope} from './scope';
 import {Block} from './statements';
-import {AnyType} from './types';
-import {Type as Ctor} from '@nestjs/common';
+import {AnyType, ClassType} from './types';
 
 export class Class extends Node<'class'> implements Scope {
+  static enclosing = Symbol('enclosing');
+
   constructor(
     public name: string,
     public fields: Field[] = [],
@@ -26,16 +27,23 @@ export class Class extends Node<'class'> implements Scope {
     }`;
   }
 
-  lookup<N extends Node<any>>(name: string, kind: Ctor<N>): N | undefined {
+  lookup<N extends Node<any>>(name: Name, kind: Ctor<N>): N | undefined {
     for (let declaration of [...this.fields, ...this.methods]) {
       if (declaration.name === name && declaration instanceof kind) {
         return declaration as N;
       }
     }
   }
+
+  resolve(scope: Scope): this {
+    const newScope = new SimpleScope({[Class.enclosing]: this}, scope);
+    return super.resolve(newScope);
+  }
 }
 
 export class Constructor extends Node<'constructor'> {
+  _thisParameter?: Parameter;
+
   constructor(
     public parameters: Parameter[] = [],
     public body: Block,
@@ -45,6 +53,19 @@ export class Constructor extends Node<'constructor'> {
 
   toString(format?: StringFormat): string {
     return `${format === 'js' ? 'constructor' : 'init'}(${this.parameters.map(param => param.toString(format)).join(', ')}) ${this.body.toString(format)}`;
+  }
+
+  resolve(scope: Scope): this {
+    if (!this._thisParameter) {
+      const enclosingClass = scope.lookup(Class.enclosing, Class);
+      if (enclosingClass) {
+        let classType = new ClassType(enclosingClass.name);
+        classType._class = enclosingClass;
+        this._thisParameter =  new Parameter('this', classType);
+      }
+    }
+    const newScope = new SimpleScope(this._thisParameter ? [this._thisParameter, ...this.parameters] : this.parameters, scope);
+    return super.resolve(newScope);
   }
 }
 
@@ -75,6 +96,8 @@ export class Field extends Node<'field'> {
 }
 
 export class Method extends Node<'method'> {
+  _thisParameter?: Parameter;
+
   constructor(
     public name: string,
     public parameters: Parameter[] = [],
@@ -86,6 +109,19 @@ export class Method extends Node<'method'> {
 
   toString(format?: StringFormat): string {
     return `${format !== 'js' ? 'func ' : ''}${this.name}(${this.parameters.map(param => param.toString(format)).join(', ')})${format !== 'js' ? ': ' + this.returnType.toString(format) : ''} ${this.body.toString(format)}`;
+  }
+
+  resolve(scope: Scope): this {
+    if (!this._thisParameter) {
+      const enclosingClass = scope.lookup(Class.enclosing, Class);
+      if (enclosingClass) {
+        let classType = new ClassType(enclosingClass.name);
+        classType._class = enclosingClass;
+        this._thisParameter =  new Parameter('this', classType);
+      }
+    }
+    const newScope = new SimpleScope(this._thisParameter ? [this._thisParameter, ...this.parameters] : this.parameters, scope);
+    return super.resolve(newScope);
   }
 }
 
