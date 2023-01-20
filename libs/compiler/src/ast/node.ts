@@ -2,7 +2,25 @@ import {Scope} from './scope';
 
 export type StringFormat = 'plain' | 'js';
 
+export class Position {
+  constructor(
+    public readonly line: number,
+    public readonly column: number,
+  ) {
+  }
+}
+
+export class Range {
+  constructor(
+    public readonly start: Position,
+    public readonly end: Position,
+  ) {
+  }
+}
+
 export class Node<K extends string> {
+  location?: Range;
+
   constructor(
     public kind: K,
   ) {

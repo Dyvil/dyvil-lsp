@@ -1,8 +1,15 @@
 grammar Dyvil;
 
-@header {
+@parser::header {
 import * as ast from '../ast';
 import {PrimitiveName} from '../ast';
+
+function makeRange(start: Token, stop?: Token) {
+  return new ast.Range(
+    new ast.Position(start.line, start.charPositionInLine),
+    stop ? new ast.Position(stop.line, stop.charPositionInLine + (stop.text?.length || 0)) : new ast.Position(start.line, start.charPositionInLine + (start.text?.length || 0))
+  );
+}
 }
 
 file: class EOF;
@@ -31,14 +38,14 @@ variable returns [ast.Variable v]:
   'var' ID ':' type '=' expression { $v = new ast.Variable($ID.text!, $type.tn, $expression.e) }
 ;
 
-type returns [ast.AnyType tn]:
+type returns [ast.AnyType tn] @after { $tn.location = makeRange($start, $stop); }:
   primitiveType { $tn = new ast.PrimitiveType($primitiveType.text! as PrimitiveName) }
   |
   ID { $tn = new ast.ClassType($ID.text!) }
 ;
 primitiveType: 'int' | 'boolean' | 'string' | 'void';
 
-statement returns [ast.AnyStatement s]:
+statement returns [ast.AnyStatement s] @after { $s.location = makeRange($start, $stop); }:
   variable { $s = new ast.VarStatement($variable.v) }
   |
   expression { $s = new ast.ExpressionStatement($expression.e) }
@@ -51,7 +58,7 @@ blockStatement returns [ast.Block bs]:
   '{' (statements+=statement)* '}' { $bs = new ast.Block($statements.map(s => s.s)) }
 ;
 
-expression returns [ast.AnyExpression e]:
+expression returns [ast.AnyExpression e] @after { $e.location = makeRange($start, $stop); }:
   object=expression '.' ID '(' (arguments+=expression)* ')' { $e = new ast.MethodCall($object.e, $ID.text!, $arguments.map(a => a.e)) }
   |
   object=expression '.' ID { $e = new ast.PropertyAccess($object.e, $ID.text!) }
