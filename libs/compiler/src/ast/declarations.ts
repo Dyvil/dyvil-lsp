@@ -3,7 +3,7 @@ import {log, Range, Severity} from './lint';
 import {autoIndent, Node, StringFormat} from './node';
 import {Ctor, Name, Scope, SimpleScope} from './scope';
 import {Block} from './statements';
-import {AnyType, ClassType} from './types';
+import {AnyType, ClassType, isAssignable} from './types';
 
 export class CompilationUnit extends Node<'unit'> {
   static enclosing = Symbol('enclosing compilation unit');
@@ -17,6 +17,14 @@ export class CompilationUnit extends Node<'unit'> {
 
   report(range: Range, problem: string, severity: Severity = 'error'): void {
     log(this.path, range, problem, severity);
+  }
+
+  resolve(scope: Scope): this {
+    const decls: Record<Name, Class | CompilationUnit> = {[CompilationUnit.enclosing]: this};
+    for (const cls of this.classes) {
+      decls[cls.name] = cls;
+    }
+    return super.resolve(new SimpleScope(decls, scope));
   }
 
   toString(format?: StringFormat): string {
@@ -34,6 +42,16 @@ export class Class extends Node<'class'> implements Scope {
     public methods: Method[] = [],
   ) {
     super('class');
+  }
+
+  asType(): ClassType {
+    const classType = new ClassType(this.name);
+    classType._class = this;
+    return classType;
+  }
+
+  findConstructor(types: AnyType[]): Constructor | undefined {
+    return this.constructors.find(ctor => ctor.parameters.length === types.length && ctor.parameters.every((param, i) => isAssignable(param.type, types[i])));
   }
 
   toString(format?: StringFormat): string {
@@ -62,6 +80,7 @@ export class Class extends Node<'class'> implements Scope {
 }
 
 export class Constructor extends Node<'constructor'> {
+  _thisClass?: Class;
   _thisParameter?: Parameter;
 
   constructor(
@@ -76,14 +95,8 @@ export class Constructor extends Node<'constructor'> {
   }
 
   resolve(scope: Scope): this {
-    if (!this._thisParameter) {
-      const enclosingClass = scope.lookup(Class.enclosing, Class);
-      if (enclosingClass) {
-        let classType = new ClassType(enclosingClass.name);
-        classType._class = enclosingClass;
-        this._thisParameter = new Parameter('this', classType);
-      }
-    }
+    this._thisClass ||= scope.lookup(Class.enclosing, Class);
+    this._thisParameter ||= this._thisClass && new Parameter('this', this._thisClass.asType());
     const newScope = new SimpleScope(this._thisParameter ? [this._thisParameter, ...this.parameters] : this.parameters, scope);
     return super.resolve(newScope);
   }
@@ -116,6 +129,7 @@ export class Field extends Node<'field'> {
 }
 
 export class Method extends Node<'method'> {
+  _thisClass?: Class;
   _thisParameter?: Parameter;
 
   constructor(
@@ -132,14 +146,8 @@ export class Method extends Node<'method'> {
   }
 
   resolve(scope: Scope): this {
-    if (!this._thisParameter) {
-      const enclosingClass = scope.lookup(Class.enclosing, Class);
-      if (enclosingClass) {
-        let classType = new ClassType(enclosingClass.name);
-        classType._class = enclosingClass;
-        this._thisParameter = new Parameter('this', classType);
-      }
-    }
+    this._thisClass ||= scope.lookup(Class.enclosing, Class);
+    this._thisParameter ||= this._thisClass && new Parameter('this', this._thisClass.asType());
     const newScope = new SimpleScope(this._thisParameter ? [this._thisParameter, ...this.parameters] : this.parameters, scope);
     return super.resolve(newScope);
   }

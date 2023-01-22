@@ -3,6 +3,17 @@ import {report} from './lint';
 import {Node} from './node';
 import {Ctor, Name, Scope} from './scope';
 
+export function isAssignable(to: AnyType, from: AnyType) {
+  switch (from.kind) {
+    case 'type:primitive':
+      return to.kind === 'type:primitive' && from.name === to.name;
+    case 'type:class':
+      return to.kind === 'type:class' && from.name === to.name;
+    default:
+      return false;
+  }
+}
+
 export class Type<K extends string> extends Node<`type:${K}`> implements Scope {
   constructor(
     kind: K,

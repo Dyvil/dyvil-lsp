@@ -14,6 +14,9 @@ export class Node<K extends string> {
   resolve(scope: Scope): this {
     // by default, resolve all child nodes
     for (const [key, value] of Object.entries(this)) {
+      if (key === 'location' || key === 'kind' || key.startsWith('_') || !value) {
+        continue;
+      }
       if (Array.isArray(value)) {
         for (let i = 0; i < value.length; i++) {
           const item = value[i];

@@ -1,4 +1,4 @@
-import {Field, Method, Parameter, Variable} from './declarations';
+import {Class, Constructor, Field, Method, Parameter, Variable} from './declarations';
 import {report} from './lint';
 import {Node, StringFormat} from './node';
 import {Scope} from './scope';
@@ -63,6 +63,8 @@ export class VariableReference extends Expression<'variable'> {
 }
 
 export class FunctionCall extends Expression<'functionCall'> {
+  _constructor?: Constructor;
+
   constructor(
     public name: string,
     public args: AnyExpression[],
@@ -72,6 +74,29 @@ export class FunctionCall extends Expression<'functionCall'> {
 
   toString(format?: StringFormat): string {
     return `${this.name}(${this.args.map(arg => arg.toString(format)).join(', ')})`;
+  }
+
+  resolve(scope: Scope): this {
+    this.args = this.args.map(arg => arg.resolve(scope));
+    const types = this.args.map(arg => arg.getType());
+    if (!this._constructor) {
+      const cls = scope.lookup(this.name, Class);
+      if (cls) {
+        const ctor = cls.findConstructor(types);
+        if (ctor) {
+          this._constructor = ctor;
+        } else {
+          report(scope, this.location!, `constructor ${this.name}(${types.join(', ')}) not found`);
+        }
+      } else {
+        report(scope, this.location!, `class or function ${this.name} not found`);
+      }
+    }
+    return this;
+  }
+
+  getType(): AnyType {
+    return this._constructor?._thisClass?.asType() ?? ErrorType;
   }
 }
 
