@@ -1,0 +1,15 @@
+class Greeter {
+  var name: string = "World"
+  var count: int = 0
+
+  init(name: string) {
+    this.name = name
+  }
+
+  func greet(): void {
+    var greeting = "Hello, " + this.name + "!"
+    println(greeting)
+    var newCount = this.count + 1
+    this.count = newCount
+  }
+}
