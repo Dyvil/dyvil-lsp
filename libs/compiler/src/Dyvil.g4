@@ -60,7 +60,7 @@ blockStatement returns [ast.Block bs]:
 expression returns [ast.AnyExpression e]:
   object=expression '.' ID '(' (arguments+=expression)* ')' { $e = new ast.MethodCall($object.e, $ID.text!, $arguments.map(a => a.e)); $e.location = makeRange($ID); }
   |
-  object=expression '.' ID { $e = new ast.PropertyAccess($object.e, $ID.text!); $e.location = makeRange($ID); }
+  object=expression '.' property=(ID | COMPLETION_MARKER) { $e = new ast.PropertyAccess($object.e, $property.text!); $e.location = makeRange($property); }
   |
   lhs=expression OPERATOR rhs=expression { $e = new ast.BinaryOperation($lhs.e, $OPERATOR.text!, $rhs.e); $e.location = makeRange($OPERATOR); }
   |<assoc=right>

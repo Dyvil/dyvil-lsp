@@ -117,6 +117,18 @@ export class PropertyAccess extends Expression<'propertyAccess'> {
   resolve(scope: Scope): this {
     this.object = this.object.resolve(scope);
     const objectType = this.object.getType();
+    if (this.property === '§') {
+      const expected = objectType.list()
+        .filter((n): n is Node<any> & {name: string} => 'name' in n)
+        .map((item): CompletionItem => ({
+          kind: item.kind,
+          label: item.name,
+        }))
+      ;
+      report(scope, this.location!, 'input \'§\' expecting', 'error', expected);
+      return this;
+    }
+
     this._field ||= objectType.lookup(this.property, Field) || report(scope, this.location!, `field ${this.property} not found on ${objectType}`);
     return this;
   }
