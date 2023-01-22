@@ -15,6 +15,7 @@
         "outputPath": "dist/apps/vs-code-client",
         "main": "apps/vs-code-client/src/main.ts",
         "tsConfig": "apps/vs-code-client/tsconfig.app.json",
+        "externalDependencies": ["vscode"],
         "assets": [
           "apps/vs-code-client/src/assets",
           "apps/vs-code-client/src/package.json"

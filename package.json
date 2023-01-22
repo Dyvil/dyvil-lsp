@@ -9,6 +9,8 @@
     "serve:compiler-service": "nx serve compiler-service",
     "compiler:main": "ts-node libs/compiler/src/main.ts",
     "compiler:antlr": "nx antlr4ts compiler",
+    "vs-code-client:watch": "nx build vs-code-client --watch",
+    "language-service:watch": "nx build language-service --watch",
     "build": "nx build",
     "test": "nx test"
   },
@@ -35,7 +37,7 @@
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.0.0",
     "tslib": "^2.3.0",
-    "vscode": "^1.1.37",
+    "vscode-languageclient": "^8.0.2",
     "vscode-languageserver": "^8.0.2",
     "vscode-languageserver-textdocument": "^1.0.8",
     "zone.js": "~0.11.4"
@@ -58,6 +60,7 @@
     "@nrwl/workspace": "15.3.3",
     "@types/jest": "28.1.1",
     "@types/node": "18.7.1",
+    "@types/vscode": "^1.74.0",
     "@typescript-eslint/eslint-plugin": "^5.36.1",
     "@typescript-eslint/parser": "^5.36.1",
     "antlr4ts-cli": "0.5.0-alpha.4",
