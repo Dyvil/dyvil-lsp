@@ -57,26 +57,26 @@ blockStatement returns [ast.Block bs]:
   '{' (statements+=statement)* '}' { $bs = new ast.Block($statements.map(s => s.s)) }
 ;
 
-expression returns [ast.AnyExpression e] @after { $e.location = makeRange($start, $stop); }:
-  object=expression '.' ID '(' (arguments+=expression)* ')' { $e = new ast.MethodCall($object.e, $ID.text!, $arguments.map(a => a.e)) }
+expression returns [ast.AnyExpression e]:
+  object=expression '.' ID '(' (arguments+=expression)* ')' { $e = new ast.MethodCall($object.e, $ID.text!, $arguments.map(a => a.e)); $e.location = makeRange($ID); }
   |
-  object=expression '.' ID { $e = new ast.PropertyAccess($object.e, $ID.text!) }
+  object=expression '.' ID { $e = new ast.PropertyAccess($object.e, $ID.text!); $e.location = makeRange($ID); }
   |
-  lhs=expression OPERATOR rhs=expression { $e = new ast.BinaryOperation($lhs.e, $OPERATOR.text!, $rhs.e) }
+  lhs=expression OPERATOR rhs=expression { $e = new ast.BinaryOperation($lhs.e, $OPERATOR.text!, $rhs.e); $e.location = makeRange($OPERATOR); }
   |<assoc=right>
-  lhs=expression '=' rhs=expression { $e = new ast.BinaryOperation($lhs.e, '=', $rhs.e) }
+  lhs=expression op='=' rhs=expression { $e = new ast.BinaryOperation($lhs.e, '=', $rhs.e); $e.location = makeRange($op); }
   |
-  ID '(' (arguments+=expression)* ')' { $e = new ast.FunctionCall($ID.text!, $arguments.map(a => a.e)) }
+  ID '(' (arguments+=expression)* ')' { $e = new ast.FunctionCall($ID.text!, $arguments.map(a => a.e)); $e.location = makeRange($ID); }
   |
-  ID { $e = new ast.VariableReference($ID.text!) }
+  ID { $e = new ast.VariableReference($ID.text!); $e.location = makeRange($ID); }
   |
-  '(' expression ')' { $e = new ast.ParenthesizedExpression($expression.e) }
+  '(' expression ')' { $e = new ast.ParenthesizedExpression($expression.e); $e.location = makeRange($start, $stop); }
   |
   literal { $e = $literal.l }
   |
-  COMPLETION_MARKER { $e = new ast.CompletionExpression() }
+  COMPLETION_MARKER { $e = new ast.CompletionExpression(); $e.location = makeRange($COMPLETION_MARKER); }
 ;
-literal returns [ast.Literal l]: (NUMBER | STRING | 'true' | 'false') { $l = new ast.Literal($text) } ;
+literal returns [ast.Literal l]: (NUMBER | STRING | 'true' | 'false') { $l = new ast.Literal($text); $l.location = makeRange($start); } ;
 
 WS: [ \t\r\n]+ -> skip;
 LC: '//' ~[\r\n]* -> skip;
