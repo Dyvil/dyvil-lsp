@@ -16,9 +16,27 @@
         "command": "start",
         "title": "Start My Extension"
       }
+    ],
+    "languages": [
+      {
+        "id": "dyvil",
+        "aliases": [
+          "Dyvil"
+        ],
+        "extensions": [
+          ".dyv"
+        ]
+      }
+    ],
+    "grammars": [
+      {
+        "language": "dyvil",
+        "scopeName": "source.dyvil",
+        "path": "./assets/dyvil.tmGrammar.json"
+      }
     ]
   },
   "activationEvents": [
-    "onCommand:start"
+    "onLanguage:dyvil"
   ]
 }
