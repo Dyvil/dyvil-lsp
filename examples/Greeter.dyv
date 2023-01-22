@@ -6,6 +6,11 @@ class Greeter {
     this.name = name
   }
 
+  static func main(): void {
+    var greeter = Greeter("World")
+    greeter.greet()
+  }
+
   func greet(): void {
     var greeting = "Hello, " + this.name + "!"
     println(greeting)

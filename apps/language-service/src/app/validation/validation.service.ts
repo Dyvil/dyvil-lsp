@@ -1,6 +1,9 @@
 import {Injectable} from '@nestjs/common';
+import {DiagnosticSeverity} from 'vscode-languageserver';
 import {TextDocument} from 'vscode-languageserver-textdocument';
 import {Diagnostic} from 'vscode-languageserver/node';
+import {SimpleScope} from '../../../../../libs/compiler/src/ast';
+import {compilationUnit} from '../../../../../libs/compiler/src/compiler';
 import {ConfigService} from '../config/config.service';
 import {ConnectionService} from '../connection/connection.service';
 import {DocumentService} from '../document/document.service';
@@ -38,14 +41,22 @@ export class ValidationService {
 
   async validateTextDocument(textDocument: TextDocument): Promise<void> {
     const uri = textDocument.uri;
-    const document = this.documentService.documents.get(uri);
-    if (!document) {
-      return;
-    }
 
     const diagnostics: Diagnostic[] = [];
-    // TODO
+    const unit = compilationUnit(textDocument.getText());
+    unit.report = (range, message, severity) => {
+      diagnostics.push({
+        severity: severity === 'error' ? DiagnosticSeverity.Error : DiagnosticSeverity.Warning,
+        range: {
+          start: {line: range.start.line - 1, character: range.start.column},
+          end: {line: range.end.line - 1, character: range.end.column},
+        },
+        message,
+        source: 'dyvil',
+      });
+    };
+    unit.resolve(new SimpleScope([]));
 
-    this.connectionService.connection.sendDiagnostics({uri, diagnostics});
+    await this.connectionService.connection.sendDiagnostics({uri, diagnostics});
   }
 }
