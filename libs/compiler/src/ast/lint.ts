@@ -33,10 +33,12 @@ export function log(file: string, {start: {column, line}}: Range, message: strin
   }
 }
 
-export function report(scope: Scope, location: Range, message: string, severity: Severity = 'error'): never {
+export function report(scope: Scope, location: Range, message: string, severity: Severity = 'error'): undefined {
   const unit = scope.lookup(CompilationUnit.enclosing, CompilationUnit);
   if (unit) {
     unit.report(location, message, severity);
+  } else {
+    log('unknown', location, message, severity);
   }
-  throw new Error(message);
+  return;
 }

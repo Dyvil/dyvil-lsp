@@ -1,4 +1,5 @@
 import {Class} from './declarations';
+import {report} from './lint';
 import {Node} from './node';
 import {Ctor, Name, Scope} from './scope';
 
@@ -24,7 +25,7 @@ export class ClassType extends Type<'class'> {
   }
 
   resolve(scope: Scope): this {
-    this._class = scope.lookup(this.name, Class);
+    this._class ||= scope.lookup(this.name, Class) || report(scope, this.location!, `class ${this.name} not found`);
     return this;
   }
 

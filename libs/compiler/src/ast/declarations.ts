@@ -20,7 +20,7 @@ export class CompilationUnit extends Node<'unit'> {
   }
 
   toString(format?: StringFormat): string {
-    return this.classes.join('\n\n');
+    return this.classes.map(c => c.toString(format)).join('\n\n');
   }
 }
 

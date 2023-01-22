@@ -1,4 +1,5 @@
 import {Field, Method, Parameter, Variable} from './declarations';
+import {report} from './lint';
 import {Node, StringFormat} from './node';
 import {Scope} from './scope';
 import {AnyType, ErrorType, PrimitiveType} from './types';
@@ -52,7 +53,7 @@ export class VariableReference extends Expression<'variable'> {
   }
 
   resolve(scope: Scope): this {
-    this._variable = scope.lookup(this.name, Variable) || scope.lookup(this.name, Parameter);
+    this._variable ||= scope.lookup(this.name, Variable) || scope.lookup(this.name, Parameter) || report(scope, this.location!, `variable ${this.name} not found`);
     return this;
   }
 
@@ -90,7 +91,8 @@ export class PropertyAccess extends Expression<'propertyAccess'> {
 
   resolve(scope: Scope): this {
     this.object = this.object.resolve(scope);
-    this._field = this.object.getType().lookup(this.property, Field);
+    const objectType = this.object.getType();
+    this._field ||= objectType.lookup(this.property, Field) || report(scope, this.location!, `field ${this.property} not found on ${objectType}`);
     return this;
   }
 
@@ -117,7 +119,8 @@ export class MethodCall extends Expression<'methodCall'> {
   resolve(scope: Scope): this {
     this.object = this.object.resolve(scope);
     this.args = this.args.map(arg => arg.resolve(scope));
-    this._method = this.object.getType().lookup(this.method, Method);
+    const objectType = this.object.getType();
+    this._method ||= objectType.lookup(this.method, Method) || report(scope, this.location!, `method ${this.method} not found on ${objectType}`);
     return this;
   }
 }
