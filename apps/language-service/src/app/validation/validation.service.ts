@@ -1,12 +1,24 @@
 import {Injectable} from '@nestjs/common';
 import {DiagnosticSeverity} from 'vscode-languageserver';
 import {TextDocument} from 'vscode-languageserver-textdocument';
-import {Diagnostic} from 'vscode-languageserver/node';
-import {SimpleScope} from '../../../../../libs/compiler/src/ast';
+import {Diagnostic as LspDiagnostic} from 'vscode-languageserver/node';
+import {Diagnostic, SimpleScope} from '../../../../../libs/compiler/src/ast';
 import {compilationUnit} from '../../../../../libs/compiler/src/compiler';
 import {ConfigService} from '../config/config.service';
 import {ConnectionService} from '../connection/connection.service';
 import {DocumentService} from '../document/document.service';
+
+function convertDiagnostic({severity, location, message}: Diagnostic): LspDiagnostic {
+  return {
+    severity: severity === 'error' ? DiagnosticSeverity.Error : DiagnosticSeverity.Warning,
+    range: {
+      start: {line: location.start.line - 1, character: location.start.column},
+      end: {line: location.end.line - 1, character: location.end.column},
+    },
+    message,
+    source: 'dyvil',
+  };
+}
 
 @Injectable()
 export class ValidationService {
@@ -42,20 +54,12 @@ export class ValidationService {
   async validateTextDocument(textDocument: TextDocument): Promise<void> {
     const uri = textDocument.uri;
 
-    const diagnostics: Diagnostic[] = [];
-    const unit = compilationUnit(textDocument.getText());
-    unit.report = (range, message, severity) => {
-      diagnostics.push({
-        severity: severity === 'error' ? DiagnosticSeverity.Error : DiagnosticSeverity.Warning,
-        range: {
-          start: {line: range.start.line - 1, character: range.start.column},
-          end: {line: range.end.line - 1, character: range.end.column},
-        },
-        message,
-        source: 'dyvil',
-      });
-    };
-    unit.resolve(new SimpleScope([]));
+    let unit = compilationUnit(textDocument.getText());
+    let diagnostics = unit.diagnostics.map(convertDiagnostic);
+    await this.connectionService.connection.sendDiagnostics({uri, diagnostics});
+
+    unit = unit.resolve(new SimpleScope([]));
+    diagnostics = unit.diagnostics.map(convertDiagnostic);
 
     await this.connectionService.connection.sendDiagnostics({uri, diagnostics});
   }

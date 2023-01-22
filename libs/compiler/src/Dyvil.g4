@@ -2,13 +2,7 @@ grammar Dyvil;
 
 @parser::header {
 import * as ast from '../ast';
-
-function makeRange(start: Token, stop?: Token) {
-  return new ast.Range(
-    new ast.Position(start.line, start.charPositionInLine),
-    stop ? new ast.Position(stop.line, stop.charPositionInLine + (stop.text?.length || 0)) : new ast.Position(start.line, start.charPositionInLine + (start.text?.length || 0))
-  );
-}
+import { makeRange } from '../compiler';
 }
 
 file returns [ast.CompilationUnit cu]:

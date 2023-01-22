@@ -1,5 +1,5 @@
 import {AnyExpression} from './expressions';
-import {log, Range, Severity} from './lint';
+import {Diagnostic} from './lint';
 import {autoIndent, Node, StringFormat} from './node';
 import {Ctor, Name, Scope, SimpleScope} from './scope';
 import {Block} from './statements';
@@ -8,6 +8,8 @@ import {AnyType, ClassType, isAssignable} from './types';
 export class CompilationUnit extends Node<'unit'> {
   static enclosing = Symbol('enclosing compilation unit');
 
+  diagnostics: Diagnostic[] = [];
+
   constructor(
     public path: string,
     public classes: Class[],
@@ -15,8 +17,8 @@ export class CompilationUnit extends Node<'unit'> {
     super('unit');
   }
 
-  report(range: Range, problem: string, severity: Severity = 'error'): void {
-    log(this.path, range, problem, severity);
+  report(diagnostic: Diagnostic): void {
+    this.diagnostics.push(diagnostic);
   }
 
   resolve(scope: Scope): this {

@@ -17,28 +17,40 @@ export class Range {
   }
 }
 
+export class Diagnostic {
+  constructor(
+    public readonly path: string | undefined,
+    public readonly location: Range,
+    public readonly message: string,
+    public readonly severity: Severity = 'error',
+  ) {
+  }
+}
+
 export type Severity = 'error' | 'warning' | 'note';
 
-export function log(file: string, {start: {column, line}}: Range, message: string, severity: Severity = 'error'): void {
+export function log(diagnostic: Diagnostic): void {
+  const {path, location: {start: {line, column}}, message, severity} = diagnostic;
   switch (severity) {
     case 'error':
-      console.error(`${file}:${line}:${column}: error: ${message}`);
+      console.error(`${path}:${line}:${column}: error: ${message}`);
       break;
     case 'warning':
-      console.warn(`${file}:${line}:${column}: warning: ${message}`);
+      console.warn(`${path}:${line}:${column}: warning: ${message}`);
       break;
     case 'note':
-      console.info(`${file}:${line}:${column}: note: ${message}`);
+      console.info(`${path}:${line}:${column}: note: ${message}`);
       break;
   }
 }
 
 export function report(scope: Scope, location: Range, message: string, severity: Severity = 'error'): undefined {
   const unit = scope.lookup(CompilationUnit.enclosing, CompilationUnit);
+  const diagnostic = new Diagnostic(undefined, location, message, severity);
   if (unit) {
-    unit.report(location, message, severity);
+    unit.report(diagnostic);
   } else {
-    log('unknown', location, message, severity);
+    log(diagnostic);
   }
   return;
 }
