@@ -37,11 +37,15 @@ type returns [ast.AnyType tn] @after { $tn.location = makeRange($start, $stop); 
   primitiveType { $tn = new ast.PrimitiveType($primitiveType.text! as ast.PrimitiveName) }
   |
   ID { $tn = new ast.ClassType($ID.text!) }
+  |
+  COMPLETION_MARKER { $tn = new ast.CompletionType() }
 ;
 primitiveType: 'int' | 'boolean' | 'string' | 'void';
 
 statement returns [ast.AnyStatement s] @after { $s.location = makeRange($start, $stop); }:
   variable { $s = new ast.VarStatement($variable.v) }
+  |
+  COMPLETION_MARKER { $s = new ast.CompletionStatement() }
   |
   expression { $s = new ast.ExpressionStatement($expression.e) }
   |
@@ -69,8 +73,10 @@ expression returns [ast.AnyExpression e] @after { $e.location = makeRange($start
   '(' expression ')' { $e = new ast.ParenthesizedExpression($expression.e) }
   |
   literal { $e = $literal.l }
+  |
+  COMPLETION_MARKER { $e = new ast.CompletionExpression() }
 ;
-literal returns [ast.Literal l]: (NUMBER | STRING | 'true' | 'false' | COMPLETION_MARKER) { $l = new ast.Literal($text) } ;
+literal returns [ast.Literal l]: (NUMBER | STRING | 'true' | 'false') { $l = new ast.Literal($text) } ;
 
 WS: [ \t\r\n]+ -> skip;
 LC: '//' ~[\r\n]* -> skip;

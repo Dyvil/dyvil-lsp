@@ -16,7 +16,5 @@ class Greeter {
     println(greeting)
     var newCount = this.count + 1
     this.count = newCount
-
-
   }
 }

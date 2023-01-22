@@ -1,5 +1,5 @@
 import {Class} from './declarations';
-import {report} from './lint';
+import {CompletionItem, report} from './lint';
 import {Node} from './node';
 import {Ctor, Name, Scope} from './scope';
 
@@ -57,7 +57,8 @@ export class ClassType extends Type<'class'> {
   }
 }
 
-export type PrimitiveName = 'int' | 'boolean' | 'string' | 'void';
+export const primitiveNames = ['int', 'boolean', 'string', 'void'] as const;
+export type PrimitiveName = typeof primitiveNames[number];
 
 export class PrimitiveType extends Type<'primitive'> {
   constructor(
@@ -71,6 +72,33 @@ export class PrimitiveType extends Type<'primitive'> {
   }
 }
 
+export class CompletionType extends Type<'completion'> {
+  constructor() {
+    super('completion');
+  }
+
+  toString(): string {
+    return '§';
+  }
+
+  resolve(scope: Scope): this {
+    const expected = scope.list()
+      .filter((d): d is Class => d.kind === 'class')
+      .map((d): CompletionItem => ({kind: d.kind, label: d.name}))
+    ;
+    report(scope, this.location!, 'input \'§\' expecting', 'error', [
+      ...expected,
+      ...primitiveNames.map(name => ({kind: 'keyword', label: name})),
+    ]);
+    return this;
+  }
+}
+
 export const ErrorType = new Type('error');
 
-export type AnyType = ClassType | PrimitiveType | typeof ErrorType;
+export type AnyType =
+  | ClassType
+  | PrimitiveType
+  | CompletionType
+  | typeof ErrorType
+;

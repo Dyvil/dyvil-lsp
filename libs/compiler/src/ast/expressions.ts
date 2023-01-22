@@ -27,17 +27,6 @@ export class Literal extends Expression<'literal'> {
     return this.representation;
   }
 
-  resolve(scope: Scope): this {
-    if (this.representation === '§') {
-      const expected = scope.list()
-        .filter((d): d is Node<any> & {name: string} => 'name' in d)
-        .map((d): CompletionItem => ({kind: d.kind, label: d.name}))
-      ;
-      report(scope, this.location!, "input '§' expecting", 'error', expected);
-    }
-    return this;
-  }
-
   getType(): AnyType {
     switch (this.representation.charAt(0)) {
       case '"':
@@ -214,6 +203,29 @@ export class ParenthesizedExpression extends Expression<'parenthesized'> {
   }
 }
 
+export class CompletionExpression extends Expression<'completion'> {
+  constructor() {
+    super('completion');
+  }
+
+  toString(): string {
+    return '§';
+  }
+
+  getType(): AnyType {
+    return ErrorType;
+  }
+
+  resolve(scope: Scope): this {
+    const expected = scope.list()
+      .filter((d): d is Node<any> & { name: string } => 'name' in d)
+      .map((d): CompletionItem => ({kind: d.kind, label: d.name}))
+    ;
+    report(scope, this.location!, 'input \'§\' expecting', 'error', expected);
+    return this;
+  }
+}
+
 export type AnyExpression =
   | Literal
   | VariableReference
@@ -222,4 +234,5 @@ export type AnyExpression =
   | MethodCall
   | BinaryOperation
   | ParenthesizedExpression
+  | CompletionExpression
   ;

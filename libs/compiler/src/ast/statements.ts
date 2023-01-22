@@ -1,5 +1,6 @@
 import {Variable} from './declarations';
 import {AnyExpression} from './expressions';
+import {CompletionItem, report} from './lint';
 import {autoIndent, Node, StringFormat} from './node';
 import {Scope, SimpleScope} from './scope';
 
@@ -62,11 +63,34 @@ export class Block extends Statement<'block'> {
   }
 }
 
+export class CompletionStatement extends Statement<'completion'> {
+  constructor() {
+    super('completion');
+  }
+
+  toString(): string {
+    return '§';
+  }
+
+  resolve(scope: Scope): this {
+    const expected = scope.list()
+      .filter((d): d is Node<any> & { name: string } => 'name' in d)
+      .map((d): CompletionItem => ({kind: d.kind, label: d.name}))
+    ;
+    report(scope, this.location!, 'input \'§\' expecting', 'error', [
+      ...expected,
+      {kind: 'keyword', label: 'var'},
+    ]);
+    return this;
+  }
+}
+
 export const EmptyStatement = new Statement('empty');
 
 export type AnyStatement =
   | VarStatement
   | ExpressionStatement
   | Block
+  | CompletionStatement
   | typeof EmptyStatement
-;
+  ;
