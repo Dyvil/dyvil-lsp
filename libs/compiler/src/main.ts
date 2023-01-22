@@ -1,7 +1,6 @@
-import {CharStreams, CommonTokenStream} from 'antlr4ts';
 import {SimpleScope} from './ast';
-import {DyvilLexer} from './parser/DyvilLexer';
-import {DyvilParser} from './parser/DyvilParser';
+import {compilationUnit} from './compiler';
+
 
 const text = `
 class Greeter {
@@ -20,11 +19,7 @@ class Greeter {
   }
 }
 `;
-const inputStream = CharStreams.fromString(text, 'Greeter.dyv');
-const lexer = new DyvilLexer(inputStream);
-const tokenStream = new CommonTokenStream(lexer);
-const parser = new DyvilParser(tokenStream);
-let file = parser.file().cu;
+let file = compilationUnit(text);
 file = file.resolve(new SimpleScope([]));
 console.dir(file, {depth: null});
 console.log(file.toString());
