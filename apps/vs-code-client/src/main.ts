@@ -1,9 +1,48 @@
-import {commands, ExtensionContext, window} from 'vscode';
+import {ExtensionContext, ExtensionMode} from 'vscode';
+import {LanguageClient, LanguageClientOptions, ServerOptions, TransportKind} from 'vscode-languageclient/node';
 
-// On activation
+let client: LanguageClient;
+
 export function activate(context: ExtensionContext) {
-  // Register command "start"
-  commands.registerCommand('start', () => {
-    window.showInformationMessage('Hello World');
-  });
+  const module = context.asAbsolutePath(context.extensionMode === ExtensionMode.Development
+    ? '../language-service/main.js'
+    : '', // TODO prod path
+  );
+  const transport = TransportKind.ipc;
+  const serverOptions: ServerOptions = {
+    run: {
+      module,
+      transport,
+    },
+    debug: {
+      module,
+      transport,
+      options: {execArgv: ['--nolazy', '--inspect=6009']},
+    },
+  };
+
+  const clientOptions: LanguageClientOptions = {
+    documentSelector: [
+      {language: 'dyvil'},
+    ],
+    synchronize: {
+      configurationSection: 'dyvil',
+    },
+  };
+
+  client = new LanguageClient(
+    'dyvil',
+    'Dyvil',
+    serverOptions,
+    clientOptions,
+  );
+
+  client.start();
+}
+
+export function deactivate() {
+  if (!client) {
+    return undefined;
+  }
+  return client.stop();
 }
