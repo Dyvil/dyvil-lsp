@@ -17,14 +17,23 @@ export class Range {
   }
 }
 
+export interface CompletionItem {
+  kind: string;
+  label: string;
+  detail?: string;
+}
+
 export class Diagnostic {
   constructor(
     public readonly path: string | undefined,
     public readonly location: Range,
     public readonly message: string,
     public readonly severity: Severity = 'error',
-    public readonly expectedTokens?: string[],
+    public readonly expected?: CompletionItem[],
   ) {
+    if (!location) {
+      throw new Error('location is required');
+    }
   }
 }
 
@@ -45,9 +54,9 @@ export function log(diagnostic: Diagnostic): void {
   }
 }
 
-export function report(scope: Scope, location: Range, message: string, severity: Severity = 'error', expectedTokens?: string[]): undefined {
+export function report(scope: Scope, location: Range, message: string, severity: Severity = 'error', expected?: CompletionItem[]): undefined {
   const unit = scope.lookup(CompilationUnit.enclosing, CompilationUnit);
-  const diagnostic = new Diagnostic(undefined, location, message, severity, expectedTokens);
+  const diagnostic = new Diagnostic(undefined, location, message, severity, expected);
   if (unit) {
     unit.report(diagnostic);
   } else {

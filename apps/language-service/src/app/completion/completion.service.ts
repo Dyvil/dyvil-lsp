@@ -5,6 +5,26 @@ import {compilationUnit} from '../../../../../libs/compiler/src/compiler';
 import {ConnectionService} from '../connection/connection.service';
 import {DocumentService} from '../document/document.service';
 
+function convertCompletionKind(kind: string): CompletionItemKind {
+  switch (kind) {
+    case 'keyword':
+      return CompletionItemKind.Keyword;
+    case 'operator':
+      return CompletionItemKind.Operator;
+    case 'class':
+      return CompletionItemKind.Class;
+    case 'field':
+      return CompletionItemKind.Field;
+    case 'method':
+      return CompletionItemKind.Method;
+    case 'variable':
+    case 'parameter':
+      return CompletionItemKind.Variable;
+    default:
+      return CompletionItemKind.Text;
+  }
+}
+
 @Injectable()
 export class CompletionService {
   constructor(
@@ -32,14 +52,15 @@ export class CompletionService {
       end: {line: document.lineCount, character: 0},
     });
     const unit = compilationUnit(`${before}§${after}`).resolve(new SimpleScope([]));
-    const diagnostic = unit.diagnostics.find(d => d.message.includes("input '§' expecting"));
-    if (!diagnostic || !diagnostic.expectedTokens) {
+    const diagnostic = unit.diagnostics.find(d => d.message.includes('input \'§\' expecting'));
+    if (!diagnostic || !diagnostic.expected) {
       return [];
     }
 
-    return diagnostic.expectedTokens.map(token => ({
-      kind: /^[a-z]+$/.test(token) ? CompletionItemKind.Keyword : CompletionItemKind.Operator,
-      label: token,
+    return diagnostic.expected.map((item) => ({
+      kind: convertCompletionKind(item.kind),
+      label: item.label,
+      detail: item.detail,
     }));
   }
 }

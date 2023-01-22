@@ -1,5 +1,5 @@
 import {Class, Constructor, Field, Method, Parameter, Variable} from './declarations';
-import {report} from './lint';
+import {CompletionItem, report} from './lint';
 import {Node, StringFormat} from './node';
 import {Scope} from './scope';
 import {AnyType, ErrorType, PrimitiveType} from './types';
@@ -29,7 +29,10 @@ export class Literal extends Expression<'literal'> {
 
   resolve(scope: Scope): this {
     if (this.representation === '§') {
-      const expected = scope.list().filter((d): d is Node<any> & {name: string} => 'name' in d).map(d => d.name);
+      const expected = scope.list()
+        .filter((d): d is Node<any> & {name: string} => 'name' in d)
+        .map((d): CompletionItem => ({kind: d.kind, label: d.name}))
+      ;
       report(scope, this.location!, "input '§' expecting", 'error', expected);
     }
     return this;
