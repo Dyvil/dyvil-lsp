@@ -27,6 +27,14 @@ export class Literal extends Expression<'literal'> {
     return this.representation;
   }
 
+  resolve(scope: Scope): this {
+    if (this.representation === '§') {
+      const expected = scope.list().filter((d): d is Node<any> & {name: string} => 'name' in d).map(d => d.name);
+      report(scope, this.location!, "input '§' expecting", 'error', expected);
+    }
+    return this;
+  }
+
   getType(): AnyType {
     switch (this.representation.charAt(0)) {
       case '"':

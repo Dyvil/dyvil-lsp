@@ -75,6 +75,10 @@ export class Class extends Node<'class'> implements Scope {
     }
   }
 
+  list(): Node<any>[] {
+    return [...this.fields, ...this.methods];
+  }
+
   resolve(scope: Scope): this {
     const newScope = new SimpleScope({[Class.enclosing]: this}, scope);
     return super.resolve(newScope);

@@ -23,6 +23,7 @@ export class Diagnostic {
     public readonly location: Range,
     public readonly message: string,
     public readonly severity: Severity = 'error',
+    public readonly expectedTokens?: string[],
   ) {
   }
 }
@@ -44,9 +45,9 @@ export function log(diagnostic: Diagnostic): void {
   }
 }
 
-export function report(scope: Scope, location: Range, message: string, severity: Severity = 'error'): undefined {
+export function report(scope: Scope, location: Range, message: string, severity: Severity = 'error', expectedTokens?: string[]): undefined {
   const unit = scope.lookup(CompilationUnit.enclosing, CompilationUnit);
-  const diagnostic = new Diagnostic(undefined, location, message, severity);
+  const diagnostic = new Diagnostic(undefined, location, message, severity, expectedTokens);
   if (unit) {
     unit.report(diagnostic);
   } else {

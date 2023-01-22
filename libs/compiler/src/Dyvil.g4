@@ -70,7 +70,7 @@ expression returns [ast.AnyExpression e] @after { $e.location = makeRange($start
   |
   literal { $e = $literal.l }
 ;
-literal returns [ast.Literal l]: (NUMBER | STRING | 'true' | 'false') { $l = new ast.Literal($text) } ;
+literal returns [ast.Literal l]: (NUMBER | STRING | 'true' | 'false' | COMPLETION_MARKER) { $l = new ast.Literal($text) } ;
 
 WS: [ \t\r\n]+ -> skip;
 LC: '//' ~[\r\n]* -> skip;
@@ -80,3 +80,4 @@ NUMBER: [+-]?[0-9]+([.][0-9]+)?;
 ID: [a-zA-Z0-9_]+;
 STRING: '"' ('\\' . | ~["\r\n\\])* '"';
 OPERATOR: [+\-*/%&|<>!:^=]+;
+COMPLETION_MARKER: '§';

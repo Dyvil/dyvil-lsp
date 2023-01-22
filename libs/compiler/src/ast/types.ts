@@ -24,6 +24,10 @@ export class Type<K extends string> extends Node<`type:${K}`> implements Scope {
   lookup<N extends Node<any>>(name: Name, kind: Ctor<N>): N | undefined {
     return;
   }
+
+  list(): Node<any>[] {
+    return [];
+  }
 }
 
 export class ClassType extends Type<'class'> {
@@ -42,6 +46,10 @@ export class ClassType extends Type<'class'> {
 
   lookup<N extends Node<any>>(name: Name, kind: Ctor<N>): N | undefined {
     return this._class?.lookup(name, kind);
+  }
+
+  list(): Node<any>[] {
+    return this._class?.list() ?? [];
   }
 
   toString(): string {
