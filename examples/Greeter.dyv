@@ -13,6 +13,10 @@ class Greeter {
 
   func greet(): void {
     var greeting = "Hello, " + this.name + "!"
+    this.greet
+  }
+
+  func greet(greeting: string): void {
     println(greeting)
     var newCount = this.count + 1
     this.count = newCount

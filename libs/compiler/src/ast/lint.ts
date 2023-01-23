@@ -21,7 +21,12 @@ export class Range {
 export interface CompletionItem {
   kind: string;
   label: string;
-  detail?: string;
+  /** displayed on the right */
+  description?: string;
+  /** displayed next to the label */
+  signature?: string;
+  /** snippet using cursor placeholders like ${1:placeholder} */
+  snippet?: string;
 }
 
 export class Diagnostic {
@@ -74,7 +79,7 @@ export function autocomplete(scope: Scope, location: Range, id: string, {lookup,
   const fromLookup = (lookup || scope).list()
     .filter((n): n is Node<any> & {name: string} => 'name' in n)
     .filter(n => !kind || n.kind === kind)
-    .map((item): CompletionItem => ({
+    .map((item): CompletionItem => 'asCompletion' in item ? (item as any).asCompletion() : ({
       kind: item.kind,
       label: item.name,
     }))

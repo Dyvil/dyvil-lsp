@@ -1,4 +1,5 @@
 import {Injectable} from '@nestjs/common';
+import {InsertTextFormat} from 'vscode-languageserver';
 import {CompletionItem, CompletionItemKind, CompletionParams} from 'vscode-languageserver';
 import {SimpleScope} from '../../../../../libs/compiler/src/ast';
 import {compilationUnit} from '../../../../../libs/compiler/src/compiler';
@@ -57,10 +58,12 @@ export class CompletionService {
       return [];
     }
 
-    return diagnostic.expected.map((item) => ({
+    return diagnostic.expected.map((item): CompletionItem => ({
       kind: convertCompletionKind(item.kind),
       label: item.label,
-      detail: item.detail,
+      labelDetails: {detail: item.signature, description: item.description},
+      insertText: item.snippet,
+      insertTextFormat: item.snippet ? InsertTextFormat.Snippet : undefined,
     }));
   }
 }

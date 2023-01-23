@@ -1,5 +1,5 @@
 import {AnyExpression} from './expressions';
-import {Diagnostic} from './lint';
+import {CompletionItem, Diagnostic} from './lint';
 import {autoIndent, Node, StringFormat} from './node';
 import {Ctor, Name, Scope, SimpleScope} from './scope';
 import {Block} from './statements';
@@ -50,6 +50,13 @@ export class Class extends Node<'class'> implements Scope {
     const classType = new ClassType(this.name);
     classType._class = this;
     return classType;
+  }
+
+  asCompletion(): CompletionItem {
+    return {
+      label: this.name,
+      kind: 'class',
+    };
   }
 
   findConstructor(types: AnyType[]): Constructor | undefined {
@@ -117,6 +124,14 @@ export class Field extends Node<'field'> {
     super('field');
   }
 
+  asCompletion(): CompletionItem {
+    return {
+      label: this.name,
+      kind: 'field',
+      signature: ': ' + this.type.toString(),
+    };
+  }
+
   toString(format?: StringFormat): string {
     if (format === 'js') {
       return autoIndent`
@@ -145,6 +160,15 @@ export class Method extends Node<'method'> {
     public body: Block,
   ) {
     super('method');
+  }
+
+  asCompletion(): CompletionItem {
+    return {
+      label: this.name,
+      kind: 'field',
+      signature: `(${this.parameters.map(param => param.type.toString()).join(', ')})${this.returnType ? ': ' + this.returnType.toString() : ''}`,
+      snippet: `${this.name}(${this.parameters.map((p, i) => `$\{${i}:${p.name}}`).join(', ')})`,
+    };
   }
 
   toString(format?: StringFormat): string {
@@ -182,6 +206,14 @@ export class Variable extends Node<'variable'> {
     public value: AnyExpression,
   ) {
     super('variable');
+  }
+
+  asCompletion(): CompletionItem {
+    return {
+      label: this.name,
+      kind: 'variable',
+      signature: this.type ? ': ' + this.type.toString() : undefined,
+    };
   }
 
   toString(format?: StringFormat): string {
