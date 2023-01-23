@@ -1,5 +1,5 @@
 import {Class} from './declarations';
-import {CompletionItem, report} from './lint';
+import {autocomplete, report} from './lint';
 import {Node} from './node';
 import {Ctor, Name, Scope} from './scope';
 
@@ -40,6 +40,12 @@ export class ClassType extends Type<'class'> {
   }
 
   resolve(scope: Scope): this {
+    if (autocomplete(scope, this.location!, this.name, {
+      kind: 'class',
+      extra: primitiveCompletions,
+    })) {
+      return this;
+    }
     this._class ||= scope.lookup(this.name, Class) || report(scope, this.location!, `class ${this.name} not found`);
     return this;
   }
@@ -59,6 +65,7 @@ export class ClassType extends Type<'class'> {
 
 export const primitiveNames = ['int', 'boolean', 'string', 'void'] as const;
 export type PrimitiveName = typeof primitiveNames[number];
+export const primitiveCompletions = primitiveNames.map(name => ({kind: 'keyword', label: name}));
 
 export class PrimitiveType extends Type<'primitive'> {
   constructor(
@@ -72,33 +79,10 @@ export class PrimitiveType extends Type<'primitive'> {
   }
 }
 
-export class CompletionType extends Type<'completion'> {
-  constructor() {
-    super('completion');
-  }
-
-  toString(): string {
-    return '§';
-  }
-
-  resolve(scope: Scope): this {
-    const expected = scope.list()
-      .filter((d): d is Class => d.kind === 'class')
-      .map((d): CompletionItem => ({kind: d.kind, label: d.name}))
-    ;
-    report(scope, this.location!, 'input \'§\' expecting', 'error', [
-      ...expected,
-      ...primitiveNames.map(name => ({kind: 'keyword', label: name})),
-    ]);
-    return this;
-  }
-}
-
 export const ErrorType = new Type('error');
 
 export type AnyType =
   | ClassType
   | PrimitiveType
-  | CompletionType
   | typeof ErrorType
-;
+  ;

@@ -1,5 +1,5 @@
 import {Class, Constructor, Field, Method, Parameter, Variable} from './declarations';
-import {CompletionItem, report} from './lint';
+import {autocomplete, report} from './lint';
 import {Node, StringFormat} from './node';
 import {Scope} from './scope';
 import {AnyType, ErrorType, PrimitiveType} from './types';
@@ -31,7 +31,8 @@ export class Literal extends Expression<'literal'> {
     switch (this.representation.charAt(0)) {
       case '"':
         return new PrimitiveType('string');
-      case 't': case 'f':
+      case 't':
+      case 'f':
         return new PrimitiveType('boolean');
       default: // 0-9
         return new PrimitiveType('int');
@@ -53,6 +54,9 @@ export class VariableReference extends Expression<'variable'> {
   }
 
   resolve(scope: Scope): this {
+    if (autocomplete(scope, this.location!, this.name)) {
+      return this;
+    }
     this._variable ||= scope.lookup(this.name, Variable) || scope.lookup(this.name, Parameter) || report(scope, this.location!, `variable ${this.name} not found`);
     return this;
   }
@@ -117,15 +121,7 @@ export class PropertyAccess extends Expression<'propertyAccess'> {
   resolve(scope: Scope): this {
     this.object = this.object.resolve(scope);
     const objectType = this.object.getType();
-    if (this.property === '§') {
-      const expected = objectType.list()
-        .filter((n): n is Node<any> & {name: string} => 'name' in n)
-        .map((item): CompletionItem => ({
-          kind: item.kind,
-          label: item.name,
-        }))
-      ;
-      report(scope, this.location!, 'input \'§\' expecting', 'error', expected);
+    if (autocomplete(scope, this.location!, this.property, {lookup: objectType})) {
       return this;
     }
 
@@ -187,11 +183,25 @@ export class BinaryOperation extends Expression<'binary'> {
           return rhsType;
         }
         return new PrimitiveType('int');
-      case '&&': case '||': case '==': case '!=': case '<': case '<=': case '>': case '>=':
+      case '&&':
+      case '||':
+      case '==':
+      case '!=':
+      case '<':
+      case '<=':
+      case '>':
+      case '>=':
         return new PrimitiveType('boolean');
-      case '-': case '*': case '/': case '%':
-      case '<<': case '>>': case '>>>':
-      case '&': case '|': case '^':
+      case '-':
+      case '*':
+      case '/':
+      case '%':
+      case '<<':
+      case '>>':
+      case '>>>':
+      case '&':
+      case '|':
+      case '^':
         return new PrimitiveType('int');
       default:
         return ErrorType;
@@ -215,29 +225,6 @@ export class ParenthesizedExpression extends Expression<'parenthesized'> {
   }
 }
 
-export class CompletionExpression extends Expression<'completion'> {
-  constructor() {
-    super('completion');
-  }
-
-  toString(): string {
-    return '§';
-  }
-
-  getType(): AnyType {
-    return ErrorType;
-  }
-
-  resolve(scope: Scope): this {
-    const expected = scope.list()
-      .filter((d): d is Node<any> & { name: string } => 'name' in d)
-      .map((d): CompletionItem => ({kind: d.kind, label: d.name}))
-    ;
-    report(scope, this.location!, 'input \'§\' expecting', 'error', expected);
-    return this;
-  }
-}
-
 export type AnyExpression =
   | Literal
   | VariableReference
@@ -246,5 +233,4 @@ export type AnyExpression =
   | MethodCall
   | BinaryOperation
   | ParenthesizedExpression
-  | CompletionExpression
   ;

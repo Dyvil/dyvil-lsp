@@ -1,4 +1,5 @@
 import {CompilationUnit} from './declarations';
+import {Node} from './node';
 import {Scope} from './scope';
 
 export class Position {
@@ -63,4 +64,22 @@ export function report(scope: Scope, location: Range, message: string, severity:
     log(diagnostic);
   }
   return;
+}
+
+export function autocomplete(scope: Scope, location: Range, id: string, {lookup, kind, extra}: {lookup?: Scope, kind?: string, extra?: CompletionItem[]} = {}): boolean {
+  if (!id.includes('§')) {
+    return false;
+  }
+  const prefix = id.slice(0, -1);
+  const fromLookup = (lookup || scope).list()
+    .filter((n): n is Node<any> & {name: string} => 'name' in n)
+    .filter(n => !kind || n.kind === kind)
+    .map((item): CompletionItem => ({
+      kind: item.kind,
+      label: item.name,
+    }))
+  ;
+  const expected = (extra ? [...fromLookup, ...extra] : fromLookup).filter(d => d.label.startsWith(prefix));
+  report(scope, location, 'input \'§\' expecting', 'error', expected);
+  return true;
 }

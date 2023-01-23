@@ -36,9 +36,7 @@ variable returns [ast.Variable v]:
 type returns [ast.AnyType tn] @after { $tn.location = makeRange($start, $stop); }:
   primitiveType { $tn = new ast.PrimitiveType($primitiveType.text! as ast.PrimitiveName) }
   |
-  ID { $tn = new ast.ClassType($ID.text!) }
-  |
-  COMPLETION_MARKER { $tn = new ast.CompletionType() }
+  completableID { $tn = new ast.ClassType($completableID.text!) }
 ;
 primitiveType: 'int' | 'boolean' | 'string' | 'void';
 
@@ -60,7 +58,7 @@ blockStatement returns [ast.Block bs]:
 expression returns [ast.AnyExpression e]:
   object=expression '.' ID '(' (arguments+=expression)* ')' { $e = new ast.MethodCall($object.e, $ID.text!, $arguments.map(a => a.e)); $e.location = makeRange($ID); }
   |
-  object=expression '.' property=(ID | COMPLETION_MARKER) { $e = new ast.PropertyAccess($object.e, $property.text!); $e.location = makeRange($property); }
+  object=expression '.' completableID { $e = new ast.PropertyAccess($object.e, $completableID.text!); $e.location = makeRange($completableID.start!, $completableID.stop!); }
   |
   lhs=expression OPERATOR rhs=expression { $e = new ast.BinaryOperation($lhs.e, $OPERATOR.text!, $rhs.e); $e.location = makeRange($OPERATOR); }
   |<assoc=right>
@@ -68,15 +66,19 @@ expression returns [ast.AnyExpression e]:
   |
   ID '(' (arguments+=expression)* ')' { $e = new ast.FunctionCall($ID.text!, $arguments.map(a => a.e)); $e.location = makeRange($ID); }
   |
-  ID { $e = new ast.VariableReference($ID.text!); $e.location = makeRange($ID); }
+  completableID { $e = new ast.VariableReference($completableID.text!); $e.location = makeRange($start, $stop); }
   |
   '(' expression ')' { $e = new ast.ParenthesizedExpression($expression.e); $e.location = makeRange($start, $stop); }
   |
   literal { $e = $literal.l }
-  |
-  COMPLETION_MARKER { $e = new ast.CompletionExpression(); $e.location = makeRange($COMPLETION_MARKER); }
 ;
 literal returns [ast.Literal l]: (NUMBER | STRING | 'true' | 'false') { $l = new ast.Literal($text); $l.location = makeRange($start); } ;
+
+completableID:
+  ID COMPLETION_MARKER?
+  |
+  COMPLETION_MARKER
+;
 
 WS: [ \t\r\n]+ -> skip;
 LC: '//' ~[\r\n]* -> skip;

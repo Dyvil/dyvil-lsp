@@ -1,6 +1,6 @@
 import {Variable} from './declarations';
 import {AnyExpression} from './expressions';
-import {CompletionItem, report} from './lint';
+import {autocomplete} from './lint';
 import {autoIndent, Node, StringFormat} from './node';
 import {Scope, SimpleScope} from './scope';
 
@@ -73,14 +73,9 @@ export class CompletionStatement extends Statement<'completion'> {
   }
 
   resolve(scope: Scope): this {
-    const expected = scope.list()
-      .filter((d): d is Node<any> & { name: string } => 'name' in d)
-      .map((d): CompletionItem => ({kind: d.kind, label: d.name}))
-    ;
-    report(scope, this.location!, 'input \'§\' expecting', 'error', [
-      ...expected,
-      {kind: 'keyword', label: 'var'},
-    ]);
+    autocomplete(scope, this.location!, '§', {
+      extra: [{kind: 'keyword', label: 'var'}],
+    });
     return this;
   }
 }
