@@ -4,6 +4,7 @@ import {CompletionService} from './completion/completion.service';
 import {ConfigService} from './config/config.service';
 import {ConnectionService} from './connection/connection.service';
 import {DocumentService} from './document/document.service';
+import {RenameService} from './rename/rename.service';
 import {ValidationService} from './validation/validation.service';
 
 @Module({
@@ -16,6 +17,7 @@ import {ValidationService} from './validation/validation.service';
     ValidationService,
     ActionService,
     CompletionService,
+    RenameService,
   ],
 })
 export class AppModule {

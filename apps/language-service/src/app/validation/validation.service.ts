@@ -1,20 +1,25 @@
 import {Injectable} from '@nestjs/common';
+import {Range} from '@software-tools/compiler';
 import {DiagnosticSeverity} from 'vscode-languageserver';
 import {TextDocument} from 'vscode-languageserver-textdocument';
 import {Diagnostic as LspDiagnostic} from 'vscode-languageserver/node';
-import {Diagnostic, SimpleScope} from '../../../../../libs/compiler/src/ast';
-import {compilationUnit} from '../../../../../libs/compiler/src/compiler';
+import {Diagnostic, SimpleScope} from '@software-tools/compiler';
+import {compilationUnit} from '@software-tools/compiler';
 import {ConfigService} from '../config/config.service';
 import {ConnectionService} from '../connection/connection.service';
 import {DocumentService} from '../document/document.service';
 
+export function convertRange(location: Range) {
+  return {
+    start: {line: location.start.line - 1, character: location.start.column},
+    end: {line: location.end.line - 1, character: location.end.column},
+  };
+}
+
 function convertDiagnostic({severity, location, message}: Diagnostic): LspDiagnostic {
   return {
     severity: severity === 'error' ? DiagnosticSeverity.Error : DiagnosticSeverity.Warning,
-    range: {
-      start: {line: location.start.line - 1, character: location.start.column},
-      end: {line: location.end.line - 1, character: location.end.column},
-    },
+    range: convertRange(location),
     message,
     source: 'dyvil',
   };

@@ -34,6 +34,9 @@ export class ConnectionService {
           completionProvider: {
             triggerCharacters: ['.'],
           },
+          renameProvider: {
+            prepareProvider: false,
+          },
         },
       };
       if (this.hasWorkspaceFolderCapability) {
