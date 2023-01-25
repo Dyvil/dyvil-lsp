@@ -1,5 +1,5 @@
 import {AnyExpression} from './expressions';
-import {CompletionItem, Diagnostic} from './lint';
+import {CompletionItem, Diagnostic, Range} from './lint';
 import {autoIndent, Node, StringFormat} from './node';
 import {Ctor, Name, Scope, SimpleScope} from './scope';
 import {Block} from './statements';
@@ -152,6 +152,7 @@ export class Field extends Node<'field'> {
 export class Method extends Node<'method'> {
   _thisClass?: Class;
   _thisParameter?: Parameter;
+  _references: Node<any>[] = [];
 
   constructor(
     public name: string,
@@ -169,6 +170,10 @@ export class Method extends Node<'method'> {
       signature: `(${this.parameters.map(param => param.type.toString()).join(', ')})${this.returnType ? ': ' + this.returnType.toString() : ''}`,
       snippet: `${this.name}(${this.parameters.map((p, i) => `$\{${i}:${p.name}}`).join(', ')})`,
     };
+  }
+
+  references(): Range[] {
+    return [this.location!, ...this._references.map(ref => ref.location!)];
   }
 
   toString(format?: StringFormat): string {

@@ -1,5 +1,5 @@
 import {Class, Constructor, Field, Method, Parameter, Variable} from './declarations';
-import {autocomplete, report} from './lint';
+import {autocomplete, Range, report} from './lint';
 import {Node, StringFormat} from './node';
 import {Scope} from './scope';
 import {AnyType, ErrorType, PrimitiveType} from './types';
@@ -145,6 +145,10 @@ export class MethodCall extends Expression<'methodCall'> {
     super('methodCall');
   }
 
+  references(): Range[] {
+    return this._method?.references() || [];
+  }
+
   toString(format?: StringFormat): string {
     return `${this.object.toString(format)}.${this.method}(${this.args.map(arg => arg.toString(format)).join(', ')})`;
   }
@@ -154,6 +158,7 @@ export class MethodCall extends Expression<'methodCall'> {
     this.args = this.args.map(arg => arg.resolve(scope));
     const objectType = this.object.getType();
     this._method ||= objectType.lookup(this.method, Method) || report(scope, this.location!, `method ${this.method} not found on ${objectType}`);
+    this._method?._references.push(this);
     return this;
   }
 }
