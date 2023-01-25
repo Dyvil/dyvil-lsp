@@ -1,4 +1,4 @@
-import {Range} from './lint';
+import {Position, Range} from './lint';
 import {Scope} from './scope';
 
 export type StringFormat = 'plain' | 'js';
@@ -12,28 +12,46 @@ export class Node<K extends string> {
   }
 
   resolve(scope: Scope): this {
-    // by default, resolve all child nodes
-    for (const [key, value] of Object.entries(this)) {
-      if (key === 'location' || key === 'kind' || key.startsWith('_') || !value) {
-        continue;
-      }
-      if (Array.isArray(value)) {
-        for (let i = 0; i < value.length; i++) {
-          const item = value[i];
-          if (item instanceof Node) {
-            value[i] = item.resolve(scope);
-          }
-        }
-      } else if (value instanceof Node) {
-        // @ts-ignore
-        this[key] = value.resolve(scope);
-      }
-    }
+    eachChild(this, node => node.resolve(scope));
     return this;
+  }
+
+  findByPosition(position: Position): Node<any>[] | undefined {
+    let child: Node<any>[] | undefined = undefined;
+    eachChild(this, node => {
+      child ||= node.findByPosition(position);
+      return node;
+    });
+    if (child) {
+      return [this, ...child];
+    }
+    if (this.location?.includes(position)) {
+      return [this];
+    }
+    return undefined;
   }
 
   toString(format?: StringFormat): string {
     return this.kind;
+  }
+}
+
+function eachChild(node: Node<any>, replacer: (n: Node<any>) => Node<any>) {
+  for (const [key, value] of Object.entries(node)) {
+    if (key === 'location' || key === 'kind' || key.startsWith('_') || !value) {
+      continue;
+    }
+    if (Array.isArray(value)) {
+      for (let i = 0; i < value.length; i++) {
+        const item = value[i];
+        if (item instanceof Node) {
+          value[i] = replacer(value[i]);
+        }
+      }
+    } else if (value instanceof Node) {
+      // @ts-ignore
+      node[key] = replacer(value);
+    }
   }
 }
 

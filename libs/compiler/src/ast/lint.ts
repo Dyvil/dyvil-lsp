@@ -16,6 +16,10 @@ export class Range {
     public readonly end: Position,
   ) {
   }
+
+  includes(position: Position): boolean {
+    return this.start.line <= position.line && this.start.column <= position.column && position.line <= this.end.line && position.column <= this.end.column;
+  }
 }
 
 export interface CompletionItem {
@@ -71,13 +75,17 @@ export function report(scope: Scope, location: Range, message: string, severity:
   return;
 }
 
-export function autocomplete(scope: Scope, location: Range, id: string, {lookup, kind, extra}: {lookup?: Scope, kind?: string, extra?: CompletionItem[]} = {}): boolean {
+export function autocomplete(scope: Scope, location: Range, id: string, {
+  lookup,
+  kind,
+  extra,
+}: { lookup?: Scope, kind?: string, extra?: CompletionItem[] } = {}): boolean {
   if (!id.includes('§')) {
     return false;
   }
   const prefix = id.slice(0, -1);
   const fromLookup = (lookup || scope).list()
-    .filter((n): n is Node<any> & {name: string} => 'name' in n)
+    .filter((n): n is Node<any> & { name: string } => 'name' in n)
     .filter(n => !kind || n.kind === kind)
     .map((item): CompletionItem => 'asCompletion' in item ? (item as any).asCompletion() : ({
       kind: item.kind,
