@@ -37,6 +37,8 @@ export class ConnectionService {
           renameProvider: {
             prepareProvider: false,
           },
+          referencesProvider: true,
+          definitionProvider: true,
         },
       };
       if (this.hasWorkspaceFolderCapability) {

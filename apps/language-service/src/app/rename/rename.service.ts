@@ -1,6 +1,7 @@
 import {Injectable} from '@nestjs/common';
-import {compilationUnit, Position, SimpleScope} from '@software-tools/compiler';
-import {CompletionItem, CompletionParams, RenameParams, WorkspaceEdit} from 'vscode-languageserver';
+import {compilationUnit, Position, Range, SimpleScope} from '@software-tools/compiler';
+import {DeclarationParams, Location, TextDocumentPositionParams} from 'vscode-languageclient';
+import {CompletionItem, CompletionParams, ReferenceParams, RenameParams, WorkspaceEdit} from 'vscode-languageserver';
 import {ConnectionService} from '../connection/connection.service';
 import {DocumentService} from '../document/document.service';
 import {convertRange} from '../validation/validation.service';
@@ -14,16 +15,59 @@ export class RenameService {
     this.connectionService.connection.onRenameRequest(params => {
       return this.rename(params);
     });
+
+    this.connectionService.connection.onReferences(params => this.references(params));
+    this.connectionService.connection.onDefinition(params => this.definition(params));
   }
 
   private rename(params: RenameParams): WorkspaceEdit | undefined {
+    const references = this.findReferences(params);
+    if (!references) {
+      return;
+    }
+    return {
+      changes: {
+        [params.textDocument.uri]: references.map(reference => ({
+          range: convertRange(reference),
+          newText: params.newName,
+        })),
+      },
+    };
+  }
+
+  private references(params: ReferenceParams): Location[] | undefined {
+    const references = this.findReferences(params);
+    if (!references) {
+      return undefined;
+    }
+    if (!params.context.includeDeclaration && references.length) {
+      references.shift();
+    }
+    return references.map(reference => ({
+      uri: params.textDocument.uri,
+      range: convertRange(reference),
+    }));
+  }
+
+  private definition(params: DeclarationParams): Location | undefined {
+    const references = this.findReferences(params);
+    if (!references || !references.length) {
+      return;
+    }
+    return {
+      uri: params.textDocument.uri,
+      range: convertRange(references[0]),
+    };
+  }
+
+  private findReferences(params: TextDocumentPositionParams): Range[] | undefined {
     const uri = params.textDocument.uri;
+    const position = new Position(params.position.line + 1, params.position.character);
     const document = this.documentService.documents.get(uri);
     if (!document) {
       return undefined;
     }
 
-    const position = new Position(params.position.line + 1, params.position.character);
     const unit = compilationUnit(document.getText(), uri).resolve(new SimpleScope([]));
     const nodes = unit.findByPosition(position);
     if (!nodes) {
@@ -35,14 +79,6 @@ export class RenameService {
       return undefined;
     }
 
-    const references = target.references();
-    return {
-      changes: {
-        [uri]: references.map(reference => ({
-          range: convertRange(reference),
-          newText: params.newName,
-        })),
-      },
-    };
+    return target.references();
   }
 }
