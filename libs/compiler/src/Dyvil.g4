@@ -10,27 +10,40 @@ file returns [ast.CompilationUnit cu]:
 ;
 
 class returns [ast.Class cn]:
-  'class' ID '{' (fields+=field | constructors+=ctor | methods+=method)* '}'
-  { $cn = new ast.Class($ID.text!, $fields.map(f => f.fn), $constructors.map(c => c.cn), $methods.map(m => m.mn)) }
+  'class' ID '{' (fields+=field | constructors+=ctor | methods+=method)* '}' {
+    $cn = new ast.Class($ID.text!, $fields.map(f => f.fn), $constructors.map(c => c.cn), $methods.map(m => m.mn))
+    $cn.location = makeRange($ID);
+  }
 ;
 field returns [ast.Field fn]:
-  'var' ID ':' type ('=' expression)? ';'?
-  { $fn = new ast.Field($ID.text!, $type.tn, $expression.e) }
+  'var' ID ':' type ('=' expression)? ';'? {
+    $fn = new ast.Field($ID.text!, $type.tn, $expression.e)
+    $fn.location = makeRange($ID);
+  }
 ;
 ctor returns [ast.Constructor cn]:
-  'init' '(' (parameters+=parameter ','?)* ')' blockStatement
-  { $cn = new ast.Constructor($parameters.map(p => p.pn), $blockStatement.bs) }
+  init='init' '(' (parameters+=parameter ','?)* ')' blockStatement {
+    $cn = new ast.Constructor($parameters.map(p => p.pn), $blockStatement.bs)
+    $cn.location = makeRange($init);
+  }
 ;
 method returns [ast.Method mn]:
-  'func' ID '(' (parameters+=parameter ','?)* ')' ':' type blockStatement
-  { $mn = new ast.Method($ID.text!, $parameters.map(p => p.pn), $type.tn, $blockStatement.bs) }
+  'func' ID '(' (parameters+=parameter ','?)* ')' ':' type blockStatement {
+    $mn = new ast.Method($ID.text!, $parameters.map(p => p.pn), $type.tn, $blockStatement.bs)
+    $mn.location = makeRange($ID);
+  }
 ;
 parameter returns [ast.Parameter pn]:
-  ID ':' type
-  { $pn = new ast.Parameter($ID.text!, $type.tn) }
+  ID ':' type {
+    $pn = new ast.Parameter($ID.text!, $type.tn)
+    $pn.location = makeRange($ID);
+  }
 ;
 variable returns [ast.Variable v]:
-  'var' ID (':' types+=type)? '=' expression { $v = new ast.Variable($ID.text!, $types[0]?.tn, $expression.e) }
+  'var' ID (':' types+=type)? '=' expression {
+    $v = new ast.Variable($ID.text!, $types[0]?.tn, $expression.e);
+    $v.location = makeRange($ID);
+  }
 ;
 
 type returns [ast.AnyType tn] @after { $tn.location = makeRange($start, $stop); }:
@@ -52,7 +65,10 @@ statement returns [ast.AnyStatement s] @after { $s.location = makeRange($start, 
   ';' { $s = ast.EmptyStatement }
 ;
 blockStatement returns [ast.Block bs]:
-  '{' (statements+=statement)* '}' { $bs = new ast.Block($statements.map(s => s.s)) }
+  '{' (statements+=statement)* '}' {
+    $bs = new ast.Block($statements.map(s => s.s));
+    $bs.location = makeRange($start, $stop);
+  }
 ;
 
 expression returns [ast.AnyExpression e]:
