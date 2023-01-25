@@ -115,7 +115,10 @@ export class Constructor extends Node<'constructor'> {
 
   resolve(scope: Scope): this {
     this._thisClass ||= scope.lookup(Class.enclosing, Class);
-    this._thisParameter ||= this._thisClass && new Parameter('this', this._thisClass.asType());
+    if (this._thisClass && !this._thisParameter) {
+      this._thisParameter = new Parameter('this', this._thisClass.asType());
+      this._thisParameter.location = this.location;
+    }
     const newScope = new SimpleScope(this._thisParameter ? [this._thisParameter, ...this.parameters] : this.parameters, scope);
     return super.resolve(newScope);
   }
@@ -194,7 +197,10 @@ export class Method extends Node<'method'> {
 
   resolve(scope: Scope): this {
     this._thisClass ||= scope.lookup(Class.enclosing, Class);
-    this._thisParameter ||= this._thisClass && new Parameter('this', this._thisClass.asType());
+    if (this._thisClass && !this._thisParameter) {
+      this._thisParameter = new Parameter('this', this._thisClass.asType());
+      this._thisParameter.location = this.location;
+    }
     const newScope = new SimpleScope(this._thisParameter ? [this._thisParameter, ...this.parameters] : this.parameters, scope);
     return super.resolve(newScope);
   }
