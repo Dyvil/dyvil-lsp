@@ -200,37 +200,59 @@ export class Method extends Node<'method'> {
   }
 }
 
-export class Parameter extends Node<'parameter'> {
+export class VariableLike<K extends string> extends Node<K> {
+  _references: Node<any>[] = [];
+
   constructor(
+    kind: K,
     public name: string,
-    public type: AnyType,
+    public type: AnyType | undefined,
   ) {
-    super('parameter');
+    super(kind);
+  }
+
+  asCompletion(): CompletionItem {
+    return {
+      label: this.name,
+      kind: this.kind,
+      signature: this.type ? ': ' + this.type.toString() : undefined,
+    };
+  }
+
+  references(): Range[] {
+    return [this.location!, ...this._references.map(ref => ref.location!)];
+  }
+
+  toString(format?: StringFormat): string {
+    return `${this.name}${this.type ? ': ' + this.type.toString(format) : ''}`;
+  }
+}
+
+export class Parameter extends VariableLike<'parameter'> {
+  type!: AnyType;
+
+  constructor(
+    name: string,
+    type: AnyType,
+  ) {
+    super('parameter', name, type);
   }
 
   toString(format?: StringFormat): string {
     if (format === 'js') {
       return this.name;
     }
-    return `${this.name}: ${this.type.toString(format)}`;
+    return super.toString(format);
   }
 }
 
-export class Variable extends Node<'variable'> {
+export class Variable extends VariableLike<'variable'> {
   constructor(
-    public name: string,
-    public type: AnyType | undefined,
+    name: string,
+    type: AnyType | undefined,
     public value: AnyExpression,
   ) {
-    super('variable');
-  }
-
-  asCompletion(): CompletionItem {
-    return {
-      label: this.name,
-      kind: 'variable',
-      signature: this.type ? ': ' + this.type.toString() : undefined,
-    };
+    super('variable', name, type);
   }
 
   toString(format?: StringFormat): string {

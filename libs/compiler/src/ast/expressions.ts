@@ -53,11 +53,16 @@ export class VariableReference extends Expression<'variable'> {
     return this.name;
   }
 
+  references(): Range[] {
+    return this._variable?.references() || [];
+  }
+
   resolve(scope: Scope): this {
     if (autocomplete(scope, this.location!, this.name)) {
       return this;
     }
     this._variable ||= scope.lookup(this.name, Variable) || scope.lookup(this.name, Parameter) || report(scope, this.location!, `variable ${this.name} not found`);
+    this._variable?._references.push(this);
     return this;
   }
 
