@@ -21,8 +21,8 @@ export class RenameService {
   }
 
   private rename(params: RenameParams): WorkspaceEdit | undefined {
-    const references = this.findReferences(params);
-    if (!references) {
+    const references = this.findReferences(params, 'rename');
+    if (!references.length) {
       return;
     }
     return {
@@ -36,8 +36,8 @@ export class RenameService {
   }
 
   private references(params: ReferenceParams): Location[] | undefined {
-    const references = this.findReferences(params);
-    if (!references) {
+    const references = this.findReferences(params, 'definition');
+    if (!references.length) {
       return undefined;
     }
     if (!params.context.includeDeclaration && references.length) {
@@ -50,8 +50,8 @@ export class RenameService {
   }
 
   private definition(params: DeclarationParams): Location | undefined {
-    const references = this.findReferences(params);
-    if (!references || !references.length) {
+    const references = this.findReferences(params, 'definition');
+    if (!references.length) {
       return;
     }
     return {
@@ -60,25 +60,25 @@ export class RenameService {
     };
   }
 
-  private findReferences(params: TextDocumentPositionParams): Range[] | undefined {
+  private findReferences(params: TextDocumentPositionParams, purpose: 'rename' | 'definition'): Range[] {
     const uri = params.textDocument.uri;
     const position = new Position(params.position.line + 1, params.position.character);
     const document = this.documentService.documents.get(uri);
     if (!document) {
-      return undefined;
+      return [];
     }
 
     const unit = compilationUnit(document.getText(), uri).resolve(new SimpleScope([]));
     const nodes = unit.findByPosition(position);
     if (!nodes) {
-      return undefined;
+      return [];
     }
 
     const target = nodes[nodes.length - 1];
     if (!target.references) {
-      return undefined;
+      return [];
     }
 
-    return target.references();
+    return target.references(purpose);
   }
 }

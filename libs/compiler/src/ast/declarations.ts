@@ -101,6 +101,7 @@ export class Class extends Node<'class'> implements Scope {
 export class Constructor extends Node<'constructor'> {
   _thisClass?: Class;
   _thisParameter?: Parameter;
+  _references: Node<any>[] = [];
 
   constructor(
     public parameters: Parameter[] = [],
@@ -111,6 +112,10 @@ export class Constructor extends Node<'constructor'> {
 
   toString(format?: StringFormat): string {
     return `${format === 'js' ? 'constructor' : 'init'}(${this.parameters.map(param => param.toString(format)).join(', ')}) ${this.body.toString(format)}`;
+  }
+
+  references(purpose?: 'rename' | 'definition'): Range[] {
+    return purpose === 'rename' ? [] : [this.location!, ...this._references.map(ref => ref.location!)];
   }
 
   resolve(scope: Scope): this {

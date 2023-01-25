@@ -11,7 +11,7 @@ export class Node<K extends string> {
   ) {
   }
 
-  references?(): Range[];
+  references?(purpose?: 'rename' | 'definition'): Range[];
 
   resolve(scope: Scope): this {
     eachChild(this, node => node.resolve(scope));

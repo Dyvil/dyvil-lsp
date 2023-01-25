@@ -85,6 +85,13 @@ export class FunctionCall extends Expression<'functionCall'> {
     return `${this.name}(${this.args.map(arg => arg.toString(format)).join(', ')})`;
   }
 
+  references(purpose?: 'rename' | 'definition'): Range[] {
+    return (purpose === 'rename'
+        ? this._constructor?._thisClass?.references()
+        : this._constructor?.references(purpose)
+    ) || [];
+  }
+
   resolve(scope: Scope): this {
     this.args = this.args.map(arg => arg.resolve(scope));
     const types = this.args.map(arg => arg.getType());
@@ -94,6 +101,7 @@ export class FunctionCall extends Expression<'functionCall'> {
         const ctor = cls.findConstructor(types);
         if (ctor) {
           this._constructor = ctor;
+          ctor._references.push(this);
           cls._references.push(this);
         } else {
           report(scope, this.location!, `constructor ${this.name}(${types.join(', ')}) not found`);
