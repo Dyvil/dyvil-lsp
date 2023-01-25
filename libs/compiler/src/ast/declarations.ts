@@ -37,6 +37,8 @@ export class CompilationUnit extends Node<'unit'> {
 export class Class extends Node<'class'> implements Scope {
   static enclosing = Symbol('enclosing class');
 
+  _references: Node<any>[] = [];
+
   constructor(
     public name: string,
     public fields: Field[] = [],
@@ -57,6 +59,10 @@ export class Class extends Node<'class'> implements Scope {
       label: this.name,
       kind: 'class',
     };
+  }
+
+  references(): Range[] {
+    return [this.location!, ...this._references.map(ref => ref.location!)];
   }
 
   findConstructor(types: AnyType[]): Constructor | undefined {
@@ -116,6 +122,8 @@ export class Constructor extends Node<'constructor'> {
 }
 
 export class Field extends Node<'field'> {
+  _references: Node<any>[] = [];
+
   constructor(
     public name: string,
     public type: AnyType,
@@ -130,6 +138,10 @@ export class Field extends Node<'field'> {
       kind: 'field',
       signature: ': ' + this.type.toString(),
     };
+  }
+
+  references(): Range[] {
+    return [this.location!, ...this._references.map(ref => ref.location!)];
   }
 
   toString(format?: StringFormat): string {

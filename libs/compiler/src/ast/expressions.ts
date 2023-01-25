@@ -89,6 +89,7 @@ export class FunctionCall extends Expression<'functionCall'> {
         const ctor = cls.findConstructor(types);
         if (ctor) {
           this._constructor = ctor;
+          cls._references.push(this);
         } else {
           report(scope, this.location!, `constructor ${this.name}(${types.join(', ')}) not found`);
         }
@@ -118,6 +119,10 @@ export class PropertyAccess extends Expression<'propertyAccess'> {
     return `${this.object.toString(format)}.${this.property}`;
   }
 
+  references(): Range[] {
+    return this._field?.references() || [];
+  }
+
   resolve(scope: Scope): this {
     this.object = this.object.resolve(scope);
     const objectType = this.object.getType();
@@ -126,6 +131,7 @@ export class PropertyAccess extends Expression<'propertyAccess'> {
     }
 
     this._field ||= objectType.lookup(this.property, Field) || report(scope, this.location!, `field ${this.property} not found on ${objectType}`);
+    this._field?._references.push(this);
     return this;
   }
 
