@@ -1,5 +1,6 @@
 import {Injectable} from '@nestjs/common';
 import {compilationUnit, Node, Position, SimpleScope} from '@software-tools/compiler';
+import {PrepareRenameParams} from 'vscode-languageclient';
 import {
   CompletionItem,
   CompletionParams,
@@ -9,6 +10,7 @@ import {
   Hover,
   HoverParams,
   Location,
+  Range as LspRange,
   ReferenceParams,
   RenameParams,
   TextDocumentPositionParams,
@@ -24,14 +26,26 @@ export class RenameService {
     private connectionService: ConnectionService,
     private documentService: DocumentService,
   ) {
-    this.connectionService.connection.onRenameRequest(params => {
-      return this.rename(params);
-    });
+    this.connectionService.connection.onPrepareRename(params => this.prepareRename(params));
+    this.connectionService.connection.onRenameRequest(params => this.rename(params));
 
     this.connectionService.connection.onReferences(params => this.references(params));
     this.connectionService.connection.onDefinition(params => this.definition(params));
     this.connectionService.connection.onHover(params => this.hover(params));
     this.connectionService.connection.onDocumentHighlight(params => this.highlight(params));
+  }
+
+  private prepareRename(params: PrepareRenameParams): LspRange | undefined {
+    const node = this.findNode(params);
+    if (!node) {
+      return;
+    }
+
+    const references = node.references('rename');
+    if (!references || !references.length) {
+      return;
+    }
+    return convertRange(node.location!);
   }
 
   private rename(params: RenameParams): WorkspaceEdit | undefined {

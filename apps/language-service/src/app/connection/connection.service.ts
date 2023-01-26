@@ -35,7 +35,7 @@ export class ConnectionService {
             triggerCharacters: ['.'],
           },
           renameProvider: {
-            prepareProvider: false,
+            prepareProvider: true,
           },
           referencesProvider: true,
           definitionProvider: true,
