@@ -1,7 +1,14 @@
 import {Injectable} from '@nestjs/common';
-import {compilationUnit, Position, Range, SimpleScope} from '@software-tools/compiler';
-import {DeclarationParams, Location, TextDocumentPositionParams} from 'vscode-languageclient';
-import {CompletionItem, CompletionParams, ReferenceParams, RenameParams, WorkspaceEdit} from 'vscode-languageserver';
+import {compilationUnit, Node, Position, SimpleScope} from '@software-tools/compiler';
+import {DeclarationParams, HoverParams, Location, TextDocumentPositionParams} from 'vscode-languageclient';
+import {
+  CompletionItem,
+  CompletionParams,
+  Hover,
+  ReferenceParams,
+  RenameParams,
+  WorkspaceEdit,
+} from 'vscode-languageserver';
 import {ConnectionService} from '../connection/connection.service';
 import {DocumentService} from '../document/document.service';
 import {convertRange} from '../validation/validation.service';
@@ -18,11 +25,12 @@ export class RenameService {
 
     this.connectionService.connection.onReferences(params => this.references(params));
     this.connectionService.connection.onDefinition(params => this.definition(params));
+    this.connectionService.connection.onHover(params => this.hover(params));
   }
 
   private rename(params: RenameParams): WorkspaceEdit | undefined {
-    const references = this.findReferences(params, 'rename');
-    if (!references.length) {
+    const references = this.findNode(params)?.references('rename');
+    if (!references || !references.length) {
       return;
     }
     return {
@@ -36,8 +44,8 @@ export class RenameService {
   }
 
   private references(params: ReferenceParams): Location[] | undefined {
-    const references = this.findReferences(params, 'definition');
-    if (!references.length) {
+    const references = this.findNode(params)?.references('definition');
+    if (!references || !references.length) {
       return undefined;
     }
     if (!params.context.includeDeclaration && references.length) {
@@ -50,8 +58,8 @@ export class RenameService {
   }
 
   private definition(params: DeclarationParams): Location | undefined {
-    const references = this.findReferences(params, 'definition');
-    if (!references.length) {
+    const references = this.findNode(params)?.references('definition');
+    if (!references || !references.length) {
       return;
     }
     return {
@@ -60,25 +68,34 @@ export class RenameService {
     };
   }
 
-  private findReferences(params: TextDocumentPositionParams, purpose: 'rename' | 'definition'): Range[] {
+  private hover(params: HoverParams): Hover | null {
+    const definition = this.findNode(params)?.definition?.();
+    if (!definition) {
+      return null;
+    }
+    return {
+      range: convertRange(definition.location!),
+      contents: {
+        language: 'dyvil',
+        value: definition.toString(),
+      },
+    };
+  }
+
+  private findNode(params: TextDocumentPositionParams): Node<any> | undefined {
     const uri = params.textDocument.uri;
     const position = new Position(params.position.line + 1, params.position.character);
     const document = this.documentService.documents.get(uri);
     if (!document) {
-      return [];
+      return;
     }
 
     const unit = compilationUnit(document.getText(), uri).resolve(new SimpleScope([]));
     const nodes = unit.findByPosition(position);
     if (!nodes) {
-      return [];
+      return;
     }
 
-    const target = nodes[nodes.length - 1];
-    if (!target.references) {
-      return [];
-    }
-
-    return target.references(purpose);
+    return nodes[nodes.length - 1];
   }
 }

@@ -39,6 +39,7 @@ export class ConnectionService {
           },
           referencesProvider: true,
           definitionProvider: true,
+          hoverProvider: true,
         },
       };
       if (this.hasWorkspaceFolderCapability) {
