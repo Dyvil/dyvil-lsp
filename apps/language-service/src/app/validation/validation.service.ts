@@ -1,11 +1,8 @@
 import {Injectable} from '@nestjs/common';
-import {Range} from '@software-tools/compiler';
+import {Diagnostic, Range} from '@software-tools/compiler';
 import {DiagnosticSeverity} from 'vscode-languageserver';
 import {TextDocument} from 'vscode-languageserver-textdocument';
 import {Diagnostic as LspDiagnostic} from 'vscode-languageserver/node';
-import {Diagnostic, SimpleScope} from '@software-tools/compiler';
-import {compilationUnit} from '@software-tools/compiler';
-import {ConfigService} from '../config/config.service';
 import {ConnectionService} from '../connection/connection.service';
 import {DocumentService} from '../document/document.service';
 
@@ -27,12 +24,9 @@ function convertDiagnostic({severity, location, message}: Diagnostic): LspDiagno
 
 @Injectable()
 export class ValidationService {
-  private openDocuments: TextDocument[] = [];
-
   constructor(
     private connectionService: ConnectionService,
     private documentService: DocumentService,
-    private configService: ConfigService,
   ) {
     this.connectionService.connection.onDidChangeConfiguration(() => {
       this.documentService.documents.all().forEach(d => this.validateTextDocument(d));
@@ -40,32 +34,14 @@ export class ValidationService {
     this.documentService.documents.onDidChangeContent(change => {
       this.validateTextDocument(change.document);
     });
-
-    this.documentService.documents.onDidOpen(async event => {
-      this.openDocuments.push(event.document);
-    });
-    this.documentService.documents.onDidClose(async event => {
-      const index = this.openDocuments.findIndex(t => t.uri === event.document.uri);
-      if (index >= 0) {
-        this.openDocuments.splice(index, 1);
-      }
-
-      if (this.openDocuments.length !== 0) {
-        return;
-      }
-    });
   }
 
   async validateTextDocument(textDocument: TextDocument): Promise<void> {
-    const uri = textDocument.uri;
-
-    let unit = compilationUnit(textDocument.getText());
-    let diagnostics = unit.diagnostics.map(convertDiagnostic);
-    await this.connectionService.connection.sendDiagnostics({uri, diagnostics});
-
-    unit = unit.resolve(new SimpleScope([]));
-    diagnostics = unit.diagnostics.map(convertDiagnostic);
-
-    await this.connectionService.connection.sendDiagnostics({uri, diagnostics});
+    const unit = this.documentService.getAST(textDocument);
+    if (!unit) {
+      return;
+    }
+    const diagnostics = unit.diagnostics.map(convertDiagnostic);
+    await this.connectionService.connection.sendDiagnostics({uri: textDocument.uri, diagnostics});
   }
 }

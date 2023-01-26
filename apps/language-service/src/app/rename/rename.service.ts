@@ -1,5 +1,5 @@
 import {Injectable} from '@nestjs/common';
-import {compilationUnit, Node, Position, SimpleScope} from '@software-tools/compiler';
+import {Node, Position} from '@software-tools/compiler';
 import {PrepareRenameParams} from 'vscode-languageclient';
 import {
   CompletionItem,
@@ -115,12 +115,11 @@ export class RenameService {
   private findNode(params: TextDocumentPositionParams): Node<any> | undefined {
     const uri = params.textDocument.uri;
     const position = new Position(params.position.line + 1, params.position.character);
-    const document = this.documentService.documents.get(uri);
-    if (!document) {
+    const unit = this.documentService.getAST(uri);
+    if (!unit) {
       return;
     }
 
-    const unit = compilationUnit(document.getText(), uri).resolve(new SimpleScope([]));
     const nodes = unit.findByPosition(position);
     if (!nodes) {
       return;
