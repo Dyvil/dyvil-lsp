@@ -34,18 +34,31 @@ export class CompilationUnit extends Node<'unit'> {
   }
 }
 
-export class Class extends Node<'class'> implements Scope {
-  static enclosing = Symbol('enclosing class');
-
+export class Declaration<K extends string> extends Node<K> {
   _references: Node<any>[] = [];
 
   constructor(
+    kind: K,
     public name: string,
+  ) {
+    super(kind);
+  }
+
+  references(): Range[] {
+    return [this.location!, ...this._references.map(ref => ref.location!)];
+  }
+}
+
+export class Class extends Declaration<'class'> implements Scope {
+  static enclosing = Symbol('enclosing class');
+
+  constructor(
+    name: string,
     public fields: Field[] = [],
     public constructors: Constructor[] = [],
     public methods: Method[] = [],
   ) {
-    super('class');
+    super('class', name);
   }
 
   asType(): ClassType {
@@ -59,10 +72,6 @@ export class Class extends Node<'class'> implements Scope {
       label: this.name,
       kind: 'class',
     };
-  }
-
-  references(): Range[] {
-    return [this.location!, ...this._references.map(ref => ref.location!)];
   }
 
   findConstructor(types: AnyType[]): Constructor | undefined {
@@ -98,16 +107,15 @@ export class Class extends Node<'class'> implements Scope {
   }
 }
 
-export class Constructor extends Node<'constructor'> {
+export class Constructor extends Declaration<'constructor'> {
   _thisClass?: Class;
   _thisParameter?: Parameter;
-  _references: Node<any>[] = [];
 
   constructor(
     public parameters: Parameter[] = [],
     public body: Block,
   ) {
-    super('constructor');
+    super('constructor', 'init');
   }
 
   toString(format?: StringFormat): string {
@@ -115,7 +123,7 @@ export class Constructor extends Node<'constructor'> {
   }
 
   references(purpose?: 'rename' | 'definition'): Range[] {
-    return purpose === 'rename' ? [] : [this.location!, ...this._references.map(ref => ref.location!)];
+    return purpose === 'rename' ? [] : super.references();
   }
 
   resolve(scope: Scope): this {
@@ -129,15 +137,13 @@ export class Constructor extends Node<'constructor'> {
   }
 }
 
-export class Field extends Node<'field'> {
-  _references: Node<any>[] = [];
-
+export class Field extends Declaration<'field'> {
   constructor(
-    public name: string,
+    name: string,
     public type: AnyType,
     public value?: AnyExpression,
   ) {
-    super('field');
+    super('field', name);
   }
 
   asCompletion(): CompletionItem {
@@ -146,10 +152,6 @@ export class Field extends Node<'field'> {
       kind: 'field',
       signature: ': ' + this.type.toString(),
     };
-  }
-
-  references(): Range[] {
-    return [this.location!, ...this._references.map(ref => ref.location!)];
   }
 
   toString(format?: StringFormat): string {
@@ -169,18 +171,17 @@ export class Field extends Node<'field'> {
   }
 }
 
-export class Method extends Node<'method'> {
+export class Method extends Declaration<'method'> {
   _thisClass?: Class;
   _thisParameter?: Parameter;
-  _references: Node<any>[] = [];
 
   constructor(
-    public name: string,
+    name: string,
     public parameters: Parameter[] = [],
     public returnType: AnyType,
     public body: Block,
   ) {
-    super('method');
+    super('method', name);
   }
 
   asCompletion(): CompletionItem {
@@ -190,10 +191,6 @@ export class Method extends Node<'method'> {
       signature: `(${this.parameters.map(param => param.type.toString()).join(', ')})${this.returnType ? ': ' + this.returnType.toString() : ''}`,
       snippet: `${this.name}(${this.parameters.map((p, i) => `$\{${i}:${p.name}}`).join(', ')})`,
     };
-  }
-
-  references(): Range[] {
-    return [this.location!, ...this._references.map(ref => ref.location!)];
   }
 
   toString(format?: StringFormat): string {
@@ -211,15 +208,13 @@ export class Method extends Node<'method'> {
   }
 }
 
-export class VariableLike<K extends string> extends Node<K> {
-  _references: Node<any>[] = [];
-
+export class VariableLike<K extends string> extends Declaration<K> {
   constructor(
     kind: K,
-    public name: string,
+    name: string,
     public type: AnyType | undefined,
   ) {
-    super(kind);
+    super(kind, name);
   }
 
   asCompletion(): CompletionItem {
@@ -228,10 +223,6 @@ export class VariableLike<K extends string> extends Node<K> {
       kind: this.kind,
       signature: this.type ? ': ' + this.type.toString() : undefined,
     };
-  }
-
-  references(): Range[] {
-    return [this.location!, ...this._references.map(ref => ref.location!)];
   }
 
   toString(format?: StringFormat): string {
