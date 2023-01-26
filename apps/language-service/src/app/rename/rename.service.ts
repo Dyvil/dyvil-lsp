@@ -1,12 +1,17 @@
 import {Injectable} from '@nestjs/common';
 import {compilationUnit, Node, Position, SimpleScope} from '@software-tools/compiler';
-import {DeclarationParams, HoverParams, Location, TextDocumentPositionParams} from 'vscode-languageclient';
 import {
   CompletionItem,
   CompletionParams,
+  DeclarationParams,
+  DocumentHighlight,
+  DocumentHighlightParams,
   Hover,
+  HoverParams,
+  Location,
   ReferenceParams,
   RenameParams,
+  TextDocumentPositionParams,
   WorkspaceEdit,
 } from 'vscode-languageserver';
 import {ConnectionService} from '../connection/connection.service';
@@ -26,6 +31,7 @@ export class RenameService {
     this.connectionService.connection.onReferences(params => this.references(params));
     this.connectionService.connection.onDefinition(params => this.definition(params));
     this.connectionService.connection.onHover(params => this.hover(params));
+    this.connectionService.connection.onDocumentHighlight(params => this.highlight(params));
   }
 
   private rename(params: RenameParams): WorkspaceEdit | undefined {
@@ -80,6 +86,16 @@ export class RenameService {
         value: definition.toString(),
       },
     };
+  }
+
+  private highlight(params: DocumentHighlightParams): DocumentHighlight[] | undefined {
+    const references = this.findNode(params)?.references();
+    if (!references || !references.length) {
+      return undefined;
+    }
+    return references.map(r => ({
+      range: convertRange(r),
+    }));
   }
 
   private findNode(params: TextDocumentPositionParams): Node<any> | undefined {

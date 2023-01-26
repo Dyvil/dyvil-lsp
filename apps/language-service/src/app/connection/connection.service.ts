@@ -40,6 +40,7 @@ export class ConnectionService {
           referencesProvider: true,
           definitionProvider: true,
           hoverProvider: true,
+          documentHighlightProvider: true,
         },
       };
       if (this.hasWorkspaceFolderCapability) {
