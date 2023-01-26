@@ -53,8 +53,8 @@ export class VariableReference extends Expression<'variable'> {
     return this.name;
   }
 
-  references(): Range[] {
-    return this._variable?.references() || [];
+  definition(): Node<any> | undefined {
+    return this._variable;
   }
 
   resolve(scope: Scope): this {
@@ -85,11 +85,8 @@ export class FunctionCall extends Expression<'functionCall'> {
     return `${this.name}(${this.args.map(arg => arg.toString(format)).join(', ')})`;
   }
 
-  references(purpose?: 'rename' | 'definition'): Range[] {
-    return (purpose === 'rename'
-        ? this._constructor?._thisClass?.references()
-        : this._constructor?.references(purpose)
-    ) || [];
+  definition(purpose?: 'rename' | 'definition'): Node<any> | undefined {
+    return purpose === 'rename' ? this._constructor?._thisClass : this._constructor;
   }
 
   resolve(scope: Scope): this {
@@ -132,8 +129,8 @@ export class PropertyAccess extends Expression<'propertyAccess'> {
     return `${this.object.toString(format)}.${this.property}`;
   }
 
-  references(): Range[] {
-    return this._field?.references() || [];
+  definition(): Node<any> | undefined {
+    return this._field;
   }
 
   resolve(scope: Scope): this {
@@ -164,8 +161,8 @@ export class MethodCall extends Expression<'methodCall'> {
     super('methodCall');
   }
 
-  references(): Range[] {
-    return this._method?.references() || [];
+  definition(): Node<any> | undefined {
+    return this._method;
   }
 
   toString(format?: StringFormat): string {

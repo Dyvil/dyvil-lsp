@@ -11,7 +11,11 @@ export class Node<K extends string> {
   ) {
   }
 
-  references?(purpose?: 'rename' | 'definition'): Range[];
+  definition?(purpose?: 'rename' | 'definition'): Node<any> | undefined;
+
+  references(purpose?: 'rename' | 'definition'): Range[] {
+    return this.definition?.(purpose)?.references(purpose) || [];
+  }
 
   resolve(scope: Scope): this {
     eachChild(this, node => node.resolve(scope));
