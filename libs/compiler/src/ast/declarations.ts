@@ -249,6 +249,10 @@ export class Parameter extends VariableLike<'parameter'> {
     super('parameter', name, type);
   }
 
+  references(purpose?: 'rename' | 'definition'): Range[] {
+    return purpose === 'rename' && this.name === 'this' ? [] : super.references();
+  }
+
   toString(format?: StringFormat): string {
     if (format === 'js') {
       return this.name;
