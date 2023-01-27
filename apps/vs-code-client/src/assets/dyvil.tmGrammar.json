@@ -31,25 +31,17 @@
         {
           "name": "comment.line.double-slash.dyvil",
           "begin": "//",
-          "end": "$",
-          "captures": {
-            "0": {
-              "name": "punctuation.definition.comment.dyvil"
-            }
-          }
+          "end": "$"
+        },
+        {
+          "name": "comment.block.documentation.dyvil",
+          "begin": "/\\*\\*",
+          "end": "\\*/"
         },
         {
           "name": "comment.block.dyvil",
           "begin": "/\\*",
-          "end": "\\*/",
-          "captures": {
-            "0": {
-              "name": "punctuation.definition.comment.begin.dyvil"
-            },
-            "1": {
-              "name": "punctuation.definition.comment.end.dyvil"
-            }
-          }
+          "end": "\\*/"
         }
       ]
     },

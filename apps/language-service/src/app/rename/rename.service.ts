@@ -89,15 +89,15 @@ export class RenameService {
   }
 
   private hover(params: HoverParams): Hover | null {
-    const definition = this.findNode(params)?.definition?.();
-    if (!definition) {
+    const doc = this.findNode(params)?.documentation();
+    if (!doc) {
       return null;
     }
+
     return {
-      range: convertRange(definition.location!),
       contents: {
-        language: 'dyvil',
-        value: definition.toString(),
+        kind: 'markdown',
+        value: doc,
       },
     };
   }
