@@ -2,7 +2,8 @@ grammar Dyvil;
 
 @parser::header {
 import * as ast from '../ast';
-import { makeRange } from '../compiler';
+import { makeRange, cleanDoc } from '../compiler';
+import { CommonTokenStream } from 'antlr4ts';
 }
 
 file returns [ast.CompilationUnit cu]:
@@ -10,33 +11,38 @@ file returns [ast.CompilationUnit cu]:
 ;
 
 class returns [ast.Class cn]:
-  'class' ID '{' (fields+=field | constructors+=ctor | methods+=method)* '}' {
+  DOC? 'class' ID '{' (fields+=field | constructors+=ctor | methods+=method)* '}' {
     $cn = new ast.Class($ID.text!, $fields.map(f => f.fn), $constructors.map(c => c.cn), $methods.map(m => m.mn))
     $cn.location = makeRange($ID);
+    $cn.doc = cleanDoc($DOC);
   }
 ;
 field returns [ast.Field fn]:
-  'var' ID ':' type ('=' expression)? ';'? {
+  DOC? 'var' ID ':' type ('=' expression)? ';'? {
     $fn = new ast.Field($ID.text!, $type.tn, $expression.e)
     $fn.location = makeRange($ID);
+    $fn.doc = cleanDoc($DOC);
   }
 ;
 ctor returns [ast.Constructor cn]:
-  init='init' '(' (parameters+=parameter ','?)* ')' blockStatement {
+  DOC? init='init' '(' (parameters+=parameter ','?)* ')' blockStatement {
     $cn = new ast.Constructor($parameters.map(p => p.pn), $blockStatement.bs)
     $cn.location = makeRange($init);
+    $cn.doc = cleanDoc($DOC);
   }
 ;
 method returns [ast.Method mn]:
-  'func' ID '(' (parameters+=parameter ','?)* ')' ':' type blockStatement {
+  DOC? 'func' ID '(' (parameters+=parameter ','?)* ')' ':' type blockStatement {
     $mn = new ast.Method($ID.text!, $parameters.map(p => p.pn), $type.tn, $blockStatement.bs)
     $mn.location = makeRange($ID);
+    $mn.doc = cleanDoc($DOC);
   }
 ;
 parameter returns [ast.Parameter pn]:
-  ID ':' type {
+  DOC? ID ':' type {
     $pn = new ast.Parameter($ID.text!, $type.tn)
     $pn.location = makeRange($ID);
+    $pn.doc = cleanDoc($DOC);
   }
 ;
 variable returns [ast.Variable v]:
@@ -98,6 +104,7 @@ completableID:
 
 WS: [ \t\r\n]+ -> skip;
 LC: '//' ~[\r\n]* -> skip;
+DOC: '/**' .*? '*/';
 BC: '/*' .*? '*/' -> skip;
 
 NUMBER: [+-]?[0-9]+([.][0-9]+)?;

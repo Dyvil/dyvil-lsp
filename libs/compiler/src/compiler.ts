@@ -10,6 +10,10 @@ export function makeRange(start: Token, stop?: Token) {
   );
 }
 
+export function cleanDoc(doc: Token | undefined): string | undefined {
+  return doc?.text?.replace(/^\/\*\*\n?|^\s*\*(?: |\/$)?/gm, '');
+}
+
 export function compilationUnit(source: string, path?: string): CompilationUnit {
   const inputStream = path ? CharStreams.fromString(source, path) : CharStreams.fromString(source);
   const lexer = new DyvilLexer(inputStream);

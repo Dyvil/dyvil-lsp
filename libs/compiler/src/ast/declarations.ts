@@ -36,12 +36,17 @@ export class CompilationUnit extends Node<'unit'> {
 
 export class Declaration<K extends string> extends Node<K> {
   _references: Node<any>[] = [];
+  doc?: string;
 
   constructor(
     kind: K,
     public name: string,
   ) {
     super(kind);
+  }
+
+  documentation(): string | undefined {
+    return this.doc;
   }
 
   references(): Range[] {
@@ -122,6 +127,15 @@ export class Constructor extends Declaration<'constructor'> {
     return `${format === 'js' ? 'constructor' : 'init'}(${this.parameters.map(param => param.toString(format)).join(', ')}) ${this.body.toString(format)}`;
   }
 
+  documentation(): string | undefined {
+    return this.parameters.length ? autoIndent`
+    ${this.doc}
+
+    #### Parameters
+    ${this.parameters.map(param => '- ' + param.documentation()).join('\n')}
+    ` : this.doc;
+  }
+
   references(purpose?: 'rename' | 'definition'): Range[] {
     return purpose === 'rename' ? [] : super.references();
   }
@@ -193,6 +207,17 @@ export class Method extends Declaration<'method'> {
     };
   }
 
+  documentation(): string | undefined {
+    let doc = this.doc || '';
+    if (this.parameters.length) {
+      doc += '\n#### Parameters\n' + this.parameters.map(param => '- ' + param.documentation()).join('\n');
+    }
+    if (this.returnType.kind !== 'type:primitive' || this.returnType.name !== 'void') {
+      doc += '\n#### Returns\n`' + this.returnType.toString() + '`';
+    }
+    return doc;
+  }
+
   toString(format?: StringFormat): string {
     return `${format !== 'js' ? 'func ' : ''}${this.name}(${this.parameters.map(param => param.toString(format)).join(', ')})${format !== 'js' ? ': ' + this.returnType.toString(format) : ''} ${this.body.toString(format)}`;
   }
@@ -242,6 +267,10 @@ export class Parameter extends VariableLike<'parameter'> {
 
   references(purpose?: 'rename' | 'definition'): Range[] {
     return purpose === 'rename' && this.name === 'this' ? [] : super.references();
+  }
+
+  documentation(): string | undefined {
+    return `\`${this.name}: ${this.type.toString()}\`${this.doc ? '\n' + this.doc : ''}`;
   }
 
   toString(format?: StringFormat): string {

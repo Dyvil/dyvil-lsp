@@ -13,6 +13,10 @@ export class Node<K extends string> {
 
   definition?(purpose?: 'rename' | 'definition'): Node<any> | undefined;
 
+  documentation(): string | undefined {
+    return this.definition?.()?.documentation();
+  }
+
   references(purpose?: 'rename' | 'definition'): Range[] {
     return this.definition?.(purpose)?.references(purpose) || [];
   }

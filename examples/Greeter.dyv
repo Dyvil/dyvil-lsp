@@ -16,7 +16,10 @@ class Greeter {
     this.greet(greeting)
   }
 
-  func greet(greeting: string): void {
+  /**
+   * Sends a greeting
+   */
+  func greet(greeting: string): string {
     println(greeting)
     var newCount = this.count + 1
     this.count = newCount
