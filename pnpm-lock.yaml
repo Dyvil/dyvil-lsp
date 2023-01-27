@@ -46,7 +46,9 @@ specifiers:
   jest: 28.1.1
   jest-environment-jsdom: 28.1.1
   jest-preset-angular: ~12.2.3
+  monaco-editor: ^0.34.1
   mongoose: ^6.8.0
+  ngx-monaco-editor-v2: ^15.0.1
   nx: 15.3.3
   prettier: ^2.6.2
   reflect-metadata: ^0.1.13
@@ -79,7 +81,9 @@ dependencies:
   '@nrwl/angular': 15.3.3_f7ugvd3srbf5yyqngewcb26bye
   '@nrwl/nest': 15.3.3_lwy5afllzddj4aptxavlwl63za
   antlr4ts: 0.5.0-alpha.4
+  monaco-editor: 0.34.1
   mongoose: 6.8.0
+  ngx-monaco-editor-v2: 15.0.1_2jc7t66lnlbdxu752mtq6jzsj4
   reflect-metadata: 0.1.13
   rxjs: 7.8.0
   tslib: 2.4.1
@@ -10001,6 +10005,10 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
 
+  /monaco-editor/0.34.1:
+    resolution: {integrity: sha512-FKc80TyiMaruhJKKPz5SpJPIjL+dflGvz4CpuThaPMc94AyN7SeC9HQ8hrvaxX7EyHdJcUY5i4D0gNyJj1vSZQ==}
+    dev: false
+
   /mongodb-connection-string-url/2.6.0:
     resolution: {integrity: sha512-WvTZlI9ab0QYtTYnuMLgobULWhokRjtC7db9LtcVfJ+Hsnyr5eo6ZtNAt3Ly24XZScGMelOcGtm7lSn0332tPQ==}
     dependencies:
@@ -10119,6 +10127,19 @@ packages:
 
   /neo-async/2.6.2:
     resolution: {integrity: sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==}
+
+  /ngx-monaco-editor-v2/15.0.1_2jc7t66lnlbdxu752mtq6jzsj4:
+    resolution: {integrity: sha512-QDj4XJO7o+XcYqbUrbIWhJdSRUnbAXltShsLveyVug+yw7ThS3DcE+FBuDUnAO67czTWta0paQPsyrH5DUfnkg==}
+    peerDependencies:
+      '@angular/common': ^15.0.2
+      '@angular/core': ^15.0.2
+      monaco-editor: ^0.34.1
+    dependencies:
+      '@angular/common': 15.0.4_2kx3gifw2v5d4j22ydwztvu5ey
+      '@angular/core': 15.0.4_rxjs@7.8.0+zone.js@0.11.8
+      monaco-editor: 0.34.1
+      tslib: 2.4.1
+    dev: false
 
   /nice-napi/1.0.2:
     resolution: {integrity: sha512-px/KnJAJZf5RuBGcfD+Sp2pAKq0ytz8j+1NehvgIGFkvtvFrDM3T8E4x/JJODXK9WZow8RRGrbA9QQ3hs+pDhA==}
