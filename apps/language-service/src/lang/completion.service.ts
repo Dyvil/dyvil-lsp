@@ -1,10 +1,7 @@
-import {Injectable} from '@nestjs/common';
-import {InsertTextFormat} from 'vscode-languageserver';
-import {CompletionItem, CompletionItemKind, CompletionParams} from 'vscode-languageserver';
-import {SimpleScope} from '../../../../../libs/compiler/src/ast';
-import {compilationUnit} from '../../../../../libs/compiler/src/compiler';
-import {ConnectionService} from '../connection/connection.service';
-import {DocumentService} from '../document/document.service';
+import {compilationUnit, SimpleScope} from '@stc/compiler';
+import {CompletionItem, CompletionItemKind, CompletionParams, InsertTextFormat} from 'vscode-languageserver';
+import {ConnectionService} from '../connection.service';
+import {DocumentService} from '../document.service';
 
 function convertCompletionKind(kind: string): CompletionItemKind {
   switch (kind) {
@@ -26,7 +23,6 @@ function convertCompletionKind(kind: string): CompletionItemKind {
   }
 }
 
-@Injectable()
 export class CompletionService {
   constructor(
     private connectionService: ConnectionService,

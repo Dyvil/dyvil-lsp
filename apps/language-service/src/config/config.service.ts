@@ -1,11 +1,9 @@
-import {Injectable} from '@nestjs/common';
-import {ConnectionService} from '../connection/connection.service';
-import {DocumentService} from '../document/document.service';
+import {ConnectionService} from '../connection.service';
+import {DocumentService} from '../document.service';
 import {Config} from './config';
 
 export const DEFAULT_SETTINGS: Config = {};
 
-@Injectable()
 export class ConfigService {
   globalSettings: Config = DEFAULT_SETTINGS;
   documentConfigs: Map<string, Thenable<Config>> = new Map();

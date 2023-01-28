@@ -1,11 +1,5 @@
-import {NestFactory} from '@nestjs/core';
-import {AppModule} from './app/app.module';
-import {ConnectionService} from './app/connection/connection.service';
+import {createConnection, ProposedFeatures} from 'vscode-languageserver/node';
+import {setup} from './index';
 
-async function bootstrap() {
-  const app = await NestFactory.createApplicationContext(AppModule);
-  const connectionService = app.get(ConnectionService);
-  connectionService.connection.listen();
-}
-
-bootstrap();
+const connection = createConnection(ProposedFeatures.all);
+setup(connection);

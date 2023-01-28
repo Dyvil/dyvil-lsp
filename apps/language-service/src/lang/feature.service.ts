@@ -1,6 +1,4 @@
-import {Injectable} from '@nestjs/common';
 import {Node, Position} from '@stc/compiler';
-import {PrepareRenameParams} from 'vscode-languageclient';
 import {
   CompletionItem,
   CompletionParams,
@@ -10,18 +8,18 @@ import {
   Hover,
   HoverParams,
   Location,
+  PrepareRenameParams,
   Range as LspRange,
   ReferenceParams,
   RenameParams,
   TextDocumentPositionParams,
   WorkspaceEdit,
 } from 'vscode-languageserver';
-import {ConnectionService} from '../connection/connection.service';
-import {DocumentService} from '../document/document.service';
-import {convertRange} from '../validation/validation.service';
+import {ConnectionService} from '../connection.service';
+import {DocumentService} from '../document.service';
+import {convertRange} from './validation.service';
 
-@Injectable()
-export class RenameService {
+export class FeatureService {
   constructor(
     private connectionService: ConnectionService,
     private documentService: DocumentService,

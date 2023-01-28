@@ -12,22 +12,14 @@
         "compiler": "tsc",
         "outputPath": "dist/apps/language-service",
         "main": "apps/language-service/src/main.ts",
-        "tsConfig": "apps/language-service/tsconfig.app.json",
-        "assets": ["apps/language-service/src/assets"]
+        "tsConfig": "apps/language-service/tsconfig.app.json"
       },
       "configurations": {
         "production": {
           "optimization": true,
           "extractLicenses": true,
           "inspect": false,
-          "externalDependencies": "none",
-          "webpackConfig": "apps/language-service/webpack.config.js",
-          "fileReplacements": [
-            {
-              "replace": "apps/language-service/src/environments/environment.ts",
-              "with": "apps/language-service/src/environments/environment.prod.ts"
-            }
-          ]
+          "externalDependencies": "none"
         }
       }
     },

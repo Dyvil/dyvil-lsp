@@ -1,24 +1,20 @@
-import {Injectable} from '@nestjs/common';
 import {
-  _Connection,
-  createConnection,
+  Connection,
   DidChangeConfigurationNotification,
   InitializeParams,
   InitializeResult,
-  ProposedFeatures,
   TextDocumentSyncKind,
-} from 'vscode-languageserver/node';
+} from 'vscode-languageserver';
 
-@Injectable()
 export class ConnectionService {
-  connection!: _Connection;
   hasConfigurationCapability!: boolean;
   hasWorkspaceFolderCapability!: boolean;
   hasDiagnosticRelatedInformationCapability!: boolean;
 
-  constructor() {
-    this.connection = createConnection(ProposedFeatures.all);
-    this.connection.onInitialize((params: InitializeParams) => {
+  constructor(
+    public readonly connection: Connection,
+  ) {
+    connection.onInitialize((params: InitializeParams) => {
       const capabilities = params.capabilities;
 
       this.hasConfigurationCapability = !!capabilities.workspace?.configuration;
@@ -52,9 +48,9 @@ export class ConnectionService {
       }
       return result;
     });
-    this.connection.onInitialized(() => {
+    connection.onInitialized(() => {
       if (this.hasConfigurationCapability) {
-        this.connection.client.register(DidChangeConfigurationNotification.type, undefined);
+        connection.client.register(DidChangeConfigurationNotification.type, undefined);
       }
     });
   }

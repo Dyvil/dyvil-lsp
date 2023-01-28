@@ -1,10 +1,8 @@
-import {Injectable} from '@nestjs/common';
 import {CompilationUnit, compilationUnit, SimpleScope} from '@stc/compiler';
+import {TextDocuments} from 'vscode-languageserver';
 import {TextDocument} from 'vscode-languageserver-textdocument';
-import {TextDocuments} from 'vscode-languageserver/node';
-import {ConnectionService} from '../connection/connection.service';
+import {ConnectionService} from './connection.service';
 
-@Injectable()
 export class DocumentService {
   documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
 

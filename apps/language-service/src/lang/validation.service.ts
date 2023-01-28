@@ -1,10 +1,9 @@
-import {Injectable} from '@nestjs/common';
 import {Diagnostic, Range} from '@stc/compiler';
 import {DiagnosticSeverity} from 'vscode-languageserver';
 import {TextDocument} from 'vscode-languageserver-textdocument';
 import {Diagnostic as LspDiagnostic} from 'vscode-languageserver/node';
-import {ConnectionService} from '../connection/connection.service';
-import {DocumentService} from '../document/document.service';
+import {ConnectionService} from '../connection.service';
+import {DocumentService} from '../document.service';
 
 export function convertRange(location: Range) {
   return {
@@ -22,7 +21,6 @@ function convertDiagnostic({severity, location, message}: Diagnostic): LspDiagno
   };
 }
 
-@Injectable()
 export class ValidationService {
   constructor(
     private connectionService: ConnectionService,
