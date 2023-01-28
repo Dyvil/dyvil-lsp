@@ -1,5 +1,5 @@
 import {Injectable} from '@nestjs/common';
-import {Node, Position} from '@software-tools/compiler';
+import {Node, Position} from '@stc/compiler';
 import {PrepareRenameParams} from 'vscode-languageclient';
 import {
   CompletionItem,

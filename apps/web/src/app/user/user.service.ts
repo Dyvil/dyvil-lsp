@@ -1,6 +1,6 @@
 import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
-import type {CreateUserDto, UserDto} from '@software-tools/types';
+import type {CreateUserDto, UserDto} from '@stc/types';
 import {environment} from '../../environments/environment';
 
 const baseUrl = environment.apiUrl + '/user';

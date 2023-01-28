@@ -6,7 +6,7 @@
 $ pnpx create-nx-workspace
 ✔ Choose what to create                 · integrated
 ✔ What to create in the new workspace   · angular-monorepo
-✔ Repository name                       · software-tools
+✔ Repository name                       · stc
 ✔ Application name                      · web
 ✔ Default stylesheet format             · scss
 ✔ Enable distributed caching to make your CI faster · No

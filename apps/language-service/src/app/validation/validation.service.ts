@@ -1,5 +1,5 @@
 import {Injectable} from '@nestjs/common';
-import {Diagnostic, Range} from '@software-tools/compiler';
+import {Diagnostic, Range} from '@stc/compiler';
 import {DiagnosticSeverity} from 'vscode-languageserver';
 import {TextDocument} from 'vscode-languageserver-textdocument';
 import {Diagnostic as LspDiagnostic} from 'vscode-languageserver/node';

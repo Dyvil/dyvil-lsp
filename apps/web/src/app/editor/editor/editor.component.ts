@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
 
 @Component({
-  selector: 'software-tools-editor',
+  selector: 'stc-editor',
   templateUrl: './editor.component.html',
   styleUrls: ['./editor.component.scss'],
 })

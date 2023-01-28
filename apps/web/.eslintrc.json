@@ -17,7 +17,7 @@
           "error",
           {
             "type": "element",
-            "prefix": "software-tools",
+            "prefix": "stc",
             "style": "kebab-case"
           }
         ]

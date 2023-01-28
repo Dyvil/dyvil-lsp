@@ -1,5 +1,5 @@
 import {Injectable} from '@nestjs/common';
-import {CompilationUnit, compilationUnit, SimpleScope} from '@software-tools/compiler';
+import {CompilationUnit, compilationUnit, SimpleScope} from '@stc/compiler';
 import {TextDocument} from 'vscode-languageserver-textdocument';
 import {TextDocuments} from 'vscode-languageserver/node';
 import {ConnectionService} from '../connection/connection.service';

@@ -17,8 +17,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@software-tools/compiler": ["libs/compiler/src/index.ts"],
-      "@software-tools/types": ["libs/types/src/index.ts"]
+      "@stc/compiler": ["libs/compiler/src/index.ts"],
+      "@stc/types": ["libs/types/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

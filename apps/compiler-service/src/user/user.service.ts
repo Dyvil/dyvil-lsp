@@ -1,6 +1,6 @@
 import {Injectable} from '@nestjs/common';
 import {InjectModel} from '@nestjs/mongoose';
-import {CreateUserDto, UpdateUserDto, User, UserDocument} from '@software-tools/types';
+import {CreateUserDto, UpdateUserDto, User, UserDocument} from '@stc/types';
 import {Model} from 'mongoose';
 
 @Injectable()
