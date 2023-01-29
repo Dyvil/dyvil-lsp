@@ -13,8 +13,8 @@
   "contributes": {
     "commands": [
       {
-        "command": "start",
-        "title": "Start My Extension"
+        "command": "dyvil.restart",
+        "title": "Restart Dyvil Language Server"
       }
     ],
     "languages": [

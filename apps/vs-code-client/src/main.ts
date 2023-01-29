@@ -1,9 +1,9 @@
-import {ExtensionContext, ExtensionMode} from 'vscode';
+import {commands, ExtensionContext, ExtensionMode} from 'vscode';
 import {LanguageClient, LanguageClientOptions, ServerOptions, TransportKind} from 'vscode-languageclient/node';
 
 let client: LanguageClient;
 
-export function activate(context: ExtensionContext) {
+export async function activate(context: ExtensionContext) {
   const module = context.asAbsolutePath(context.extensionMode === ExtensionMode.Development
     ? '../language-service/main.js'
     : '', // TODO prod path
@@ -37,12 +37,15 @@ export function activate(context: ExtensionContext) {
     clientOptions,
   );
 
-  client.start();
+  await client.start();
+
+  commands.registerCommand('dyvil.restart', async () => {
+    await client.restart();
+  });
 }
 
-export function deactivate() {
-  if (!client) {
-    return undefined;
+export async function deactivate() {
+  if (client && client.isRunning()) {
+    await client.stop();
   }
-  return client.stop();
 }
