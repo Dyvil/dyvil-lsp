@@ -20,13 +20,18 @@
           "apps/web/src/assets",
           {
             "glob": "**/*",
-            "input":"examples",
+            "input": "examples",
             "output": "/assets/examples"
           },
-          { "glob": "**/*", "input": "node_modules/monaco-editor", "output": "/assets/monaco/" }
+          {
+            "glob": "**/*",
+            "input": "node_modules/monaco-editor",
+            "output": "/assets/monaco/"
+          }
         ],
         "styles": ["apps/web/src/styles.scss"],
-        "scripts": []
+        "scripts": [],
+        "webWorkerTsConfig": "apps/web/tsconfig.worker.json"
       },
       "configurations": {
         "production": {
@@ -91,7 +96,8 @@
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "apps/web/jest.config.ts",
-        "passWithNoTests": true
+        "passWithNoTests": true,
+        "webWorkerTsConfig": "apps/web/tsconfig.worker.json"
       }
     }
   },
