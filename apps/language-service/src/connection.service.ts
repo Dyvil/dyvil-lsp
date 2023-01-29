@@ -24,9 +24,6 @@ export class ConnectionService {
       const result: InitializeResult = {
         capabilities: {
           textDocumentSync: TextDocumentSyncKind.Incremental,
-          codeActionProvider: {
-            resolveProvider: true,
-          },
           completionProvider: {
             triggerCharacters: ['.'],
           },

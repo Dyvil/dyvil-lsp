@@ -3,3 +3,4 @@ import {setup} from './index';
 
 const connection = createConnection(ProposedFeatures.all);
 setup(connection);
+connection.listen();
