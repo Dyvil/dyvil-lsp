@@ -6,7 +6,7 @@
   "prefix": "stc",
   "targets": {
     "build": {
-      "executor": "@angular-devkit/build-angular:browser",
+      "executor": "@nrwl/angular:webpack-browser",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/web",
@@ -25,11 +25,19 @@
           },
           {
             "glob": "**/*",
-            "input": "node_modules/monaco-editor",
-            "output": "/assets/monaco/"
+            "input": "node_modules/monaco-editor-workers/dist",
+            "output": "/assets/monaco-editor-workers"
           }
         ],
         "styles": ["apps/web/src/styles.scss"],
+        "customWebpackConfig": {
+          "path": "apps/web/webpack.config.js"
+        },
+        "allowedCommonJsDependencies": [
+          "vscode-jsonrpc",
+          "vscode-languageclient",
+          "vscode-languageserver-protocol"
+        ],
         "scripts": [],
         "webWorkerTsConfig": "apps/web/tsconfig.worker.json"
       },
@@ -67,7 +75,7 @@
       "defaultConfiguration": "production"
     },
     "serve": {
-      "executor": "@angular-devkit/build-angular:dev-server",
+      "executor": "@nrwl/angular:webpack-dev-server",
       "configurations": {
         "production": {
           "browserTarget": "web:build:production"

@@ -18,6 +18,7 @@
     "baseUrl": ".",
     "paths": {
       "@stc/compiler": ["libs/compiler/src/index.ts"],
+      "@stc/language-service": ["apps/language-service/src/index.ts"],
       "@stc/types": ["libs/types/src/index.ts"]
     }
   },

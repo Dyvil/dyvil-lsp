@@ -1,8 +1,8 @@
 import {languages} from 'monaco-editor';
-import IMonarchLanguage = languages.IMonarchLanguage;
 import ILanguageExtensionPoint = languages.ILanguageExtensionPoint;
+import IMonarchLanguage = languages.IMonarchLanguage;
 
-const monarchLang: IMonarchLanguage = {
+export const dyvilMonarchLang: IMonarchLanguage = {
   keywords: 'class|var|init|func|true|false|this|super'.split('|'),
   typeKeywords: [
     'boolean', 'int', 'void', 'string',
@@ -51,16 +51,9 @@ const monarchLang: IMonarchLanguage = {
   },
 };
 
-
-export async function onMonacoLoad() {
-  const monaco = (window as any).monaco;
-
-  const language: ILanguageExtensionPoint = {
-    id: 'dyvil',
-    aliases: ['Dyvil'],
-    extensions: ['.dyv'],
-  };
-  monaco.languages.register(language);
-  monaco.languages.setMonarchTokensProvider('dyvil', monarchLang);
-}
+export const dyvilMonacoLang: ILanguageExtensionPoint = {
+  id: 'dyvil',
+  aliases: ['Dyvil'],
+  extensions: ['.dyv'],
+};
 
