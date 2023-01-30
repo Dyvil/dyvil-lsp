@@ -1,20 +1,6 @@
-import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, ViewChild} from '@angular/core';
 import {buildWorkerDefinition} from 'monaco-editor-workers';
-
-import 'monaco-editor/esm/vs/editor/editor.all.js';
-
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api.js';
-
-import 'monaco-editor/esm/vs/editor/standalone/browser/accessibilityHelp/accessibilityHelp.js';
-import 'monaco-editor/esm/vs/editor/standalone/browser/inspectTokens/inspectTokens.js';
-import 'monaco-editor/esm/vs/editor/standalone/browser/iPadShowKeyboard/iPadShowKeyboard.js';
-import 'monaco-editor/esm/vs/editor/standalone/browser/quickAccess/standaloneCommandsQuickAccess.js';
-import 'monaco-editor/esm/vs/editor/standalone/browser/quickAccess/standaloneGotoLineQuickAccess.js';
-import 'monaco-editor/esm/vs/editor/standalone/browser/quickAccess/standaloneGotoSymbolQuickAccess.js';
-import 'monaco-editor/esm/vs/editor/standalone/browser/quickAccess/standaloneHelpQuickAccess.js';
-import 'monaco-editor/esm/vs/editor/standalone/browser/quickInput/standaloneQuickInputService.js';
-import 'monaco-editor/esm/vs/editor/standalone/browser/referenceSearch/standaloneReferenceSearch.js';
-import 'monaco-editor/esm/vs/editor/standalone/browser/toggleHighContrast/toggleHighContrast.js';
 import {CloseAction, ErrorAction, MessageTransports, MonacoLanguageClient, MonacoServices} from 'monaco-languageclient';
 import {BrowserMessageReader, BrowserMessageWriter} from 'vscode-languageserver-protocol/browser';
 import getMessageServiceOverride from 'vscode/service-override/messages';

@@ -1,6 +1,7 @@
 const {merge} = require('webpack-merge');
 const {resolve} = require('path');
 const {ProvidePlugin} = require('webpack');
+const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
 module.exports = (config, context) => {
   return merge(config, {
@@ -9,6 +10,10 @@ module.exports = (config, context) => {
         {
           test: /\.css$/,
           use: ['style-loader', 'css-loader'],
+        },
+        {
+          test: /\.ttf$/,
+          type: 'asset/resource'
         },
       ],
     },
@@ -21,6 +26,10 @@ module.exports = (config, context) => {
     plugins: [
       new ProvidePlugin({
         process: 'process/browser',
+      }),
+      new MonacoWebpackPlugin({
+        publicPath: '/',
+        languages: ['typescript', 'javascript'],
       }),
     ],
   });

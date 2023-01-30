@@ -49,6 +49,7 @@ specifiers:
   jest-environment-jsdom: 28.1.1
   jest-preset-angular: ~12.2.3
   monaco-editor: ^0.34.1
+  monaco-editor-webpack-plugin: ^7.0.1
   monaco-editor-workers: ^0.34.2
   monaco-languageclient: ^4.0.3
   mongoose: ^6.8.0
@@ -136,6 +137,7 @@ devDependencies:
   jest: 28.1.1_lpnbhgxso4u2juc7wocetwmymy
   jest-environment-jsdom: 28.1.1
   jest-preset-angular: 12.2.3_awfan4wgzzcw5upk4n767gkque
+  monaco-editor-webpack-plugin: 7.0.1_feckyf2jam7vk36gev3ykueqty
   nx: 15.3.3
   path-browserify: 1.0.1
   prettier: 2.8.1
@@ -10053,13 +10055,23 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
 
+  /monaco-editor-webpack-plugin/7.0.1_feckyf2jam7vk36gev3ykueqty:
+    resolution: {integrity: sha512-M8qIqizltrPlIbrb73cZdTWfU9sIsUVFvAZkL3KGjAHmVWEJ0hZKa/uad14JuOckc0GwnCaoGHvMoYtJjVyCzw==}
+    peerDependencies:
+      monaco-editor: '>= 0.31.0'
+      webpack: ^4.5.0 || 5.x
+    dependencies:
+      loader-utils: 2.0.4
+      monaco-editor: 0.34.1
+      webpack: 5.75.0
+    dev: true
+
   /monaco-editor-workers/0.34.2:
     resolution: {integrity: sha512-MdO1nvAbGNzc7ygyzwACvs5DOPaTOUNDjU/qTQx0Rsw00BrhL88eMi9sWBm+LYfQbPaZf+YBqwJaJUovl3M6bQ==}
     dev: false
 
   /monaco-editor/0.34.1:
     resolution: {integrity: sha512-FKc80TyiMaruhJKKPz5SpJPIjL+dflGvz4CpuThaPMc94AyN7SeC9HQ8hrvaxX7EyHdJcUY5i4D0gNyJj1vSZQ==}
-    dev: false
 
   /monaco-languageclient/4.0.3_g6dmqpbszgjdad7lgz62esnux4:
     resolution: {integrity: sha512-1mGIUb5PFRknITBhNxgH0SnQy1/jntt9oo0cQpOl3HdhYEL/CYK2UrsZZX7Udqmz1PXKyRIzQ3tZ7dJn4mzWtA==}
