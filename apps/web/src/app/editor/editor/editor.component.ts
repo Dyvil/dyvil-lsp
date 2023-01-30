@@ -1,4 +1,15 @@
-import {AfterViewInit, Component, ElementRef, ViewChild} from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  Output,
+  SimpleChanges,
+  ViewChild,
+} from '@angular/core';
 import {buildWorkerDefinition} from 'monaco-editor-workers';
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api.js';
 import {CloseAction, ErrorAction, MessageTransports, MonacoLanguageClient, MonacoServices} from 'monaco-languageclient';
@@ -39,17 +50,23 @@ function createLanguageClient(transports: MessageTransports): MonacoLanguageClie
   templateUrl: './editor.component.html',
   styleUrls: ['./editor.component.scss'],
 })
-export class EditorComponent implements AfterViewInit {
-  @ViewChild('editor', {static: true}) editor!: ElementRef;
+export class EditorComponent implements AfterViewInit, OnChanges, OnDestroy {
+  @ViewChild('container', {static: true}) container!: ElementRef;
+
+  @Input() language = 'dyvil';
+
+  @Input() code: string;
+  @Output() codeChanged = new EventEmitter<string>();
+
+  worker?: Worker;
+  editor?: monaco.editor.IStandaloneCodeEditor;
+  lspClient?: MonacoLanguageClient;
 
   async ngAfterViewInit() {
-    const examplePath = '/assets/examples/Greeter.dyv';
-    const code = await fetch(examplePath).then(r => r.text());
-
-    const model = monaco.editor.createModel(code, 'dyvil');
-    const domElement = this.editor.nativeElement;
-    monaco.editor.create(domElement, {
-      model: model,
+    const domElement = this.container.nativeElement;
+    this.editor = monaco.editor.create(domElement, {
+      value: this.code,
+      language: this.language,
       theme: 'vs-dark',
       glyphMargin: true,
       lightbulb: {
@@ -57,15 +74,31 @@ export class EditorComponent implements AfterViewInit {
       },
       automaticLayout: true,
     });
+    this.editor.onDidChangeModelContent(() => {
+      this.editor && this.codeChanged.next(this.editor.getValue());
+    });
 
-    MonacoServices.install();
+    if (this.language === 'dyvil') {
+      MonacoServices.install();
 
-    const worker = new Worker(new URL('./editor.worker.ts', import.meta.url));
-    const reader = new BrowserMessageReader(worker);
-    const writer = new BrowserMessageWriter(worker);
-    const languageClient = createLanguageClient({reader, writer});
-    languageClient.start();
+      this.worker = new Worker(new URL('./editor.worker.ts', import.meta.url));
+      const reader = new BrowserMessageReader(this.worker);
+      const writer = new BrowserMessageWriter(this.worker);
+      this.lspClient = createLanguageClient({reader, writer});
+      this.lspClient.start();
+      reader.onClose(() => this.lspClient?.stop());
+    }
+  }
 
-    reader.onClose(() => languageClient.stop());
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['code']) {
+      this.editor?.setValue(changes['code'].currentValue);
+    }
+  }
+
+  async ngOnDestroy() {
+    this.editor?.dispose();
+    await this.lspClient?.stop();
+    this.worker?.terminate();
   }
 }
