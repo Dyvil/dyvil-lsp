@@ -5,7 +5,7 @@ let client: LanguageClient;
 
 export async function activate(context: ExtensionContext) {
   const module = context.asAbsolutePath(context.extensionMode === ExtensionMode.Development
-    ? '../language-service/main.js'
+    ? '../language-server/main.js'
     : '', // TODO prod path
   );
   const transport = TransportKind.ipc;

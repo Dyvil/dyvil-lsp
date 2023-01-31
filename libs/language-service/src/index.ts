@@ -1,9 +1,9 @@
 import {Connection} from 'vscode-languageserver';
-import {ConnectionService} from './connection.service';
-import {DocumentService} from './document.service';
-import {CompletionService} from './lang/completion.service';
-import {FeatureService} from './lang/feature.service';
-import {ValidationService} from './lang/validation.service';
+import {ConnectionService} from './lib/connection.service';
+import {DocumentService} from './lib/document.service';
+import {CompletionService} from './lib/lang/completion.service';
+import {FeatureService} from './lib/lang/feature.service';
+import {ValidationService} from './lib/lang/validation.service';
 
 export function setup(connection: Connection) {
   const connectionService = new ConnectionService(connection);
