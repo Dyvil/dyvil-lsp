@@ -24,6 +24,11 @@
             "output": "/assets/examples"
           },
           {
+            "input": "node_modules/monaco-editor/esm/vs/base/browser/ui/codicons/codicon/",
+            "glob": "codicon.ttf",
+            "output": "/"
+          },
+          {
             "glob": "**/*",
             "input": "node_modules/monaco-editor-workers/dist",
             "output": "/assets/monaco-editor-workers"

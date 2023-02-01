@@ -9,7 +9,7 @@ module.exports = (config, context) => {
       rules: [
         {
           test: /\.css$/,
-          use: ['style-loader', 'css-loader'],
+          use: ['style-loader', 'css-loader?{"url":false}'],
         },
         {
           test: /\.ttf$/,
