@@ -26,6 +26,7 @@
           "optimization": true,
           "extractLicenses": true,
           "inspect": false,
+          "sourceMap": false,
           "fileReplacements": [
             {
               "replace": "apps/vs-code-client/src/environments/environment.ts",

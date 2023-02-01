@@ -5,10 +5,10 @@
     "name": "Adrian Kunz",
     "email": "clashsoft@hotmail.com"
   },
-  "version": "0.0.0",
+  "version": "0.0.2",
   "main": "main.js",
   "engines": {
-    "vscode": "^1.74.0"
+    "vscode": "^1.69.0"
   },
   "contributes": {
     "commands": [
