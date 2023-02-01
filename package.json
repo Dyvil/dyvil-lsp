@@ -10,7 +10,7 @@
     "compiler:main": "ts-node libs/compiler/src/main.ts",
     "compiler:antlr": "nx antlr4ts compiler",
     "vs-code-client:watch": "nx build vs-code-client --watch",
-    "language-service:watch": "nx build language-service --watch",
+    "language-server:watch": "nx build language-server --watch",
     "build": "nx build",
     "test": "nx test"
   },

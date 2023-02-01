@@ -19,6 +19,9 @@
           "optimization": true,
           "extractLicenses": true,
           "inspect": false,
+          "sourceMap": false,
+          "mode": "production",
+          "outputPath": "dist/apps/vs-code-client/server",
           "externalDependencies": "none"
         }
       }
