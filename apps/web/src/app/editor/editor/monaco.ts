@@ -1,8 +1,22 @@
-import {languages} from 'monaco-editor';
-import ILanguageExtensionPoint = languages.ILanguageExtensionPoint;
-import IMonarchLanguage = languages.IMonarchLanguage;
+import {buildWorkerDefinition} from 'monaco-editor-workers';
+import * as monaco from 'monaco-editor/esm/vs/editor/editor.api.js';
+import {CloseAction, ErrorAction, MessageTransports, MonacoLanguageClient} from 'monaco-languageclient';
+import getMessageServiceOverride from 'vscode/service-override/messages';
+import {StandaloneServices} from 'vscode/services';
 
-export const dyvilMonarchLang: IMonarchLanguage = {
+StandaloneServices.initialize({
+  ...getMessageServiceOverride(document.body),
+});
+
+buildWorkerDefinition('./assets/monaco-editor-workers/workers', window.location.href + '../..', false);
+
+monaco.languages.register({
+  id: 'dyvil',
+  aliases: ['Dyvil'],
+  extensions: ['.dyv'],
+});
+
+monaco.languages.setMonarchTokensProvider('dyvil', {
   keywords: 'class|var|init|func|true|false|this|super'.split('|'),
   typeKeywords: [
     'boolean', 'int', 'void', 'string',
@@ -49,11 +63,23 @@ export const dyvilMonarchLang: IMonarchLanguage = {
       [/\/\/.*$/, 'comment'],
     ],
   },
-};
+});
 
-export const dyvilMonacoLang: ILanguageExtensionPoint = {
-  id: 'dyvil',
-  aliases: ['Dyvil'],
-  extensions: ['.dyv'],
-};
+export function createLanguageClient(transports: MessageTransports): MonacoLanguageClient {
+  return new MonacoLanguageClient({
+    name: 'Dyvil Language Client',
+    clientOptions: {
+      documentSelector: [{language: 'dyvil'}],
+      errorHandler: {
+        error: () => ({action: ErrorAction.Continue}),
+        closed: () => ({action: CloseAction.DoNotRestart}),
+      },
+    },
+    connectionProvider: {
+      get: () => {
+        return Promise.resolve(transports);
+      },
+    },
+  });
+}
 
