@@ -8,7 +8,7 @@ StandaloneServices.initialize({
   ...getMessageServiceOverride(document.body),
 });
 
-buildWorkerDefinition('./assets/monaco-editor-workers/workers', window.location.href + '../..', false);
+buildWorkerDefinition('./assets/monaco-editor-workers/workers', document.baseURI, false);
 
 monaco.languages.register({
   id: 'dyvil',
