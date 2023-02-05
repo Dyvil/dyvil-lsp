@@ -12,36 +12,8 @@ $ pnpx create-nx-workspace
 ✔ Enable distributed caching to make your CI faster · No
 ```
 
-## Compiler Service
+## GitHub Actions
 
-```
-$ pnpm i @nrwl/nest
-$ pnpm nx g @nrwl/nest:app compiler-service
-```
-
-## Types Library
-
-```
-$ pnpm nx g @nrwl/nest:lib types --buildable
-                  # We need nest types
-                                 # Incremental builds
-```
-
-## Mongoose
-
-```
-$ pnpm i mongoose @nestjs/mongoose
-```
-
-## User Module
-
-```
-$ cd apps/compiler-service
-$ nx g @nrwl/nest:resource user
-```
-
-## Config
-
-```
-$ pnpm i @nestjs/config
-```
+- Settings > Actions > General > Workflow permissions > Read and write permissions
+- Settings > Pages > Deploy from a branch, gh-pages
+  - Optional: Custom domain, then set cname in deploy.yml and remove --base-href=...
