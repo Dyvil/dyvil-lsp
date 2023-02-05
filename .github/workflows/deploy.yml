@@ -33,7 +33,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install
       - name: Build
-        run: pnpm build web --base-href=stc-23
+        run: pnpm build web --base-href=/stc-23
       - name: Deploy to Pages
         if: github.ref == 'refs/heads/main'
         uses: peaceiris/actions-gh-pages@v3
