@@ -34,6 +34,8 @@ jobs:
         run: pnpm install
       - name: Build
         run: pnpm build web --base-href=/stc-23/
+      - name: Create 404.html
+        run: cp dist/apps/web/index.html dist/apps/web/404.html
       - name: Deploy to Pages
         if: github.ref == 'refs/heads/main'
         uses: peaceiris/actions-gh-pages@v3
