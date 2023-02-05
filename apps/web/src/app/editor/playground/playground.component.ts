@@ -1,3 +1,4 @@
+import {HttpClient} from '@angular/common/http';
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {debounceTime, Subject} from 'rxjs';
 import {EditorComponent} from '../editor/editor.component';
@@ -16,9 +17,16 @@ export class PlaygroundComponent implements OnInit {
 
   worker?: Worker;
 
-  async ngOnInit() {
-    const examplePath = '/assets/examples/Greeter.dyv';
-    this.code = await fetch(examplePath).then(r => r.text());
+  constructor(
+    private http: HttpClient,
+  ) {
+  }
+
+  ngOnInit() {
+    const examplePath = 'assets/examples/Greeter.dyv';
+    this.http.get(examplePath, {responseType: 'text'}).subscribe(code => {
+      this.code = code;
+    });
 
     this.compile$.pipe(
       debounceTime(400),
