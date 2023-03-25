@@ -51,10 +51,12 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "15.2.4",
+    "@angular-devkit/core": "~15.1.0",
+    "@angular-devkit/schematics": "~15.1.0",
     "@angular-eslint/eslint-plugin": "~15.0.0",
     "@angular-eslint/eslint-plugin-template": "~15.0.0",
     "@angular-eslint/template-parser": "~15.0.0",
-    "@angular/cli": "~15.0.5",
+    "@angular/cli": "~15.2.0",
     "@angular/compiler-cli": "15.2.4",
     "@angular/language-service": "15.2.4",
     "@nestjs/schematics": "^9.0.4",
@@ -66,6 +68,7 @@
     "@nrwl/linter": "15.8.9",
     "@nrwl/node": "15.8.9",
     "@nrwl/workspace": "15.8.9",
+    "@schematics/angular": "~15.1.0",
     "@types/jest": "29.4.4",
     "@types/node": "18.7.1",
     "@types/vscode": "^1.76.0",
@@ -73,7 +76,7 @@
     "@typescript-eslint/parser": "^5.56.0",
     "antlr4ts-cli": "0.5.0-alpha.4",
     "css-loader": "^6.7.3",
-    "cypress": "^11.2.0",
+    "cypress": "^12.2.0",
     "eslint": "~8.15.0",
     "eslint-config-prettier": "8.1.0",
     "eslint-plugin-cypress": "^2.12.1",
@@ -92,4 +95,3 @@
     "webpack-merge": "^5.8.0"
   }
 }
-
