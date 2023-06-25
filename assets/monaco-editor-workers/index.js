@@ -9,9 +9,14 @@ export function buildWorkerDefinition(workerPath, basePath, useModuleWorker) {
     };
     if (!monWin.MonacoEnvironment) {
         monWin.MonacoEnvironment = {
-            workerOverrideGlobals: workerOverrideGlobals
+            workerOverrideGlobals: workerOverrideGlobals,
+            createTrustedTypesPolicy: (_policyName) => {
+                return undefined;
+            }
         };
     }
+    const monEnv = monWin.MonacoEnvironment;
+    monEnv.workerOverrideGlobals = workerOverrideGlobals;
     const getWorker = (_, label) => {
         console.log('getWorker: workerId: ' + _ + ' label: ' + label);
         const buildWorker = (globals, label, workerName, editorType) => {
@@ -40,6 +45,6 @@ export function buildWorkerDefinition(workerPath, basePath, useModuleWorker) {
                 return buildWorker(workerOverrideGlobals, label, 'editorWorker', 'Editor Worker');
         }
     };
-    monWin.MonacoEnvironment.getWorker = getWorker;
+    monEnv.getWorker = getWorker;
 }
 //# sourceMappingURL=index.js.map
