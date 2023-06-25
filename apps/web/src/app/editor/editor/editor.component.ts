@@ -11,9 +11,11 @@ import {
   ViewChild,
 } from '@angular/core';
 import {editor} from 'monaco-editor/esm/vs/editor/editor.api';
-import {MonacoLanguageClient, MonacoServices} from 'monaco-languageclient';
+import {initServices, MonacoLanguageClient} from 'monaco-languageclient';
+import getFileServiceOverride from 'vscode/service-override/files';
 import {BrowserMessageReader, BrowserMessageWriter} from 'vscode-languageserver-protocol/browser';
 import {createLanguageClient} from './monaco';
+import {LogLevel} from "vscode";
 
 @Component({
   selector: 'stc-editor',
@@ -49,7 +51,12 @@ export class EditorComponent implements AfterViewInit, OnChanges, OnDestroy {
     });
 
     if (this.language === 'dyvil') {
-      MonacoServices.install();
+      await initServices({
+        userServices: {
+          // manually add the files service
+          ...getFileServiceOverride()
+        },
+      });
 
       this.worker = new Worker(new URL('./editor.worker.ts', import.meta.url));
       const reader = new BrowserMessageReader(this.worker);

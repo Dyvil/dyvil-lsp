@@ -12,7 +12,7 @@ module.exports = (config, context) => {
           use: ['style-loader', 'css-loader?{"url":false}'],
         },
         {
-          test: /\.ttf$/,
+          test: /\.(ttf|mp3|wasm)$/,
           type: 'asset/resource'
         },
       ],
