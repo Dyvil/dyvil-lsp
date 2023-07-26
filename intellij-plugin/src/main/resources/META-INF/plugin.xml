@@ -21,10 +21,11 @@
        Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
   <depends>com.intellij.modules.platform</depends>
   <depends>com.intellij.modules.ultimate</depends>
+  <depends>JavaScript</depends>
 
   <!-- Extension points defined by the plugin.
        Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
   <extensions defaultExtensionNs="com.intellij">
-
+    <platform.lsp.serverSupportProvider implementation="de.uniks.intellijplugin.DyvilLspServerSupportProvider"/>
   </extensions>
 </idea-plugin>

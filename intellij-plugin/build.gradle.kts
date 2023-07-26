@@ -17,7 +17,7 @@ intellij {
   version.set("2023.2")
   type.set("IU") // Target IDE Platform
 
-  plugins.set(listOf(/* Plugin Dependencies */))
+  plugins.set(listOf("JavaScript"))
 }
 
 tasks {
@@ -28,6 +28,15 @@ tasks {
   }
   withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions.jvmTarget = "17"
+  }
+
+  prepareSandbox {
+    doLast {
+      copy {
+        from("${rootDir}/../dist/apps/language-server/main.js")
+        into("${destinationDir.path}/${project.name}/language-server")
+      }
+    }
   }
 
   patchPluginXml {
