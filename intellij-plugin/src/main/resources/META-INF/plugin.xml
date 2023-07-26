@@ -22,10 +22,18 @@
   <depends>com.intellij.modules.platform</depends>
   <depends>com.intellij.modules.ultimate</depends>
   <depends>JavaScript</depends>
+  <depends>org.jetbrains.plugins.textmate</depends>
 
   <!-- Extension points defined by the plugin.
        Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
   <extensions defaultExtensionNs="com.intellij">
     <platform.lsp.serverSupportProvider implementation="de.uniks.intellijplugin.DyvilLspServerSupportProvider"/>
+
+    <fileType
+      name="Dyvil File"
+      implementationClass="de.uniks.intellijplugin.DyvilFileType"
+      fieldName="INSTANCE"
+      language="Dyvil"
+      extensions="dyv"/>
   </extensions>
 </idea-plugin>

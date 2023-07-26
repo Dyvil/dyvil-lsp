@@ -17,7 +17,7 @@ intellij {
   version.set("2023.2")
   type.set("IU") // Target IDE Platform
 
-  plugins.set(listOf("JavaScript"))
+  plugins.set(listOf("JavaScript", "org.jetbrains.plugins.textmate"))
 }
 
 tasks {
