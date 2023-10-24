@@ -198,6 +198,10 @@ export class Method extends Declaration<'method'> {
     super('method', name);
   }
 
+  get jsName() {
+    return this.name + this.parameters.map(param => '_' + param.name).join('');
+  }
+
   asCompletion(): CompletionItem {
     return {
       label: this.name,
@@ -219,7 +223,7 @@ export class Method extends Declaration<'method'> {
   }
 
   toString(format?: StringFormat): string {
-    return `${format !== 'js' ? 'func ' : ''}${this.name}(${this.parameters.map(param => param.toString(format)).join(', ')})${format !== 'js' ? ': ' + this.returnType.toString(format) : ''} ${this.body.toString(format)}`;
+    return `${format !== 'js' ? 'func ' + this.name : this.jsName}(${this.parameters.map(param => param.toString(format)).join(', ')})${format !== 'js' ? ': ' + this.returnType.toString(format) : ''} ${this.body.toString(format)}`;
   }
 
   resolve(scope: Scope): this {

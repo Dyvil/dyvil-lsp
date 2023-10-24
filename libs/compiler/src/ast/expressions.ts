@@ -166,7 +166,8 @@ export class MethodCall extends Expression<'methodCall'> {
   }
 
   toString(format?: StringFormat): string {
-    return `${this.object.toString(format)}.${this.method}(${this.args.map(arg => arg.toString(format)).join(', ')})`;
+    const name = this._method && format === 'js' ? this._method.jsName : this.method;
+    return `${this.object.toString(format)}.${name}(${this.args.map(arg => arg.toString(format)).join(', ')})`;
   }
 
   resolve(scope: Scope): this {
