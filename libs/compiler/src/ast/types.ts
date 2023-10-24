@@ -21,7 +21,7 @@ export class Type<K extends string> extends Node<`type:${K}`> implements Scope {
     super(`type:${kind}`);
   }
 
-  lookup<N extends Node<any>>(name: Name, kind: Ctor<N>): N | undefined {
+  lookup<N extends Node<any>>(name: Name, kind: Ctor<N>, ...args: any[]): N | undefined {
     return;
   }
 
@@ -51,8 +51,8 @@ export class ClassType extends Type<'class'> {
     return this;
   }
 
-  lookup<N extends Node<any>>(name: Name, kind: Ctor<N>): N | undefined {
-    return this._class?.lookup(name, kind);
+  lookup<N extends Node<any>>(name: Name, kind: Ctor<N>, ...args: any[]): N | undefined {
+    return this._class?.lookup(name, kind, ...args);
   }
 
   list(): Node<any>[] {

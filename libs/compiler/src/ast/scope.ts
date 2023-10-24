@@ -4,7 +4,7 @@ export type Name = string | symbol;
 export type Ctor<T> = { new(...args: any[]): T };
 
 export interface Scope {
-  lookup<N extends Node<any>>(name: Name, kind: Ctor<N>): N | undefined;
+  lookup<N extends Node<any>>(name: Name, kind: Ctor<N>, ...args: any[]): N | undefined;
 
   list(): Node<any>[];
 }

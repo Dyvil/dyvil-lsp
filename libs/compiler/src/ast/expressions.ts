@@ -174,7 +174,8 @@ export class MethodCall extends Expression<'methodCall'> {
     this.object = this.object.resolve(scope);
     this.args = this.args.map(arg => arg.resolve(scope));
     const objectType = this.object.getType();
-    this._method ||= objectType.lookup(this.method, Method) || report(scope, this.location!, `method ${this.method} not found on ${objectType}`);
+    const argTypes = this.args.map(a => a.getType());
+    this._method ||= objectType.lookup(this.method, Method, argTypes) || report(scope, this.location!, `method ${this.method} not found on ${objectType}`);
     this._method?._references.push(this);
     return this;
   }

@@ -94,9 +94,14 @@ export class Class extends Declaration<'class'> implements Scope {
     }`;
   }
 
-  lookup<N extends Node<any>>(name: Name, kind: Ctor<N>): N | undefined {
-    for (let declaration of [...this.fields, ...this.methods]) {
-      if (declaration.name === name && declaration instanceof kind) {
+  lookup<N extends Node<any>>(name: Name, kind: Ctor<N>, ...args: any[]): N | undefined {
+    for (let field of this.fields) {
+      if (field.name === name && field instanceof kind) {
+        return field as N;
+      }
+    }
+    for (let declaration of this.methods) {
+      if (declaration.name === name && declaration instanceof kind && declaration.overloads(args[0])) {
         return declaration as N;
       }
     }
@@ -234,6 +239,10 @@ export class Method extends Declaration<'method'> {
     }
     const newScope = new SimpleScope(this._thisParameter ? [this._thisParameter, ...this.parameters] : this.parameters, scope);
     return super.resolve(newScope);
+  }
+
+  overloads(args: AnyType[]) {
+    return args.length === this.parameters.length && this.parameters.every((param, i) => isAssignable(param.type, args[i]));
   }
 }
 
