@@ -1,5 +1,5 @@
 import {AnyExpression} from './expressions';
-import {CompletionItem, Diagnostic, Range} from './lint';
+import {CompletionItem, Diagnostic, Range, report} from './lint';
 import {autoIndent, Node, StringFormat} from './node';
 import {Ctor, Name, Scope, SimpleScope} from './scope';
 import {Block} from './statements';
@@ -113,7 +113,19 @@ export class Class extends Declaration<'class'> implements Scope {
 
   resolve(scope: Scope): this {
     const newScope = new SimpleScope({[Class.enclosing]: this}, scope);
-    return super.resolve(newScope);
+    super.resolve(newScope);
+    for (const field of this.fields) {
+      if (this.fields.some(f => f !== field && f.name === field.name)) {
+        report(scope, field.location!, `duplicate field ${field.name}`);
+      }
+    }
+    for (const method of this.methods) {
+      if (this.methods.some(m => m !== method && m.jsName === method.jsName)) {
+        report(scope, method.location!, `duplicate method ${method.name} with mangled name ${method.jsName}`);
+      }
+    }
+
+    return this;
   }
 }
 
