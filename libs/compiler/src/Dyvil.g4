@@ -18,8 +18,8 @@ class returns [ast.Class cn]:
   }
 ;
 field returns [ast.Field fn]:
-  DOC? 'var' ID ':' type ('=' expression)? ';'? {
-    $fn = new ast.Field($ID.text!, $type.tn, $expression.e)
+  DOC? 'var' ID ':' type ('=' expr+=expression)? ';'? {
+    $fn = new ast.Field($ID.text!, $type.tn, $expr[0]?.e)
     $fn.location = makeRange($ID);
     $fn.doc = cleanDoc($DOC);
   }
@@ -70,6 +70,8 @@ statement returns [ast.AnyStatement s] @after { $s.location = makeRange($start, 
   |
   whileStatement {$s = $whileStatement.ws}
   |
+  ifStatement {$s = $ifStatement.is}
+  |
   ';' { $s = ast.EmptyStatement }
 ;
 blockStatement returns [ast.Block bs]:
@@ -84,6 +86,16 @@ whileStatement returns [ast.WhileStatement ws]:
     $ws = new ast.WhileStatement($expression.e, $blockStatement.bs);
     $ws.location = makeRange($start, $stop);
   }
+;
+
+ifStatement returns [ast.IfStatement is]:
+  'if' expression thenBlock=blockStatement { $is = new ast.IfStatement($expression.e, $thenBlock.bs); }
+  (
+    'else' elseBlock=blockStatement { $is.else = $elseBlock.bs; }
+    | 'else' elseIfBlock=ifStatement { $is.else = $elseIfBlock.is; }
+    | completion=COMPLETION_MARKER { $is.completion = true; }
+  )?
+  { $is.location = makeRange($start, $stop);}
 ;
 
 expression returns [ast.AnyExpression e]:

@@ -15,7 +15,7 @@ monaco.languages.register({
 });
 
 monaco.languages.setMonarchTokensProvider('dyvil', {
-  keywords: 'class|var|init|func|true|false|this|super|while'.split('|'),
+  keywords: 'class|var|init|func|true|false|this|super|while|if|else'.split('|'),
   typeKeywords: [
     'boolean', 'int', 'void', 'string',
   ],

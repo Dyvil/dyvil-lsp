@@ -26,5 +26,13 @@ class Greeter {
       var newCount = this.count + 1
       this.count = newCount
     }
+
+    if this.count == 10 {
+      println("Count is 10")
+    } else if (this.count == 20) {
+      println("Count is 20")
+    } else {
+      println("Count is " + this.count)
+    }
   }
 }

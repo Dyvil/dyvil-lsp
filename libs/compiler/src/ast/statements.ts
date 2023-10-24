@@ -87,6 +87,40 @@ export class WhileStatement extends Statement<'while'> {
   }
 }
 
+export class IfStatement extends Statement<'while'> {
+  static keyword = 'if';
+  static snippet = `if (\${1:condition}) {
+  \${2:statements...}
+}`;
+
+  else?: Block | IfStatement;
+  completion?: boolean;
+
+  constructor(
+    public condition: AnyExpression,
+    public then: Block,
+    _else?: Block | IfStatement,
+  ) {
+    super('while');
+    this.else = _else;
+  }
+
+  resolve(scope: Scope): this {
+    this.completion && autocomplete(scope, this.location!, '§', {
+      extra: [{
+        kind: 'keyword',
+        label: 'else',
+        snippet: 'else {\n  \${1:statements...}\n}',
+      }],
+    });
+    return this;
+  }
+
+  toString(format?: StringFormat): string {
+    return `if ${format === 'js' ? '(' : ''}${this.condition.toString(format)}${format === 'js' ? ')' : ''} ${this.then.toString(format)}${this.else ? ` else ${this.else.toString(format)}` : ''}`;
+  }
+}
+
 export class CompletionStatement extends Statement<'completion'> {
   constructor() {
     super('completion');
@@ -113,6 +147,7 @@ export const EmptyStatement = new Statement('empty');
 export const CompletableStatements = [
   WhileStatement,
   VarStatement,
+  IfStatement,
 ] as const;
 
 export type AnyStatement =
@@ -121,5 +156,6 @@ export type AnyStatement =
   | Block
   | CompletionStatement
   | WhileStatement
+  | IfStatement
   | typeof EmptyStatement
   ;
