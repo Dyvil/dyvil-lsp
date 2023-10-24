@@ -49,7 +49,7 @@
       "patterns": [
         {
           "name": "keyword.control.dyvil",
-          "match": "\\b(?:class|var|init|func|int|boolean|string|void|true|false)\\b"
+          "match": "\\b(?:class|var|init|func|int|boolean|string|void|true|false|while)\\b"
         },
         {
           "name": "keyword.other.dyvil",

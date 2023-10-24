@@ -21,7 +21,10 @@ class Greeter {
    */
   func greet(greeting: string): string {
     println(greeting)
-    var newCount = this.count + 1
-    this.count = newCount
+
+    while this.count < 10 {
+      var newCount = this.count + 1
+      this.count = newCount
+    }
   }
 }

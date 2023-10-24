@@ -63,6 +63,22 @@ export class Block extends Statement<'block'> {
   }
 }
 
+export class WhileStatement extends Statement<'while'> {
+  constructor(
+    public condition: AnyExpression,
+    public body: Block,
+  ) {
+    super('while');
+  }
+
+  toString(format?: StringFormat): string {
+    if (format === 'js') {
+      return `while (${this.condition.toString(format)}) ${this.body.toString(format)}`;
+    }
+    return `while ${this.condition.toString(format)} ${this.body.toString(format)}`;
+  }
+}
+
 export class CompletionStatement extends Statement<'completion'> {
   constructor() {
     super('completion');
@@ -74,7 +90,12 @@ export class CompletionStatement extends Statement<'completion'> {
 
   resolve(scope: Scope): this {
     autocomplete(scope, this.location!, '§', {
-      extra: [{kind: 'keyword', label: 'var'}],
+      extra: [
+        {kind: 'keyword', label: 'var'},
+        {kind: 'keyword', label: 'while', snippet: `while (\${1:condition}) {
+  \${2:statements...}
+}`},
+      ],
     });
     return this;
   }
@@ -87,5 +108,6 @@ export type AnyStatement =
   | ExpressionStatement
   | Block
   | CompletionStatement
+  | WhileStatement
   | typeof EmptyStatement
   ;

@@ -68,12 +68,21 @@ statement returns [ast.AnyStatement s] @after { $s.location = makeRange($start, 
   |
   blockStatement {$s = $blockStatement.bs }
   |
+  whileStatement {$s = $whileStatement.ws}
+  |
   ';' { $s = ast.EmptyStatement }
 ;
 blockStatement returns [ast.Block bs]:
   '{' (statements+=statement)* '}' {
     $bs = new ast.Block($statements.map(s => s.s));
     $bs.location = makeRange($start, $stop);
+  }
+;
+
+whileStatement returns [ast.WhileStatement ws]:
+  'while' expression blockStatement {
+    $ws = new ast.WhileStatement($expression.e, $blockStatement.bs);
+    $ws.location = makeRange($start, $stop);
   }
 ;
 
