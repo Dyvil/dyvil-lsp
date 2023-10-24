@@ -315,6 +315,10 @@ export class Variable extends VariableLike<'variable'> {
     super('variable', name, type);
   }
 
+  documentation(): string | undefined {
+    return `\`var ${this.name}: ${this.type?.toString()}\`${this.doc ? '\n' + this.doc : ''}`;
+  }
+
   toString(format?: StringFormat): string {
     if (format === 'js') {
       return `let ${this.name} = ${this.value.toString(format)}`;

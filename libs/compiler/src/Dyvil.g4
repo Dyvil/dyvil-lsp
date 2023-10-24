@@ -46,10 +46,10 @@ parameter returns [ast.Parameter pn]:
   }
 ;
 variable returns [ast.Variable v]:
-  'var' ID (':' types+=type)? '=' expression {
-    $v = new ast.Variable($ID.text!, $types[0]?.tn, $expression.e);
-    $v.location = makeRange($ID);
-  }
+  'var' ID { $v = new ast.Variable($ID.text!, undefined, undefined!); }
+  (':' type { $v.type = $type.tn })?
+  '=' expression { $v.value = $expression.e; }
+  { $v.location = makeRange($ID); }
 ;
 
 type returns [ast.AnyType tn] @after { $tn.location = makeRange($start, $stop); }:
