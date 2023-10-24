@@ -13,6 +13,9 @@ class Statement<K extends string> extends Node<`statement:${K}`> {
 }
 
 export class VarStatement extends Statement<'variable'> {
+  static keyword = 'var';
+  static snippet = 'var \${1:name} = \${2:value}';
+
   constructor(
     public variable: Variable,
   ) {
@@ -64,6 +67,11 @@ export class Block extends Statement<'block'> {
 }
 
 export class WhileStatement extends Statement<'while'> {
+  static keyword = 'while';
+  static snippet = `while (\${1:condition}) {
+  \${2:statements...}
+}`;
+
   constructor(
     public condition: AnyExpression,
     public body: Block,
@@ -90,18 +98,22 @@ export class CompletionStatement extends Statement<'completion'> {
 
   resolve(scope: Scope): this {
     autocomplete(scope, this.location!, '§', {
-      extra: [
-        {kind: 'keyword', label: 'var'},
-        {kind: 'keyword', label: 'while', snippet: `while (\${1:condition}) {
-  \${2:statements...}
-}`},
-      ],
+      extra: CompletableStatements.map(statement => ({
+        kind: 'keyword',
+        label: statement.keyword,
+        snippet: statement.snippet,
+      })),
     });
     return this;
   }
 }
 
 export const EmptyStatement = new Statement('empty');
+
+export const CompletableStatements = [
+  WhileStatement,
+  VarStatement,
+] as const;
 
 export type AnyStatement =
   | VarStatement
