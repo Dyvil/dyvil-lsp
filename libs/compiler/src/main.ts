@@ -2,8 +2,10 @@ import {readFileSync} from 'fs';
 import {log, SimpleScope} from './ast';
 import {compilationUnit} from './compiler';
 
-const text = readFileSync('examples/Greeter.dyv', 'utf8');
-let file = compilationUnit(text);
+const path = process.argv[2];
+
+const text = readFileSync(path, 'utf8');
+let file = compilationUnit(text, path);
 file = file.resolve(new SimpleScope([]));
 for (let diagnostic of file.diagnostics) {
   log(diagnostic);
