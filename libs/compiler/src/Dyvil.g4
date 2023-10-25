@@ -11,11 +11,16 @@ file returns [ast.CompilationUnit cu]:
 ;
 
 class returns [ast.Class cn]:
-  DOC? 'class' ID '{' (fields+=field | constructors+=ctor | methods+=method)* '}' {
-    $cn = new ast.Class($ID.text!, $fields.map(f => f.fn), $constructors.map(c => c.cn), $methods.map(m => m.mn))
+  DOC? 'class' ID {
+    $cn = new ast.Class($ID.text!, [], [], [])
     $cn.location = makeRange($ID);
     $cn.doc = cleanDoc($DOC);
   }
+  '{' (
+  field { $cn.fields.push($field.fn) }
+  | ctor { $cn.constructors.push($ctor.cn) }
+  | method { $cn.methods.push($method.mn) }
+  )* '}'
 ;
 field returns [ast.Field fn]:
   DOC? 'var' ID {
