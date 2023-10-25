@@ -18,11 +18,14 @@ class returns [ast.Class cn]:
   }
 ;
 field returns [ast.Field fn]:
-  DOC? 'var' ID ':' type ('=' expr+=expression)? ';'? {
-    $fn = new ast.Field($ID.text!, $type.tn, $expr[0]?.e)
+  DOC? 'var' ID {
+    $fn = new ast.Field($ID.text!, undefined!, undefined);
     $fn.location = makeRange($ID);
     $fn.doc = cleanDoc($DOC);
   }
+  ':' type
+  ('=' expression { $fn.value = $expression.e })?
+  ';'?
 ;
 ctor returns [ast.Constructor cn]:
   DOC? init='init' '(' (parameters+=parameter ','?)* ')' blockStatement {
