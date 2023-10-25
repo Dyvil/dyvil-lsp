@@ -107,7 +107,7 @@ ifStatement returns [ast.IfStatement is]:
 ;
 
 expression returns [ast.AnyExpression e]:
-  object=expression '.' ID '(' (arguments+=expression)* ')' { $e = new ast.MethodCall($object.e, $ID.text!, $arguments.map(a => a.e)); $e.location = makeRange($ID); }
+  object=expression '.' ID '(' (arguments+=expression ','?)* ')' { $e = new ast.MethodCall($object.e, $ID.text!, $arguments.map(a => a.e)); $e.location = makeRange($ID); }
   |
   object=expression '.' completableID { $e = new ast.PropertyAccess($object.e, $completableID.text!); $e.location = makeRange($completableID.start!, $completableID.stop!); }
   |
@@ -115,7 +115,7 @@ expression returns [ast.AnyExpression e]:
   |<assoc=right>
   lhs=expression op='=' rhs=expression { $e = new ast.BinaryOperation($lhs.e, '=', $rhs.e); $e.location = makeRange($op); }
   |
-  ID '(' (arguments+=expression)* ')' { $e = new ast.FunctionCall($ID.text!, $arguments.map(a => a.e)); $e.location = makeRange($ID); }
+  ID '(' (arguments+=expression ','?)* ')' { $e = new ast.FunctionCall($ID.text!, $arguments.map(a => a.e)); $e.location = makeRange($ID); }
   |
   completableID { $e = new ast.VariableReference($completableID.text!); $e.location = makeRange($start, $stop); }
   |
