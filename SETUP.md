@@ -34,6 +34,8 @@ In existing repo, move the created folder one level up.
 $ pnpm install
 ```
 
+If IntelliJ does not recognize the project, close the project, delete .idea folder and re-open.
+
 ### Add Compiler
 
 ```sh
@@ -52,6 +54,8 @@ In root package.json scripts:
 ```
 
 In compiler project.json add antlr4ts target.
+
+Install `antlr4ts` as regular dependency and `antlr4ts-cli` as dev dependency.
 
 ### Add Nest
 
