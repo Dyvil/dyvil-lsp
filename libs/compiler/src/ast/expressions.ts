@@ -197,8 +197,8 @@ export class BinaryOperation extends Expression<'binary'> {
   getType(): AnyType {
     switch (this.operator) {
       case '+':
-        let lhsType = this.lhs.getType();
-        let rhsType = this.rhs.getType();
+        const lhsType = this.lhs.getType();
+        const rhsType = this.rhs.getType();
         if (lhsType.kind === 'type:primitive' && lhsType.name === 'string') {
           return lhsType;
         }

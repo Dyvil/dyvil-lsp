@@ -91,17 +91,17 @@ export class Class extends Declaration<'class'> implements Scope {
   }
 
   lookup<N extends Node<any>>(name: Name, kind: Ctor<N>, ...args: any[]): N | undefined {
-    for (let field of this.fields) {
+    for (const field of this.fields) {
       if (field.name === name && field instanceof kind) {
         return field as N;
       }
     }
-    for (let declaration of this.methods) {
+    for (const declaration of this.methods) {
       if (declaration.name === name && declaration instanceof kind && declaration.overloads(args[0])) {
         return declaration as N;
       }
     }
-    for (let ctor of this.constructors) {
+    for (const ctor of this.constructors) {
       if (ctor instanceof kind && ctor.overloads(args[0])) {
         return ctor as N;
       }
