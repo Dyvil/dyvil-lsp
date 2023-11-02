@@ -57,6 +57,13 @@ In compiler project.json add antlr4ts target.
 
 Install `antlr4ts` as regular dependency and `antlr4ts-cli` as dev dependency.
 
+Ensure tsconfig options are:
+
+```json
+  "noImplicitOverride": false,
+  "strictPropertyInitialization": false,
+```
+
 ### Add Nest
 
 From https://nx.dev/packages/nest#setting-up-nest
