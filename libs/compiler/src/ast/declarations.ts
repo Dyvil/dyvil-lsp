@@ -130,15 +130,40 @@ export class Class extends Declaration<'class'> implements Scope {
   }
 }
 
-export class Constructor extends Declaration<'constructor'> {
+export class MethodLike<K extends string> extends Declaration<K> {
   _thisClass?: Class;
   _thisParameter?: Parameter;
 
   constructor(
-    public parameters: Parameter[] = [],
+    kind: K,
+    name: string,
+    public parameters: Parameter[],
     public body: Block,
   ) {
-    super('constructor', 'init');
+    super(kind, name);
+  }
+
+  resolve(scope: Scope): this {
+    this._thisClass ||= scope.lookup(Class.enclosing, Class);
+    if (this._thisClass && !this._thisParameter) {
+      this._thisParameter = new Parameter('this', this._thisClass.asType());
+      this._thisParameter.location = this.location;
+    }
+    const newScope = new SimpleScope(this._thisParameter ? [this._thisParameter, ...this.parameters] : this.parameters, scope);
+    return super.resolve(newScope);
+  }
+
+  overloads(args: AnyType[]) {
+    return args.length === this.parameters.length && this.parameters.every((param, i) => isAssignable(param.type, args[i]));
+  }
+}
+
+export class Constructor extends MethodLike<'constructor'> {
+  constructor(
+    parameters: Parameter[] = [],
+    body: Block,
+  ) {
+    super('constructor', 'init', parameters, body);
   }
 
   toString(format?: StringFormat): string {
@@ -156,20 +181,6 @@ export class Constructor extends Declaration<'constructor'> {
 
   references(purpose?: 'rename' | 'definition'): Range[] {
     return purpose === 'rename' ? [] : super.references();
-  }
-
-  resolve(scope: Scope): this {
-    this._thisClass ||= scope.lookup(Class.enclosing, Class);
-    if (this._thisClass && !this._thisParameter) {
-      this._thisParameter = new Parameter('this', this._thisClass.asType());
-      this._thisParameter.location = this.location;
-    }
-    const newScope = new SimpleScope(this._thisParameter ? [this._thisParameter, ...this.parameters] : this.parameters, scope);
-    return super.resolve(newScope);
-  }
-
-  overloads(args: AnyType[]) {
-    return args.length === this.parameters.length && this.parameters.every((param, i) => isAssignable(param.type, args[i]));
   }
 }
 
@@ -207,17 +218,14 @@ export class Field extends Declaration<'field'> {
   }
 }
 
-export class Method extends Declaration<'method'> {
-  _thisClass?: Class;
-  _thisParameter?: Parameter;
-
+export class Method extends MethodLike<'method'> {
   constructor(
     name: string,
-    public parameters: Parameter[] = [],
+    parameters: Parameter[] = [],
     public returnType: AnyType,
-    public body: Block,
+    body: Block,
   ) {
-    super('method', name);
+    super('method', name, parameters, body);
   }
 
   get jsName() {
@@ -246,20 +254,6 @@ export class Method extends Declaration<'method'> {
 
   toString(format?: StringFormat): string {
     return `${format !== 'js' ? 'func ' + this.name : this.jsName}(${this.parameters.map(param => param.toString(format)).join(', ')})${format !== 'js' ? ': ' + this.returnType.toString(format) : ''} ${this.body.toString(format)}`;
-  }
-
-  resolve(scope: Scope): this {
-    this._thisClass ||= scope.lookup(Class.enclosing, Class);
-    if (this._thisClass && !this._thisParameter) {
-      this._thisParameter = new Parameter('this', this._thisClass.asType());
-      this._thisParameter.location = this.location;
-    }
-    const newScope = new SimpleScope(this._thisParameter ? [this._thisParameter, ...this.parameters] : this.parameters, scope);
-    return super.resolve(newScope);
-  }
-
-  overloads(args: AnyType[]) {
-    return args.length === this.parameters.length && this.parameters.every((param, i) => isAssignable(param.type, args[i]));
   }
 }
 
