@@ -95,7 +95,7 @@ export class FunctionCall extends Expression<'functionCall'> {
     if (!this._constructor) {
       const cls = scope.lookup(this.name, Class);
       if (cls) {
-        const ctor = cls.findConstructor(types);
+        const ctor = cls.lookup('init', Constructor, types);
         if (ctor) {
           this._constructor = ctor;
           ctor._references.push(this);

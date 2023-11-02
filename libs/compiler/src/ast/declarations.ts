@@ -79,10 +79,6 @@ export class Class extends Declaration<'class'> implements Scope {
     };
   }
 
-  findConstructor(types: AnyType[]): Constructor | undefined {
-    return this.constructors.find(ctor => ctor.parameters.length === types.length && ctor.parameters.every((param, i) => isAssignable(param.type, types[i])));
-  }
-
   toString(format?: StringFormat): string {
     return autoIndent`
     class ${this.name} {
@@ -103,6 +99,11 @@ export class Class extends Declaration<'class'> implements Scope {
     for (let declaration of this.methods) {
       if (declaration.name === name && declaration instanceof kind && declaration.overloads(args[0])) {
         return declaration as N;
+      }
+    }
+    for (let ctor of this.constructors) {
+      if (ctor instanceof kind && ctor.overloads(args[0])) {
+        return ctor as N;
       }
     }
   }
@@ -165,6 +166,10 @@ export class Constructor extends Declaration<'constructor'> {
     }
     const newScope = new SimpleScope(this._thisParameter ? [this._thisParameter, ...this.parameters] : this.parameters, scope);
     return super.resolve(newScope);
+  }
+
+  overloads(args: AnyType[]) {
+    return args.length === this.parameters.length && this.parameters.every((param, i) => isAssignable(param.type, args[i]));
   }
 }
 
