@@ -1,5 +1,5 @@
 import {Class, Constructor, Field, Method, Parameter, Variable} from './declarations';
-import {autocomplete, Range, report} from './lint';
+import {autocomplete, report} from './lint';
 import {Node, StringFormat} from './node';
 import {Scope} from './scope';
 import {AnyType, ErrorType, PrimitiveType} from './types';
