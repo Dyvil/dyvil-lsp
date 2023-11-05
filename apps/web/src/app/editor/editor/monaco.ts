@@ -1,10 +1,9 @@
 import {buildWorkerDefinition} from 'monaco-editor-workers';
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api.js';
-import {MonacoLanguageClient} from 'monaco-languageclient';
-import {StandaloneServices} from 'vscode/services';
+import {initServices, MonacoLanguageClient} from 'monaco-languageclient';
 import {CloseAction, ErrorAction, MessageTransports} from "vscode-languageclient";
 
-StandaloneServices.initialize({});
+initServices()
 
 buildWorkerDefinition('./assets/monaco-editor-workers/workers', document.baseURI, false);
 
