@@ -11,14 +11,16 @@ export class Node<K extends string> {
   ) {
   }
 
-  definition?(purpose?: 'rename' | 'definition'): Node<any> | undefined;
+  definition(purpose?: 'rename' | 'definition'): Node<any> | undefined {
+    return undefined;
+  }
 
   documentation(): string | undefined {
-    return this.definition?.()?.documentation();
+    return this.definition()?.documentation();
   }
 
   references(purpose?: 'rename' | 'definition'): Range[] {
-    return this.definition?.(purpose)?.references(purpose) || [];
+    return this.definition(purpose)?.references(purpose) || [];
   }
 
   resolve(scope: Scope): this {
