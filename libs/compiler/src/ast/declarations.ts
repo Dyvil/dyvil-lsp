@@ -1,5 +1,5 @@
 import {AnyExpression} from './expressions';
-import {CompletionItem, Diagnostic, Range, report} from './lint';
+import {autocomplete, CompletionItem, Diagnostic, Range, report} from './lint';
 import {autoIndent, Node, StringFormat} from './node';
 import {Ctor, Name, Scope, SimpleScope} from './scope';
 import {Block} from './statements';
@@ -56,6 +56,8 @@ export class Declaration<K extends string> extends Node<K> {
 
 export class Class extends Declaration<'class'> implements Scope {
   static enclosing = Symbol('enclosing class');
+
+  completion?: ClassCompletion;
 
   constructor(
     name: string,
@@ -130,6 +132,29 @@ export class Class extends Declaration<'class'> implements Scope {
   }
 }
 
+export class ClassCompletion extends Node<'class-completion'> {
+  constructor(
+    public name: string,
+  ) {
+    super('class-completion');
+  }
+
+  toString(format?: StringFormat): string {
+    return this.name;
+  }
+
+  resolve(scope: Scope): this {
+    autocomplete(scope, this.location!, this.name, {
+      extra: CompletableClassDeclarations.map(statement => ({
+        kind: 'keyword',
+        label: statement.keyword,
+        snippet: statement.snippet,
+      })),
+    })
+    return super.resolve(scope);
+  }
+}
+
 export class MethodLike<K extends string> extends Declaration<K> {
   _thisClass?: Class;
   _thisParameter?: Parameter;
@@ -159,6 +184,11 @@ export class MethodLike<K extends string> extends Declaration<K> {
 }
 
 export class Constructor extends MethodLike<'constructor'> {
+  static keyword = 'init';
+  static snippet = `init(\${1:parameters...}) {
+  \${2:statements...}
+}`;
+
   constructor(
     parameters: Parameter[] = [],
     body: Block,
@@ -185,6 +215,9 @@ export class Constructor extends MethodLike<'constructor'> {
 }
 
 export class Field extends Declaration<'field'> {
+  static keyword = 'var';
+  static snippet = 'var ${1:name}: ${2:type} = ${3:value}';
+
   constructor(
     name: string,
     public type: AnyType,
@@ -219,6 +252,11 @@ export class Field extends Declaration<'field'> {
 }
 
 export class Method extends MethodLike<'method'> {
+  static keyword = 'func';
+  static snippet = `func \${1:name}(\${2:parameters...}) {
+  \${3:statements...}
+}`;
+
   constructor(
     name: string,
     parameters: Parameter[] = [],
@@ -331,3 +369,9 @@ export class Variable extends VariableLike<'variable'> {
     return it;
   }
 }
+
+export const CompletableClassDeclarations = [
+  Method,
+  Constructor,
+  Field,
+] as const;

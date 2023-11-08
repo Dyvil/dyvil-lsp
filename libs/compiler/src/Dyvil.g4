@@ -20,6 +20,7 @@ class returns [ast.Class cn]:
   field { $cn.fields.push($field.fn) }
   | ctor { $cn.constructors.push($ctor.cn) }
   | method { $cn.methods.push($method.mn) }
+  | completionID { $cn.completion = new ast.ClassCompletion($completionID.text!); $cn.completion.location = makeRange($completionID.start!, $completionID.stop!); }
   )* '}'
 ;
 field returns [ast.Field fn]:
