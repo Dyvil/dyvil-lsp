@@ -122,16 +122,18 @@ export class IfStatement extends Statement<'while'> {
 }
 
 export class CompletionStatement extends Statement<'completion'> {
-  constructor() {
+  constructor(
+    public completion: string,
+  ) {
     super('completion');
   }
 
   toString(): string {
-    return '§';
+    return this.completion;
   }
 
   resolve(scope: Scope): this {
-    autocomplete(scope, this.location!, '§', {
+    autocomplete(scope, this.location!, this.completion, {
       extra: CompletableStatements.map(statement => ({
         kind: 'keyword',
         label: statement.keyword,

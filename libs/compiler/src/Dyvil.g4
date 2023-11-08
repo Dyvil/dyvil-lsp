@@ -70,7 +70,7 @@ primitiveType: 'int' | 'boolean' | 'string' | 'void';
 statement returns [ast.AnyStatement s] @after { $s.location = makeRange($start, $stop); }:
   variable { $s = new ast.VarStatement($variable.v) }
   |
-  COMPLETION_MARKER { $s = new ast.CompletionStatement() }
+  completionID { $s = new ast.CompletionStatement($completionID.text!) }
   |
   expression { $s = new ast.ExpressionStatement($expression.e) }
   |
@@ -125,11 +125,8 @@ expression returns [ast.AnyExpression e]:
 ;
 literal returns [ast.Literal l]: (NUMBER | STRING | 'true' | 'false') { $l = new ast.Literal($text); $l.location = makeRange($start); } ;
 
-completableID:
-  ID COMPLETION_MARKER?
-  |
-  COMPLETION_MARKER
-;
+completableID: ID COMPLETION_MARKER? | COMPLETION_MARKER;
+completionID: ID? COMPLETION_MARKER;
 
 WS: [ \t\r\n]+ -> skip;
 LC: '//' ~[\r\n]* -> skip;
