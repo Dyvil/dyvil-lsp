@@ -67,6 +67,42 @@ function eachChild(node: Node<any>, replacer: (n: Node<any>) => Node<any>) {
   }
 }
 
+/**
+ * Simple template tag for indenting multi-line strings.
+ * The first line of the first string must always be empty (i.e. there must be a line break after `).
+ * The second line of the first string determines the indentation level.
+ * Every template insertion will respect the indentation level of the current line.
+ * Example:
+ * ```js
+ * const fn = `func main() {
+ *   // ...
+ * }`
+ * const cls = autoIndent`
+ * class Foo {
+ *   ${fn}
+ * }`
+ * ```
+ * will set `cls` to
+ * ```
+ * class Foo {
+ *   func main() {
+ *     // ...
+ *   }
+ * }
+ * ```
+ *
+ * Without the `autoIndent` tag, the result would be
+ * ```
+ * class Foo {
+ *   func main() {
+ *   // ...
+ * }
+ * }
+ * ```
+ *
+ * @param strings
+ * @param values
+ */
 export function autoIndent(strings: TemplateStringsArray, ...values: any[]): string {
   if (!strings[0].startsWith('\n')) {
     throw new Error('must start with a newline');
