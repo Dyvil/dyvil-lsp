@@ -1,4 +1,4 @@
-import {Class, Constructor, Field, Method, Parameter, Variable} from './declarations';
+import {Class, Constructor, Field, Method, VariableLike} from './declarations';
 import {autocomplete, report} from './lint';
 import {Node, StringFormat} from './node';
 import {Scope} from './scope';
@@ -41,7 +41,7 @@ export class Literal extends Expression<'literal'> {
 }
 
 export class VariableReference extends Expression<'variable'> {
-  _variable?: Variable | Parameter;
+  _variable?: VariableLike<string>;
 
   constructor(
     public name: string,
@@ -62,7 +62,7 @@ export class VariableReference extends Expression<'variable'> {
       return this;
     }
     if (!this._variable) {
-      this._variable ||= scope.lookup(this.name, Variable) || scope.lookup(this.name, Parameter) || report(scope, this.location!, `variable ${this.name} not found`);
+      this._variable ||= scope.lookup(this.name, VariableLike) || report(scope, this.location!, `variable ${this.name} not found`);
       this._variable?._references.push(this);
     }
     return this;
