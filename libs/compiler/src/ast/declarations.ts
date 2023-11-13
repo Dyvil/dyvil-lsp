@@ -1,9 +1,9 @@
-import {AnyExpression} from './expressions';
+import {Expression} from './expressions';
 import {autocomplete, CompletionItem, Diagnostic, Range, report} from './lint';
 import {autoIndent, Node, StringFormat} from './node';
 import {Ctor, Name, Scope, SimpleScope} from './scope';
 import {Block} from './statements';
-import {AnyType, ClassType, isAssignable} from './types';
+import {Type, ClassType, isAssignable} from './types';
 
 export class CompilationUnit extends Node<'unit'> {
   static enclosing = Symbol('enclosing compilation unit');
@@ -178,7 +178,7 @@ export class MethodLike<K extends string> extends Declaration<K> {
     return super.resolve(newScope);
   }
 
-  overloads(args: AnyType[]) {
+  overloads(args: Type[]) {
     return args.length === this.parameters.length && this.parameters.every((param, i) => isAssignable(param.type, args[i]));
   }
 }
@@ -220,8 +220,8 @@ export class Field extends Declaration<'field'> {
 
   constructor(
     name: string,
-    public type: AnyType,
-    public value?: AnyExpression,
+    public type: Type,
+    public value?: Expression,
   ) {
     super('field', name);
   }
@@ -260,7 +260,7 @@ export class Method extends MethodLike<'method'> {
   constructor(
     name: string,
     parameters: Parameter[] = [],
-    public returnType: AnyType,
+    public returnType: Type,
     body: Block,
   ) {
     super('method', name, parameters, body);
@@ -299,7 +299,7 @@ export class VariableLike<K extends string> extends Declaration<K> {
   constructor(
     kind: K,
     name: string,
-    public type: AnyType | undefined,
+    public type: Type | undefined,
   ) {
     super(kind, name);
   }
@@ -318,11 +318,11 @@ export class VariableLike<K extends string> extends Declaration<K> {
 }
 
 export class Parameter extends VariableLike<'parameter'> {
-  type!: AnyType;
+  type!: Type;
 
   constructor(
     name: string,
-    type: AnyType,
+    type: Type,
   ) {
     super('parameter', name, type);
   }
@@ -346,8 +346,8 @@ export class Parameter extends VariableLike<'parameter'> {
 export class Variable extends VariableLike<'variable'> {
   constructor(
     name: string,
-    type: AnyType | undefined,
-    public value: AnyExpression,
+    type: Type | undefined,
+    public value: Expression,
   ) {
     super('variable', name, type);
   }

@@ -3,7 +3,7 @@ import {autocomplete, report} from './lint';
 import {Node} from './node';
 import {Ctor, Name, Scope} from './scope';
 
-export function isAssignable(to: AnyType, from: AnyType) {
+export function isAssignable(to: Type, from: Type) {
   switch (from.kind) {
     case 'type:primitive':
       return to.kind === 'type:primitive' && from.name === to.name;
@@ -14,7 +14,7 @@ export function isAssignable(to: AnyType, from: AnyType) {
   }
 }
 
-export class Type<K extends string> extends Node<`type:${K}`> implements Scope {
+export class BaseType<K extends string> extends Node<`type:${K}`> implements Scope {
   constructor(
     kind: K,
   ) {
@@ -30,7 +30,7 @@ export class Type<K extends string> extends Node<`type:${K}`> implements Scope {
   }
 }
 
-export class ClassType extends Type<'class'> {
+export class ClassType extends BaseType<'class'> {
   _class?: Class;
 
   constructor(
@@ -68,7 +68,7 @@ export const primitiveNames = ['int', 'boolean', 'string', 'void'] as const;
 export type PrimitiveName = typeof primitiveNames[number];
 export const primitiveCompletions = primitiveNames.map(name => ({kind: 'keyword', label: name}));
 
-export class PrimitiveType extends Type<'primitive'> {
+export class PrimitiveType extends BaseType<'primitive'> {
   constructor(
     public name: PrimitiveName,
   ) {
@@ -80,9 +80,9 @@ export class PrimitiveType extends Type<'primitive'> {
   }
 }
 
-export const ErrorType = new Type('error');
+export const ErrorType = new BaseType('error');
 
-export type AnyType =
+export type Type =
   | ClassType
   | PrimitiveType
   | typeof ErrorType

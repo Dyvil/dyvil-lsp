@@ -61,7 +61,7 @@ variable returns [ast.Variable v]:
   { $v.location = makeRange($ID); }
 ;
 
-type returns [ast.AnyType tn] @after { $tn.location = makeRange($start, $stop); }:
+type returns [ast.Type tn] @after { $tn.location = makeRange($start, $stop); }:
   primitiveType { $tn = new ast.PrimitiveType($primitiveType.text! as ast.PrimitiveName) }
   |
   completableID { $tn = new ast.ClassType($completableID.text!) }
@@ -107,7 +107,7 @@ ifStatement returns [ast.IfStatement is]:
   { $is.location = makeRange($start, $stop);}
 ;
 
-expression returns [ast.AnyExpression e]:
+expression returns [ast.Expression e]:
   object=expression '.' ID '(' (arguments+=expression ','?)* ')' { $e = new ast.MethodCall($object.e, $ID.text!, $arguments.map(a => a.e)); $e.location = makeRange($ID); }
   |
   object=expression '.' completableID { $e = new ast.PropertyAccess($object.e, $completableID.text!); $e.location = makeRange($completableID.start!, $completableID.stop!); }

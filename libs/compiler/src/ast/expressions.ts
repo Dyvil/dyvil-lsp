@@ -2,21 +2,21 @@ import {Class, Constructor, Field, Method, VariableLike} from './declarations';
 import {autocomplete, report} from './lint';
 import {Node, StringFormat} from './node';
 import {Scope} from './scope';
-import {AnyType, ErrorType, PrimitiveType} from './types';
+import {Type, ErrorType, PrimitiveType} from './types';
 
-abstract class Expression<K extends string> extends Node<`expr:${K}`> {
+abstract class BaseExpression<K extends string> extends Node<`expr:${K}`> {
   protected constructor(
     kind: K,
   ) {
     super(`expr:${kind}`);
   }
 
-  getType(): AnyType {
+  getType(): Type {
     throw new Error(`${this.constructor.name}.getType not implemented`);
   }
 }
 
-export class Literal extends Expression<'literal'> {
+export class Literal extends BaseExpression<'literal'> {
   constructor(
     public representation: string,
   ) {
@@ -27,7 +27,7 @@ export class Literal extends Expression<'literal'> {
     return this.representation;
   }
 
-  getType(): AnyType {
+  getType(): Type {
     switch (this.representation.charAt(0)) {
       case '"':
         return new PrimitiveType('string');
@@ -40,7 +40,7 @@ export class Literal extends Expression<'literal'> {
   }
 }
 
-export class VariableReference extends Expression<'variable'> {
+export class VariableReference extends BaseExpression<'variable'> {
   _variable?: VariableLike<string>;
 
   constructor(
@@ -68,17 +68,17 @@ export class VariableReference extends Expression<'variable'> {
     return this;
   }
 
-  getType(): AnyType {
+  getType(): Type {
     return this._variable?.type ?? ErrorType;
   }
 }
 
-export class FunctionCall extends Expression<'functionCall'> {
+export class FunctionCall extends BaseExpression<'functionCall'> {
   _constructor?: Constructor;
 
   constructor(
     public name: string,
-    public args: AnyExpression[],
+    public args: Expression[],
   ) {
     super('functionCall');
   }
@@ -112,16 +112,16 @@ export class FunctionCall extends Expression<'functionCall'> {
     return this;
   }
 
-  getType(): AnyType {
+  getType(): Type {
     return this._constructor?._thisClass?.asType() ?? ErrorType;
   }
 }
 
-export class PropertyAccess extends Expression<'propertyAccess'> {
+export class PropertyAccess extends BaseExpression<'propertyAccess'> {
   _field?: Field;
 
   constructor(
-    public object: AnyExpression,
+    public object: Expression,
     public property: string,
   ) {
     super('propertyAccess');
@@ -149,18 +149,18 @@ export class PropertyAccess extends Expression<'propertyAccess'> {
     return this;
   }
 
-  getType(): AnyType {
+  getType(): Type {
     return this._field?.type || ErrorType;
   }
 }
 
-export class MethodCall extends Expression<'methodCall'> {
+export class MethodCall extends BaseExpression<'methodCall'> {
   _method?: Method;
 
   constructor(
-    public object: AnyExpression,
+    public object: Expression,
     public method: string,
-    public args: AnyExpression[],
+    public args: Expression[],
   ) {
     super('methodCall');
   }
@@ -187,11 +187,11 @@ export class MethodCall extends Expression<'methodCall'> {
   }
 }
 
-export class BinaryOperation extends Expression<'binary'> {
+export class BinaryOperation extends BaseExpression<'binary'> {
   constructor(
-    public lhs: AnyExpression,
+    public lhs: Expression,
     public operator: string,
-    public rhs: AnyExpression,
+    public rhs: Expression,
   ) {
     super('binary');
   }
@@ -200,7 +200,7 @@ export class BinaryOperation extends Expression<'binary'> {
     return `${this.lhs.toString(format)} ${this.operator} ${this.rhs.toString(format)}`;
   }
 
-  getType(): AnyType {
+  getType(): Type {
     switch (this.operator) {
       case '+':
         const lhsType = this.lhs.getType();
@@ -238,9 +238,9 @@ export class BinaryOperation extends Expression<'binary'> {
   }
 }
 
-export class ParenthesizedExpression extends Expression<'parenthesized'> {
+export class ParenthesizedExpression extends BaseExpression<'parenthesized'> {
   constructor(
-    public expression: AnyExpression,
+    public expression: Expression,
   ) {
     super('parenthesized');
   }
@@ -249,12 +249,12 @@ export class ParenthesizedExpression extends Expression<'parenthesized'> {
     return `(${this.expression.toString(format)})`;
   }
 
-  getType(): AnyType {
+  getType(): Type {
     return this.expression.getType();
   }
 }
 
-export type AnyExpression =
+export type Expression =
   | Literal
   | VariableReference
   | FunctionCall
