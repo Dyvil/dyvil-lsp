@@ -61,8 +61,10 @@ export class VariableReference extends Expression<'variable'> {
     if (autocomplete(scope, this.location!, this.name)) {
       return this;
     }
-    this._variable ||= scope.lookup(this.name, Variable) || scope.lookup(this.name, Parameter) || report(scope, this.location!, `variable ${this.name} not found`);
-    this._variable?._references.push(this);
+    if (!this._variable) {
+      this._variable ||= scope.lookup(this.name, Variable) || scope.lookup(this.name, Parameter) || report(scope, this.location!, `variable ${this.name} not found`);
+      this._variable?._references.push(this);
+    }
     return this;
   }
 
@@ -91,10 +93,10 @@ export class FunctionCall extends Expression<'functionCall'> {
 
   resolve(scope: Scope): this {
     this.args = this.args.map(arg => arg.resolve(scope));
-    const types = this.args.map(arg => arg.getType());
     if (!this._constructor) {
       const cls = scope.lookup(this.name, Class);
       if (cls) {
+        const types = this.args.map(arg => arg.getType());
         const ctor = cls.lookup('init', Constructor, types);
         if (ctor) {
           this._constructor = ctor;
@@ -140,8 +142,10 @@ export class PropertyAccess extends Expression<'propertyAccess'> {
       return this;
     }
 
-    this._field ||= objectType.lookup(this.property, Field) || report(scope, this.location!, `field ${this.property} not found on ${objectType}`);
-    this._field?._references.push(this);
+    if (!this._field) {
+      this._field ||= objectType.lookup(this.property, Field) || report(scope, this.location!, `field ${this.property} not found on ${objectType}`);
+      this._field?._references.push(this);
+    }
     return this;
   }
 
@@ -173,10 +177,12 @@ export class MethodCall extends Expression<'methodCall'> {
   resolve(scope: Scope): this {
     this.object = this.object.resolve(scope);
     this.args = this.args.map(arg => arg.resolve(scope));
-    const objectType = this.object.getType();
-    const argTypes = this.args.map(a => a.getType());
-    this._method ||= objectType.lookup(this.method, Method, argTypes) || report(scope, this.location!, `method ${this.method} not found on ${objectType}`);
-    this._method?._references.push(this);
+    if (!this._method) {
+      const objectType = this.object.getType();
+      const argTypes = this.args.map(a => a.getType());
+      this._method ||= objectType.lookup(this.method, Method, argTypes) || report(scope, this.location!, `method ${this.method} not found on ${objectType}`);
+      this._method?._references.push(this);
+    }
     return this;
   }
 }
