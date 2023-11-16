@@ -2,7 +2,7 @@ import {readFileSync} from 'fs';
 import {log, SimpleScope} from './ast';
 import {compilationUnit} from './compiler';
 
-const path = process.argv[2];
+const path = process.argv[2] || 'examples/Greeter.dyv';
 
 const text = readFileSync(path, 'utf8');
 let file = compilationUnit(text, path);
