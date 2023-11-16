@@ -62,6 +62,11 @@ export function log(diagnostic: Diagnostic): void {
       console.info(`${path}:${line}:${column}: note: ${message}`);
       break;
   }
+  if (diagnostic.expected) {
+    for (let completionItem of diagnostic.expected) {
+      console.log(`- [${completionItem.kind}] ${completionItem.label} ${completionItem.signature || ''} - ${completionItem.description || ''}`);
+    }
+  }
 }
 
 export function report(scope: Scope, location: Range, message: string, severity: Severity = 'error', expected?: CompletionItem[]): undefined {
