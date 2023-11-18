@@ -67,6 +67,25 @@ function eachChild(node: Node<any>, replacer: (n: Node<any>) => Node<any>) {
   }
 }
 
+export function* recurse(node: Node<any>): Generator<Node<any>> {
+  yield node;
+  for (const [key, value] of Object.entries(node)) {
+    if (key === 'location' || key === 'kind' || key.startsWith('_') || !value) {
+      continue;
+    }
+    if (Array.isArray(value)) {
+      for (let i = 0; i < value.length; i++) {
+        const item = value[i];
+        if (item instanceof Node) {
+          yield* recurse(value[i]);
+        }
+      }
+    } else if (value instanceof Node) {
+      yield* recurse(value);
+    }
+  }
+}
+
 /**
  * Simple template tag for indenting multi-line strings.
  * The first line of the first string must always be empty (i.e. there must be a line break after `).
