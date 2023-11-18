@@ -7,8 +7,8 @@ import {DocumentService} from '../document.service';
 
 export function convertRange(location: Range) {
   return {
-    start: {line: location.start.line - 1, character: location.start.column},
-    end: {line: location.end.line - 1, character: location.end.column},
+    start: {line: location.start.line - 1, character: location.start.column - 1},
+    end: {line: location.end.line - 1, character: location.end.column - 1},
   };
 }
 

@@ -5,8 +5,8 @@ import {DyvilParser} from './parser/DyvilParser';
 
 export function makeRange(start: Token, stop?: Token) {
   return new Range(
-    new Position(start.line, start.charPositionInLine),
-    stop ? new Position(stop.line, stop.charPositionInLine + (stop.text?.length || 0)) : new Position(start.line, start.charPositionInLine + (start.text?.length || 0))
+    new Position(start.line, start.charPositionInLine + 1),
+    stop ? new Position(stop.line, stop.charPositionInLine + (stop.text?.length || 0) + 1) : new Position(start.line, start.charPositionInLine + (start.text?.length || 0) + 1)
   );
 }
 
