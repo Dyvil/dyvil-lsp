@@ -21,7 +21,6 @@ export class ConnectionService {
       this.hasConfigurationCapability = !!capabilities.workspace?.configuration;
       this.hasWorkspaceFolderCapability = !!capabilities.workspace?.workspaceFolders;
       this.hasDiagnosticRelatedInformationCapability = !!capabilities.textDocument?.publishDiagnostics?.relatedInformation;
-      console.log(capabilities.workspace?.semanticTokens);
 
       const result: InitializeResult = {
         capabilities: {

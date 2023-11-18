@@ -21,7 +21,6 @@ export class SemanticTokenService {
   }
 
   private provideSemanticTokens(params: SemanticTokensParams): SemanticTokens {
-    console.log(params);
 
     const uri = params.textDocument.uri;
     const document = this.documentService.documents.get(uri);
@@ -59,7 +58,6 @@ export class SemanticTokenService {
       }
     }
 
-    console.log(dataCollector.data);
     return {data: dataCollector.data};
   }
 }
