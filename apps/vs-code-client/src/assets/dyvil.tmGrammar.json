@@ -109,10 +109,6 @@
           "match": "\\b[A-Z][A-Za-z0-9_]*\\b"
         },
         {
-          "name": "entity.name.function.dyvil",
-          "match": "\\b([a-z][A-Za-z0-9_]*)(?=\\s*\\()"
-        },
-        {
           "name": "variable.name.dyvil",
           "match": "\\b[a-z][A-Za-z0-9_]*\\b"
         }

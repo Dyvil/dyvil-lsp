@@ -36,6 +36,11 @@
       }
     ]
   },
+  "configurationDefaults": {
+    "[dyvil]": {
+      "editor.semanticHighlighting.enabled": true
+    }
+  },
   "activationEvents": [
     "onLanguage:dyvil"
   ]
