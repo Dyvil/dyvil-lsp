@@ -6,7 +6,7 @@ import {
   SemanticTokenTypes,
   uinteger
 } from "vscode-languageserver-protocol";
-import {compilationUnit, FunctionCall, Range, recurse, SimpleScope} from "@stc/compiler";
+import {compilationUnit, FunctionCall, Parameter, Range, recurse, SimpleScope, VariableReference} from "@stc/compiler";
 import {DocumentService} from "../document.service";
 
 export const TOKEN_TYPES = Object.values(SemanticTokenTypes);
@@ -54,6 +54,13 @@ export class SemanticTokenService {
           break;
         case 'variable':
           dataCollector.addNode(node.location!, SemanticTokenTypes.variable);
+          break;
+        case 'expr:variable':
+          if (node instanceof VariableReference && node._variable instanceof Parameter) {
+            dataCollector.addNode(node.location!, SemanticTokenTypes.parameter);
+          } else {
+            dataCollector.addNode(node.location!, SemanticTokenTypes.variable);
+          }
           break;
       }
     }
