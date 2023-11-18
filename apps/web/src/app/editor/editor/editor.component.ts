@@ -43,6 +43,7 @@ export class EditorComponent implements AfterViewInit, OnChanges, OnDestroy {
         enabled: true,
       },
       automaticLayout: true,
+      "semanticHighlighting.enabled": true,
     });
     this.editor.onDidChangeModelContent(() => {
       this.editor && this.codeChanged.next(this.editor.getValue());
