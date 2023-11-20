@@ -1,4 +1,5 @@
 {
+  "$schema": "https://raw.githubusercontent.com/wraith13/vscode-schemas/master/en/latest/schemas/vscode-extensions.json",
   "name": "dyvil-vscode",
   "publisher": "dyvil",
   "author": {
