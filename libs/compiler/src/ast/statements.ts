@@ -1,6 +1,6 @@
 import {Variable} from './declarations';
 import {Expression} from './expressions';
-import {autocomplete} from './lint';
+import {autocomplete, CompletionItem} from './lint';
 import {autoIndent, Node, StringFormat} from './node';
 import {Scope, SimpleScope} from './scope';
 
@@ -13,8 +13,11 @@ class Statement<K extends string> extends Node<`statement:${K}`> {
 }
 
 export class VarStatement extends Statement<'variable'> {
-  static keyword = 'var';
-  static snippet = 'var \${1:name} = \${2:value}';
+  static completion: CompletionItem = {
+    kind: 'keyword',
+    label: 'var',
+    snippet: 'var \${1:name} = \${2:value}',
+  };
 
   constructor(
     public variable: Variable,
@@ -67,10 +70,11 @@ export class Block extends Statement<'block'> {
 }
 
 export class WhileStatement extends Statement<'while'> {
-  static keyword = 'while';
-  static snippet = `while (\${1:condition}) {
-  \${2:statements...}
-}`;
+  static completion: CompletionItem = {
+    kind: 'keyword',
+    label: 'while',
+    snippet: 'while (\${1:condition}) {\n  \${2:statements...}\n}',
+  }
 
   constructor(
     public condition: Expression,
@@ -88,10 +92,11 @@ export class WhileStatement extends Statement<'while'> {
 }
 
 export class IfStatement extends Statement<'while'> {
-  static keyword = 'if';
-  static snippet = `if (\${1:condition}) {
-  \${2:statements...}
-}`;
+  static completion: CompletionItem = {
+    kind: 'keyword',
+    label: 'if',
+    snippet: 'if (\${1:condition}) {\n  \${2:statements...}\n}',
+  }
 
   else?: Block | IfStatement;
   completion?: boolean;
@@ -122,6 +127,12 @@ export class IfStatement extends Statement<'while'> {
 }
 
 export class CompletionStatement extends Statement<'completion'> {
+  static completions = [
+    WhileStatement,
+    VarStatement,
+    IfStatement,
+  ].map(c => c.completion);
+
   constructor(
     public completion: string,
   ) {
@@ -134,23 +145,13 @@ export class CompletionStatement extends Statement<'completion'> {
 
   resolve(scope: Scope): this {
     autocomplete(scope, this.location!, this.completion, {
-      extra: CompletableStatements.map(statement => ({
-        kind: 'keyword',
-        label: statement.keyword,
-        snippet: statement.snippet,
-      })),
+      extra: CompletionStatement.completions,
     });
     return this;
   }
 }
 
 export const EmptyStatement = new Statement('empty');
-
-export const CompletableStatements = [
-  WhileStatement,
-  VarStatement,
-  IfStatement,
-] as const;
 
 export type AnyStatement =
   | VarStatement
