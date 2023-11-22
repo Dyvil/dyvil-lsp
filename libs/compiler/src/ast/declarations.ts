@@ -255,7 +255,7 @@ export class Method extends MethodLike<'method'> {
   asCompletion(): CompletionItem {
     return {
       label: this.name,
-      kind: 'field',
+      kind: 'method',
       signature: `(${this.parameters.map(param => param.type.toString()).join(', ')})${this.returnType ? ': ' + this.returnType.toString() : ''}`,
       snippet: `${this.name}(${this.parameters.map((p, i) => `$\{${i}:${p.name}}`).join(', ')})`,
     };
