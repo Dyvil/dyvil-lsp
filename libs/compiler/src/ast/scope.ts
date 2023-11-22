@@ -1,10 +1,10 @@
 import {Node} from './node';
 
 export type Name = string | symbol;
-export type Ctor<T> = { new(...args: any[]): T };
+export type Concept<T> = { new(...args: any[]): T };
 
 export interface Scope {
-  lookup<N extends Node<any>>(name: Name, kind: Ctor<N>, ...args: any[]): N | undefined;
+  lookup<N extends Node<any>>(name: Name, concept: Concept<N>, ...args: any[]): N | undefined;
 
   list(): Node<any>[];
 }
@@ -16,7 +16,7 @@ export class SimpleScope implements Scope {
   ) {
   }
 
-  lookup<N extends Node<any>>(name: Name, kind: Ctor<N>): N | undefined {
+  lookup<N extends Node<any>>(name: Name, kind: Concept<N>): N | undefined {
     const decl = Array.isArray(this.declarations) ? this.declarations.find(d => d.name === name) : this.declarations[name];
     return decl && decl instanceof kind ? decl : this.parent?.lookup(name, kind);
   }

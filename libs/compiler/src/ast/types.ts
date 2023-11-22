@@ -1,7 +1,7 @@
 import {Class} from './declarations';
 import {autocomplete, report} from './lint';
 import {Node} from './node';
-import {Ctor, Name, Scope} from './scope';
+import {Concept, Name, Scope} from './scope';
 
 export function isAssignable(to: Type, from: Type) {
   switch (from.kind) {
@@ -21,7 +21,7 @@ export class BaseType<K extends string> extends Node<`type:${K}`> implements Sco
     super(`type:${kind}`);
   }
 
-  lookup<N extends Node<any>>(name: Name, kind: Ctor<N>, ...args: any[]): N | undefined {
+  lookup<N extends Node<any>>(name: Name, concept: Concept<N>, ...args: any[]): N | undefined {
     return;
   }
 
@@ -53,8 +53,8 @@ export class ClassType extends BaseType<'class'> {
     return this;
   }
 
-  lookup<N extends Node<any>>(name: Name, kind: Ctor<N>, ...args: any[]): N | undefined {
-    return this._class?.lookup(name, kind, ...args);
+  lookup<N extends Node<any>>(name: Name, concept: Concept<N>, ...args: any[]): N | undefined {
+    return this._class?.lookup(name, concept, ...args);
   }
 
   list(): Node<any>[] {

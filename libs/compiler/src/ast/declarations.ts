@@ -1,7 +1,7 @@
 import {Expression} from './expressions';
 import {autocomplete, CompletionItem, Diagnostic, Range, report} from './lint';
 import {autoIndent, Node, StringFormat} from './node';
-import {Ctor, Name, Scope, SimpleScope} from './scope';
+import {Concept, Name, Scope, SimpleScope} from './scope';
 import {Block} from './statements';
 import {Type, ClassType, isAssignable} from './types';
 
@@ -92,19 +92,19 @@ export class Class extends Declaration<'class'> implements Scope {
     }`;
   }
 
-  lookup<N extends Node<any>>(name: Name, kind: Ctor<N>, ...args: any[]): N | undefined {
+  lookup<N extends Node<any>>(name: Name, concept: Concept<N>, ...args: any[]): N | undefined {
     for (const field of this.fields) {
-      if (field.name === name && field instanceof kind) {
+      if (field.name === name && field instanceof concept) {
         return field as N;
       }
     }
     for (const declaration of this.methods) {
-      if (declaration.name === name && declaration instanceof kind && declaration.overloads(args[0])) {
+      if (declaration.name === name && declaration instanceof concept && declaration.overloads(args[0])) {
         return declaration as N;
       }
     }
     for (const ctor of this.constructors) {
-      if (ctor instanceof kind && ctor.overloads(args[0])) {
+      if (ctor instanceof concept && ctor.overloads(args[0])) {
         return ctor as N;
       }
     }
