@@ -1,7 +1,6 @@
-import {Node} from './node';
+import {Concept, Node} from './node';
 
 export type Name = string | symbol;
-export type Concept<T> = { new(...args: any[]): T };
 
 export interface Scope {
   lookup<N extends Node<any>>(name: Name, concept: Concept<N>, ...args: any[]): N | undefined;
@@ -16,9 +15,12 @@ export class SimpleScope implements Scope {
   ) {
   }
 
-  lookup<N extends Node<any>>(name: Name, kind: Concept<N>): N | undefined {
-    const decl = Array.isArray(this.declarations) ? this.declarations.find(d => d.name === name) : this.declarations[name];
-    return decl && decl instanceof kind ? decl : this.parent?.lookup(name, kind);
+  lookup<N extends Node<any>>(name: Name, concept: Concept<N>): N | undefined {
+    const decl = Array.isArray(this.declarations)
+      ? this.declarations.find(d => d.name === name && d instanceof concept) as N | undefined
+      : this.declarations[name] instanceof concept
+        ? this.declarations[name] as N : undefined;
+    return decl ?? this.parent?.lookup(name, concept);
   }
 
   list(): Node<any>[] {

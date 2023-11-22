@@ -3,6 +3,31 @@ import {Scope} from './scope';
 
 export type StringFormat = 'plain' | 'js';
 
+export type Concept<T> = { new(...args: any[]): T };
+
+/**
+ * Checks whether the first concept is a sub-concept of the second concept.
+ * Roughly equivalent to `new sub() instanceof sup`.
+ * @see https://stackoverflow.com/a/18939541/4138801
+ * @example
+ * class A {}
+ * class B extends A {}
+ * class C extends B {}
+ *
+ * isSubConcept(A, A) // true
+ * isSubConcept(B, A) // true
+ * isSubConcept(C, A) // true
+ * isSubConcept(A, B) // false
+ * isSubConcept(B, C) // false
+ * isSubConcept(C, B) // false
+ *
+ * @param sub the sub-concept
+ * @param sup the super-concept
+ */
+export function isSubConcept(sub: Concept<any>, sup: Concept<any>): boolean {
+  return sub === sup || sub.prototype instanceof sup;
+}
+
 export class Node<K extends string> {
   location?: Range;
 

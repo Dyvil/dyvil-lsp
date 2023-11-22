@@ -1,7 +1,7 @@
 import {Expression} from './expressions';
 import {autocomplete, CompletionItem, Diagnostic, Range, report} from './lint';
-import {autoIndent, Node, StringFormat} from './node';
-import {Concept, Name, Scope, SimpleScope} from './scope';
+import {autoIndent, Concept, Node, StringFormat} from './node';
+import {Name, Scope, SimpleScope} from './scope';
 import {Block} from './statements';
 import {Type, ClassType, isAssignable} from './types';
 
