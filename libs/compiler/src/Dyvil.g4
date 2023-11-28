@@ -92,27 +92,26 @@ statement returns [ast.AnyStatement s] @after { $s.location = makeRange($start, 
   ';' { $s = ast.EmptyStatement }
 ;
 blockStatement returns [ast.Block bs]:
-  '{' (statements+=statement)* '}' {
-    $bs = new ast.Block($statements.map(s => s.s));
-    $bs.location = makeRange($start, $stop);
-  }
+  '{' { $bs = new ast.Block(); }
+  (statement { $bs.statements.push($statement.s); })*
+  '}' { $bs.location = makeRange($start, $stop); }
 ;
 
 whileStatement returns [ast.WhileStatement ws]:
-  'while' expression blockStatement {
-    $ws = new ast.WhileStatement($expression.e, $blockStatement.bs);
-    $ws.location = makeRange($start, $stop);
-  }
+  WHILE='while' { $ws = new ast.WhileStatement(); $ws.location = makeRange($WHILE); }
+  expression { $ws.condition = $expression.e; }
+  blockStatement { $ws.body = $blockStatement.bs; }
 ;
 
 ifStatement returns [ast.IfStatement is]:
-  'if' expression thenBlock=blockStatement { $is = new ast.IfStatement($expression.e, $thenBlock.bs); }
+  IF='if' { $is = new ast.IfStatement(); $is.location = makeRange($IF); }
+  expression { $is.condition = $expression.e; }
+  thenBlock=blockStatement { $is.then = $thenBlock.bs; }
   (
     'else' elseBlock=blockStatement { $is.else = $elseBlock.bs; }
     | 'else' elseIfBlock=ifStatement { $is.else = $elseIfBlock.is; }
     | completion=COMPLETION_MARKER { $is.completion = true; }
   )?
-  { $is.location = makeRange($start, $stop);}
 ;
 
 expression returns [ast.Expression e]:

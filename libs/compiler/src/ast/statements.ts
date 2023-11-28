@@ -1,5 +1,5 @@
 import {Variable} from './declarations';
-import {Expression} from './expressions';
+import {ErrorExpression, Expression} from './expressions';
 import {autocomplete, CompletionItem} from '../lint';
 import {autoIndent, Node, StringFormat} from './node';
 import {Scope, SimpleScope} from '../scope';
@@ -77,8 +77,8 @@ export class WhileStatement extends Statement<'while'> {
   }
 
   constructor(
-    public condition: Expression,
-    public body: Block,
+    public condition: Expression = ErrorExpression,
+    public body: Block = new Block(),
   ) {
     super('while');
   }
@@ -102,8 +102,8 @@ export class IfStatement extends Statement<'while'> {
   completion?: boolean;
 
   constructor(
-    public condition: Expression,
-    public then: Block,
+    public condition: Expression = ErrorExpression,
+    public then: Block = new Block(),
     _else?: Block | IfStatement,
   ) {
     super('while');
