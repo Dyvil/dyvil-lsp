@@ -3,7 +3,6 @@ export default {
   displayName: 'web',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
-  globals: {},
   coverageDirectory: '../../coverage/apps/web',
   transform: {
     '^.+\\.(ts|mjs|js|html)$': [
