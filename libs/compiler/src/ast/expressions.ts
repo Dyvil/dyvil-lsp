@@ -121,14 +121,14 @@ export class PropertyAccess extends BaseExpression<'propertyAccess'> {
   _field?: Field;
 
   constructor(
-    public object: Expression,
+    public receiver: Expression,
     public property: string,
   ) {
     super('propertyAccess');
   }
 
   toString(format?: StringFormat): string {
-    return `${this.object.toString(format)}.${this.property}`;
+    return `${this.receiver.toString(format)}.${this.property}`;
   }
 
   definition(): Node<any> | undefined {
@@ -136,8 +136,8 @@ export class PropertyAccess extends BaseExpression<'propertyAccess'> {
   }
 
   resolve(scope: Scope): this {
-    this.object = this.object.resolve(scope);
-    const objectType = this.object.getType();
+    this.receiver = this.receiver.resolve(scope);
+    const objectType = this.receiver.getType();
     if (autocomplete(scope, this.location!, this.property, {lookup: objectType})) {
       return this;
     }
@@ -158,7 +158,7 @@ export class MethodCall extends BaseExpression<'methodCall'> {
   _method?: Method;
 
   constructor(
-    public object: Expression,
+    public receiver: Expression,
     public method: string,
     public args: Expression[],
   ) {
@@ -171,14 +171,14 @@ export class MethodCall extends BaseExpression<'methodCall'> {
 
   toString(format?: StringFormat): string {
     const name = this._method && format === 'js' ? this._method.jsName : this.method;
-    return `${this.object.toString(format)}.${name}(${this.args.map(arg => arg.toString(format)).join(', ')})`;
+    return `${this.receiver.toString(format)}.${name}(${this.args.map(arg => arg.toString(format)).join(', ')})`;
   }
 
   resolve(scope: Scope): this {
-    this.object = this.object.resolve(scope);
+    this.receiver = this.receiver.resolve(scope);
     this.args = this.args.map(arg => arg.resolve(scope));
     if (!this._method) {
-      const objectType = this.object.getType();
+      const objectType = this.receiver.getType();
       const argTypes = this.args.map(a => a.getType());
       this._method ||= objectType.lookup(this.method, Method, argTypes) || report(scope, this.location!, `method ${this.method} not found on ${objectType}`);
       this._method?._references.push(this);

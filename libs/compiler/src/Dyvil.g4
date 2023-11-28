@@ -116,9 +116,9 @@ ifStatement returns [ast.IfStatement is]:
 ;
 
 expression returns [ast.Expression e]:
-  object=expression '.' ID '(' (arguments+=expression ','?)* ')' { $e = new ast.MethodCall($object.e, $ID.text!, $arguments.map(a => a.e)); $e.location = makeRange($ID); }
+  receiver=expression '.' ID '(' (arguments+=expression ','?)* ')' { $e = new ast.MethodCall($receiver.e, $ID.text!, $arguments.map(a => a.e)); $e.location = makeRange($ID); }
   |
-  object=expression '.' completableID { $e = new ast.PropertyAccess($object.e, $completableID.text!); $e.location = makeRange($completableID.start!, $completableID.stop!); }
+  receiver=expression '.' completableID { $e = new ast.PropertyAccess($receiver.e, $completableID.text!); $e.location = makeRange($completableID.start!, $completableID.stop!); }
   |
   lhs=expression OPERATOR rhs=expression { $e = new ast.BinaryOperation($lhs.e, $OPERATOR.text!, $rhs.e); $e.location = makeRange($OPERATOR); }
   |<assoc=right>
