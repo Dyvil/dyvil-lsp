@@ -121,23 +121,32 @@ ifStatement returns [ast.IfStatement is]:
 ;
 
 expression returns [ast.Expression e]:
-  receiver=expression '.' ID '(' (arguments+=expression ','?)* ')' { $e = new ast.MethodCall($receiver.e, $ID.text!, $arguments.map(a => a.e)); $e.location = makeRange($ID); }
+  receiver=expression '.' ID '(' { $e = new ast.MethodCall($receiver.e, $ID.text); $e.location = makeRange($ID); }
+    (expressionList { ($e as ast.MethodCall).args = $expressionList.es; })?
+    ')'
   |
-  receiver=expression '.' completableID { $e = new ast.PropertyAccess($receiver.e, $completableID.text!); $e.location = makeRange($completableID.start!, $completableID.stop!); }
+  receiver=expression '.' completableID { $e = new ast.PropertyAccess($receiver.e, $completableID.text); $e.location = makeRange($completableID.start!, $completableID.stop!); }
   |
-  lhs=expression OPERATOR rhs=expression { $e = new ast.BinaryOperation($lhs.e, $OPERATOR.text!, $rhs.e); $e.location = makeRange($OPERATOR); }
+  lhs=expression OPERATOR rhs=expression { $e = new ast.BinaryOperation($lhs.e, $OPERATOR.text, $rhs.e); $e.location = makeRange($OPERATOR); }
   |<assoc=right>
   lhs=expression op='=' rhs=expression { $e = new ast.BinaryOperation($lhs.e, '=', $rhs.e); $e.location = makeRange($op); }
   |
-  ID '(' (arguments+=expression ','?)* ')' { $e = new ast.FunctionCall($ID.text!, $arguments.map(a => a.e)); $e.location = makeRange($ID); }
+  ID '(' { $e = new ast.FunctionCall($ID.text); $e.location = makeRange($ID); }
+    (expressionList { ($e as ast.FunctionCall).args = $expressionList.es; })?
+    ')'
   |
-  completableID { $e = new ast.VariableReference($completableID.text!); $e.location = makeRange($start, $stop); }
+  completableID { $e = new ast.VariableReference($completableID.text); $e.location = makeRange($start, $stop); }
   |
   '(' expression ')' { $e = new ast.ParenthesizedExpression($expression.e); $e.location = makeRange($start, $stop); }
   |
   literal { $e = $literal.l }
 ;
 literal returns [ast.Literal l]: (NUMBER | STRING | 'true' | 'false') { $l = new ast.Literal($text); $l.location = makeRange($start); } ;
+expressionList returns [ast.Expression[] es] @init { $es = []; }:
+  expression { $es.push($expression.e); }
+  (',' expression { $es.push($expression.e); })*
+  ','?
+;
 
 completableID: ID COMPLETION_MARKER? | COMPLETION_MARKER;
 completionID: ID? COMPLETION_MARKER;
