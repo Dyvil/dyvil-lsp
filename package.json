@@ -7,7 +7,7 @@
     "postinstall": "monaco-treemending",
     "serve:web": "nx serve web",
     "serve:compiler-service": "nx serve compiler-service",
-    "compiler:main": "ts-node libs/compiler/src/main.ts",
+    "compiler:main": "nx main compiler",
     "compiler:antlr": "nx antlr4ts compiler",
     "vs-code-client:watch": "nx build vs-code-client --watch",
     "language-server:watch": "nx build language-server --watch",

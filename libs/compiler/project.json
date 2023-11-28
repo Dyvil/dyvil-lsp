@@ -4,6 +4,13 @@
   "sourceRoot": "libs/compiler/src",
   "projectType": "library",
   "targets": {
+    "main": {
+      "executor": "@nx/js:node",
+      "dependsOn": ["antlr4ts"],
+      "options": {
+        "buildTarget": "compiler:build"
+      }
+    },
     "antlr4ts": {
       "command": "antlr4ts -no-visitor -no-listener -o parser Dyvil.g4",
       "options": {
@@ -20,7 +27,7 @@
         "outputPath": "dist/libs/compiler",
         "tsConfig": "libs/compiler/tsconfig.lib.json",
         "packageJson": "libs/compiler/package.json",
-        "main": "libs/compiler/src/index.ts",
+        "main": "libs/compiler/src/main.ts",
         "assets": ["libs/compiler/*.md"]
       }
     },
