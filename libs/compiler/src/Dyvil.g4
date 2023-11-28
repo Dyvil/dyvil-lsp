@@ -7,12 +7,14 @@ import { CommonTokenStream } from 'antlr4ts';
 }
 
 file returns [ast.CompilationUnit cu]:
-  (classes+=class)* EOF { $cu = new ast.CompilationUnit(this._input.sourceName, $classes.map(c => c.cn)); }
+  { $cu = new ast.CompilationUnit(this._input.sourceName); }
+  (class { $cu.classes.push($class.cn); })*
+  EOF
 ;
 
 class returns [ast.Class cn]:
   DOC? 'class' ID {
-    $cn = new ast.Class($ID.text!, [], [], [])
+    $cn = new ast.Class($ID.text)
     $cn.location = makeRange($ID);
     $cn.doc = cleanDoc($DOC);
   }
@@ -25,34 +27,40 @@ class returns [ast.Class cn]:
 ;
 field returns [ast.Field fn]:
   DOC? 'var' ID {
-    $fn = new ast.Field($ID.text!, undefined!, undefined);
+    $fn = new ast.Field($ID.text);
     $fn.location = makeRange($ID);
     $fn.doc = cleanDoc($DOC);
   }
-  ':' type
+  ':' type { $fn.type = $type.tn; }
   ('=' expression { $fn.value = $expression.e })?
   ';'?
 ;
 ctor returns [ast.Constructor cn]:
-  DOC? init='init' '(' (parameters+=parameter ','?)* ')' blockStatement {
-    $cn = new ast.Constructor($parameters.map(p => p.pn), $blockStatement.bs)
+  DOC? init='init' {
+    $cn = new ast.Constructor();
     $cn.location = makeRange($init);
     $cn.doc = cleanDoc($DOC);
   }
+  '(' (parameter { $cn.parameters.push($parameter.pn); } ','?)* ')'
+  blockStatement { $cn.body = $blockStatement.bs; }
 ;
 method returns [ast.Method mn]:
-  DOC? 'func' ID '(' (parameters+=parameter ','?)* ')' ':' type blockStatement {
-    $mn = new ast.Method($ID.text!, $parameters.map(p => p.pn), $type.tn, $blockStatement.bs)
+  DOC? 'func' ID {
+    $mn = new ast.Method($ID.text);
     $mn.location = makeRange($ID);
     $mn.doc = cleanDoc($DOC);
   }
+  '(' (parameter { $mn.parameters.push($parameter.pn); } ','?)* ')'
+  ':' type { $mn.returnType = $type.tn; }
+  blockStatement { $mn.body = $blockStatement.bs; }
 ;
 parameter returns [ast.Parameter pn]:
-  DOC? ID ':' type {
-    $pn = new ast.Parameter($ID.text!, $type.tn)
+  DOC? ID {
+    $pn = new ast.Parameter($ID.text);
     $pn.location = makeRange($ID);
     $pn.doc = cleanDoc($DOC);
   }
+  ':' type { $pn.type = $type.tn; }
 ;
 variable returns [ast.Variable v]:
   'var' ID { $v = new ast.Variable($ID.text!, undefined, undefined!); }

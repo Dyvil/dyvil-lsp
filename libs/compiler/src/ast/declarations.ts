@@ -3,7 +3,7 @@ import {autocomplete, CompletionItem, Diagnostic, Range, report} from '../lint';
 import {autoIndent, Concept, Node, StringFormat} from './node';
 import {Name, Scope, SimpleScope} from '../scope';
 import {Block} from './statements';
-import {Type, ClassType, isAssignable} from './types';
+import {Type, ClassType, isAssignable, ErrorType} from './types';
 
 export class CompilationUnit extends Node<'unit'> {
   static enclosing = Symbol('enclosing compilation unit');
@@ -12,7 +12,7 @@ export class CompilationUnit extends Node<'unit'> {
 
   constructor(
     public path: string,
-    public classes: Class[],
+    public classes: Class[] = [],
   ) {
     super('unit');
   }
@@ -60,7 +60,7 @@ export class Class extends Declaration<'class'> implements Scope {
   completion?: ClassCompletion;
 
   constructor(
-    name: string,
+    name: string = '<anonymous>',
     public fields: Field[] = [],
     public constructors: Constructor[] = [],
     public methods: Method[] = [],
@@ -169,7 +169,7 @@ export class Constructor extends MethodLike<'constructor'> {
 
   constructor(
     parameters: Parameter[] = [],
-    body: Block,
+    body: Block = new Block(),
   ) {
     super('constructor', 'init', parameters, body);
   }
@@ -200,8 +200,8 @@ export class Field extends Declaration<'field'> {
   };
 
   constructor(
-    name: string,
-    public type: Type,
+    name: string = '<unknown>',
+    public type: Type = ErrorType,
     public value?: Expression,
   ) {
     super('field', name);
@@ -240,10 +240,10 @@ export class Method extends MethodLike<'method'> {
   };
 
   constructor(
-    name: string,
+    name: string = '<unknown>',
     parameters: Parameter[] = [],
-    public returnType: Type,
-    body: Block,
+    public returnType: Type = ErrorType,
+    body: Block = new Block(),
   ) {
     super('method', name, parameters, body);
   }
@@ -328,8 +328,8 @@ export class Parameter extends VariableLike<'parameter'> {
   type!: Type;
 
   constructor(
-    name: string,
-    type: Type,
+    name: string = '<unknown>',
+    type: Type = ErrorType,
   ) {
     super('parameter', name, type);
   }
