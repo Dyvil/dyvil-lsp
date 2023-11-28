@@ -185,6 +185,10 @@ export class MethodCall extends BaseExpression<'methodCall'> {
     }
     return this;
   }
+
+  getType(): Type {
+    return this._method?.returnType || ErrorType;
+  }
 }
 
 export class BinaryOperation extends BaseExpression<'binary'> {
