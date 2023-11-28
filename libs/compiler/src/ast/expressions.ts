@@ -254,6 +254,16 @@ export class ParenthesizedExpression extends BaseExpression<'parenthesized'> {
   }
 }
 
+export const ErrorExpression = new class extends BaseExpression<'error'> {
+  constructor() {
+    super('error');
+  }
+
+  getType(): Type {
+    return ErrorType;
+  }
+};
+
 export type Expression =
   | Literal
   | VariableReference
@@ -262,4 +272,5 @@ export type Expression =
   | MethodCall
   | BinaryOperation
   | ParenthesizedExpression
+  | typeof ErrorExpression
   ;

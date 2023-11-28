@@ -69,7 +69,7 @@ export class Node<K extends string> {
   }
 
   toString(format?: StringFormat): string {
-    return this.kind;
+    return `<${this.kind}>`;
   }
 }
 
