@@ -1,4 +1,4 @@
-import {Expression} from './expressions';
+import {ErrorExpression, Expression} from './expressions';
 import {autocomplete, CompletionItem, Diagnostic, Range, report} from '../lint';
 import {autoIndent, Concept, Node, StringFormat} from './node';
 import {Name, Scope, SimpleScope} from '../scope';
@@ -352,9 +352,9 @@ export class Parameter extends VariableLike<'parameter'> {
 
 export class Variable extends VariableLike<'variable'> {
   constructor(
-    name: string,
-    type: Type | undefined,
-    public value: Expression,
+    name: string = '<unknown>',
+    type?: Type,
+    public value: Expression = ErrorExpression,
   ) {
     super('variable', name, type);
   }

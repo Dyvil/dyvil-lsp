@@ -63,7 +63,7 @@ parameter returns [ast.Parameter pn]:
   ':' type { $pn.type = $type.tn; }
 ;
 variable returns [ast.Variable v]:
-  'var' ID { $v = new ast.Variable($ID.text!, undefined, undefined!); }
+  'var' ID { $v = new ast.Variable($ID.text); }
   (':' type { $v.type = $type.tn })?
   '=' expression { $v.value = $expression.e; }
   { $v.location = makeRange($ID); }
