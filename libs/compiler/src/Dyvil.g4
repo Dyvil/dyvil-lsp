@@ -41,7 +41,7 @@ ctor returns [ast.Constructor cn]:
     $cn.location = makeRange($init);
     $cn.doc = cleanDoc($DOC);
   }
-  '(' (parameter { $cn.parameters.push($parameter.pn); } ','?)* ')'
+  '(' parameterList { $cn.parameters = $parameterList.ps; } ')'
   blockStatement { $cn.body = $blockStatement.bs; }
 ;
 method returns [ast.Method mn]:
@@ -50,7 +50,7 @@ method returns [ast.Method mn]:
     $mn.location = makeRange($ID);
     $mn.doc = cleanDoc($DOC);
   }
-  '(' (parameter { $mn.parameters.push($parameter.pn); } ','?)* ')'
+  '(' (parameterList { $mn.parameters = $parameterList.ps; })? ')'
   ':' type { $mn.returnType = $type.tn; }
   blockStatement { $mn.body = $blockStatement.bs; }
 ;
@@ -62,6 +62,12 @@ parameter returns [ast.Parameter pn]:
   }
   ':' type { $pn.type = $type.tn; }
 ;
+parameterList returns [ast.Parameter[] ps] @init { $ps = []; }:
+  parameter { $ps.push($parameter.pn); }
+  (',' parameter { $ps.push($parameter.pn); })*
+  ','?
+;
+
 variable returns [ast.Variable v]:
   'var' ID { $v = new ast.Variable($ID.text); }
   (':' type { $v.type = $type.tn })?
