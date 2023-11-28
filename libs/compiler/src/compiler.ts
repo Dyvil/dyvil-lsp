@@ -1,7 +1,8 @@
-import {ANTLRErrorListener, CharStreams, CommonTokenStream, DiagnosticErrorListener, Recognizer, Token} from 'antlr4ts';
-import {CompilationUnit, CompletionItem, Diagnostic, Position, Range} from './ast';
+import {ANTLRErrorListener, CharStreams, CommonTokenStream, Token} from 'antlr4ts';
+import {CompilationUnit} from './ast';
 import {DyvilLexer} from './parser/DyvilLexer';
 import {DyvilParser} from './parser/DyvilParser';
+import {CompletionItem, Diagnostic, Position, Range} from "./lint";
 
 export function makeRange(start: Token, stop?: Token) {
   return new Range(

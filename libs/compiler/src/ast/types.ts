@@ -1,7 +1,7 @@
 import {Class} from './declarations';
-import {autocomplete, report} from './lint';
+import {autocomplete, report} from '../lint';
 import {Concept, Node} from './node';
-import {Name, Scope} from './scope';
+import {Name, Scope} from '../scope';
 
 export function isAssignable(to: Type, from: Type) {
   switch (from.kind) {

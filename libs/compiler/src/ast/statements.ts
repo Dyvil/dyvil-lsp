@@ -1,8 +1,8 @@
 import {Variable} from './declarations';
 import {Expression} from './expressions';
-import {autocomplete, CompletionItem} from './lint';
+import {autocomplete, CompletionItem} from '../lint';
 import {autoIndent, Node, StringFormat} from './node';
-import {Scope, SimpleScope} from './scope';
+import {Scope, SimpleScope} from '../scope';
 
 class Statement<K extends string> extends Node<`statement:${K}`> {
   constructor(

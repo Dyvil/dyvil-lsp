@@ -1,5 +1,5 @@
-import {CompilationUnit} from './declarations';
-import {Node} from './node';
+import {CompilationUnit} from './ast';
+import {Node} from './ast';
 import {Scope} from './scope';
 
 export class Position {

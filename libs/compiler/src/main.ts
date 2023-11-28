@@ -1,6 +1,7 @@
 import {readFileSync} from 'fs';
-import {log, SimpleScope} from './ast';
+import {SimpleScope} from './scope';
 import {compilationUnit} from './compiler';
+import {log} from "./lint";
 
 const path = process.argv[2] || 'examples/Greeter.dyv';
 

@@ -1,5 +1,5 @@
-import {Position, Range} from './lint';
-import {Scope} from './scope';
+import {Position, Range} from '../lint';
+import {Scope} from '../scope';
 
 export type StringFormat = 'plain' | 'js';
 

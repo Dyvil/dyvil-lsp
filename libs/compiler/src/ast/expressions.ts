@@ -1,7 +1,7 @@
 import {Class, Constructor, Field, Method, VariableLike} from './declarations';
-import {autocomplete, report} from './lint';
+import {autocomplete, report} from '../lint';
 import {Node, StringFormat} from './node';
-import {Scope} from './scope';
+import {Scope} from '../scope';
 import {Type, ErrorType, PrimitiveType} from './types';
 
 abstract class BaseExpression<K extends string> extends Node<`expr:${K}`> {

@@ -1,4 +1,4 @@
-import {Concept, Node} from './node';
+import {Concept, Node} from './ast';
 
 export type Name = string | symbol;
 
