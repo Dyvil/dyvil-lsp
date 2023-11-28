@@ -22,7 +22,7 @@ class returns [ast.Class cn]:
   field { $cn.fields.push($field.fn) }
   | ctor { $cn.constructors.push($ctor.cn) }
   | method { $cn.methods.push($method.mn) }
-  | completionID { $cn.completion = new ast.ClassCompletion($completionID.text!); $cn.completion.location = makeRange($completionID.start!, $completionID.stop!); }
+  | COMPLETION_ID { $cn.completion = new ast.ClassCompletion($COMPLETION_ID.text!); $cn.completion.location = makeRange($COMPLETION_ID); }
   )* '}'
 ;
 field returns [ast.Field fn]:
@@ -85,7 +85,7 @@ primitiveType: 'int' | 'boolean' | 'string' | 'void';
 statement returns [ast.AnyStatement s] @after { $s.location = makeRange($start, $stop); }:
   variable { $s = new ast.VarStatement($variable.v) }
   |
-  completionID { $s = new ast.CompletionStatement($completionID.text!) }
+  COMPLETION_ID { $s = new ast.CompletionStatement($COMPLETION_ID.text!) }
   |
   expression { $s = new ast.ExpressionStatement($expression.e) }
   |
@@ -148,8 +148,7 @@ expressionList returns [ast.Expression[] es] @init { $es = []; }:
   ','?
 ;
 
-completableID: ID COMPLETION_MARKER? | COMPLETION_MARKER;
-completionID: ID? COMPLETION_MARKER;
+completableID: ID | COMPLETION_ID;
 
 WS: [ \t\r\n]+ -> skip;
 LC: '//' ~[\r\n]* -> skip;
@@ -157,6 +156,7 @@ DOC: '/**' .*? '*/';
 BC: '/*' .*? '*/' -> skip;
 
 NUMBER: [+-]?[0-9]+([.][0-9]+)?;
+COMPLETION_ID: ID? COMPLETION_MARKER;
 ID: [a-zA-Z0-9_]+;
 STRING: '"' ('\\' . | ~["\r\n\\])* '"';
 OPERATOR: [+\-*/%&|<>!:^=]+;
