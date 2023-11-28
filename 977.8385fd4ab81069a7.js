@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkweb=self.webpackChunkweb||[]).push([[977],{8977:(t,e,c)=>{c.r(e),c.d(e,{detect:()=>n});const n=()=>({encoding:"utf8",confidence:1})}}]);
