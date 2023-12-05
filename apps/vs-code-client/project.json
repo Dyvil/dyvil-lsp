@@ -5,41 +5,50 @@
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nrwl/webpack:webpack",
+      "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
       "options": {
-        "target": "node",
-        "compiler": "tsc",
+        "platform": "node",
         "outputPath": "dist/apps/vs-code-client",
+        "format": ["cjs"],
+        "bundle": true,
+        "external": ["vscode"],
         "main": "apps/vs-code-client/src/main.ts",
         "tsConfig": "apps/vs-code-client/tsconfig.app.json",
-        "externalDependencies": ["vscode"],
-        "assets": [
-          "apps/vs-code-client/src/assets",
-          "apps/vs-code-client/src/package.json"
-        ]
+        "assets": ["apps/vs-code-client/assets/**"],
+        "generatePackageJson": true,
+        "esbuildOptions": {
+          "sourcemap": true,
+          "outExtension": {
+            ".js": ".js"
+          }
+        }
       },
       "configurations": {
+        "development": {},
         "production": {
-          "optimization": true,
-          "extractLicenses": true,
-          "inspect": false,
-          "sourceMap": false,
-          "fileReplacements": [
-            {
-              "replace": "apps/vs-code-client/src/environments/environment.ts",
-              "with": "apps/vs-code-client/src/environments/environment.prod.ts"
+          "minify": true,
+          "thirdParty": true,
+          "esbuildOptions": {
+            "sourcemap": false,
+            "outExtension": {
+              ".js": ".js"
             }
-          ]
+          }
         }
       }
     },
     "serve": {
       "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
       "options": {
         "buildTarget": "vs-code-client:build"
       },
       "configurations": {
+        "development": {
+          "buildTarget": "vs-code-client:build:development"
+        },
         "production": {
           "buildTarget": "vs-code-client:build:production"
         }
