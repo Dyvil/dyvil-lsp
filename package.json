@@ -11,6 +11,7 @@
     "compiler:antlr": "nx antlr4ts compiler",
     "vs-code-client:watch": "nx build vs-code-client --watch",
     "language-server:watch": "nx build language-server --watch",
+    "vscode-client": "code --extensionDevelopmentPath=$PWD/dist/apps/vs-code-client/ examples/ examples/Greeter.dyv",
     "vscode:publish": "nx run-many -t build -p vs-code-client language-server && cd dist/apps/vs-code-client && ovsx publish",
     "build": "nx build",
     "test": "nx test"
