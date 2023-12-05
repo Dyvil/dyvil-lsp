@@ -21,15 +21,12 @@ export class SemanticTokenService {
   }
 
   private provideSemanticTokens(params: SemanticTokensParams): SemanticTokens {
-
-    const uri = params.textDocument.uri;
-    const document = this.documentService.documents.get(uri);
-    if (!document) {
+    const unit = this.documentService.getAST(params.textDocument.uri);
+    if (!unit) {
       return {data: []};
     }
 
     const dataCollector = new TokenDataCollector();
-    const unit = compilationUnit(document.getText()).resolve(new SimpleScope([]));
 
     for (const node of recurse(unit)) {
       switch (node.kind) {
