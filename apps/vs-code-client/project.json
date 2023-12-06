@@ -17,7 +17,7 @@
         "main": "apps/vs-code-client/src/main.ts",
         "tsConfig": "apps/vs-code-client/tsconfig.app.json",
         "assets": ["apps/vs-code-client/assets/**"],
-        "generatePackageJson": true,
+        "generatePackageJson": false,
         "esbuildOptions": {
           "sourcemap": true,
           "outExtension": {
