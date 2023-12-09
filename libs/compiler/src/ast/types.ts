@@ -48,7 +48,6 @@ export class ClassType extends BaseType<'class'> {
     }
     if (!this._class) {
       this._class ||= scope.lookup(this.name, Class) || report(scope, this.location!, `class ${this.name} not found`);
-      this._class?._references.push(this);
     }
     return this;
   }

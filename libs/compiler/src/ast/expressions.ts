@@ -63,7 +63,6 @@ export class VariableReference extends BaseExpression<'variable'> {
     }
     if (!this._variable) {
       this._variable ||= scope.lookup(this.name, VariableLike) || report(scope, this.location!, `variable ${this.name} not found`);
-      this._variable?._references.push(this);
     }
     return this;
   }
@@ -75,6 +74,7 @@ export class VariableReference extends BaseExpression<'variable'> {
 
 export class FunctionCall extends BaseExpression<'functionCall'> {
   _constructor?: Constructor;
+  _class?: Class;
 
   constructor(
     public name: string = '<unknown>',
@@ -88,7 +88,7 @@ export class FunctionCall extends BaseExpression<'functionCall'> {
   }
 
   definition(purpose?: 'rename' | 'definition'): Node<any> | undefined {
-    return purpose === 'rename' ? this._constructor?._thisClass : this._constructor;
+    return purpose === 'rename' ? this._class : this._constructor;
   }
 
   resolve(scope: Scope): this {
@@ -99,9 +99,8 @@ export class FunctionCall extends BaseExpression<'functionCall'> {
         const types = this.args.map(arg => arg.getType());
         const ctor = cls.lookup('init', Constructor, types);
         if (ctor) {
+          this._class = cls;
           this._constructor = ctor;
-          ctor._references.push(this);
-          cls._references.push(this);
         } else {
           report(scope, this.location!, `constructor ${this.name}(${types.join(', ')}) not found`);
         }
@@ -113,7 +112,7 @@ export class FunctionCall extends BaseExpression<'functionCall'> {
   }
 
   getType(): Type {
-    return this._constructor?._thisClass?.asType() ?? ErrorType;
+    return this._class?.asType() ?? ErrorType;
   }
 }
 
@@ -144,7 +143,6 @@ export class PropertyAccess extends BaseExpression<'propertyAccess'> {
 
     if (!this._field) {
       this._field ||= objectType.lookup(this.property, Field) || report(scope, this.location!, `field ${this.property} not found on ${objectType}`);
-      this._field?._references.push(this);
     }
     return this;
   }
@@ -181,7 +179,6 @@ export class MethodCall extends BaseExpression<'methodCall'> {
       const objectType = this.receiver.getType();
       const argTypes = this.args.map(a => a.getType());
       this._method ||= objectType.lookup(this.method, Method, argTypes) || report(scope, this.location!, `method ${this.method} not found on ${objectType}`);
-      this._method?._references.push(this);
     }
     return this;
   }
