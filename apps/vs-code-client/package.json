@@ -6,7 +6,7 @@
     "name": "Adrian Kunz",
     "email": "clashsoft@hotmail.com"
   },
-  "version": "0.0.3",
+  "version": "0.0.4",
   "main": "./main.js",
   "engines": {
     "vscode": "^1.69.0"
