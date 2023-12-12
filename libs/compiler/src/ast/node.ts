@@ -45,7 +45,7 @@ export class Node<K extends string> {
     return this.definition()?.documentation();
   }
 
-  references(purpose?: 'rename' | 'definition'): Range[] {
+  references(purpose?: 'rename' | 'definition'): Node<string>[] {
     return this.definition(purpose)?.references(purpose) || [];
   }
 

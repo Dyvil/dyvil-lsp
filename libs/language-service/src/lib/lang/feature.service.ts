@@ -54,7 +54,7 @@ export class FeatureService {
     return {
       changes: {
         [params.textDocument.uri]: references.map(reference => ({
-          range: convertRange(reference),
+          range: convertRange(reference.location!),
           newText: params.newName,
         })),
       },
@@ -71,7 +71,7 @@ export class FeatureService {
     }
     return references.map(reference => ({
       uri: params.textDocument.uri,
-      range: convertRange(reference),
+      range: convertRange(reference.location!),
     }));
   }
 
@@ -82,7 +82,7 @@ export class FeatureService {
     }
     return {
       uri: params.textDocument.uri,
-      range: convertRange(references[0]),
+      range: convertRange(references[0].location!),
     };
   }
 
@@ -106,7 +106,7 @@ export class FeatureService {
       return undefined;
     }
     return references.map(r => ({
-      range: convertRange(r),
+      range: convertRange(r.location!),
     }));
   }
 

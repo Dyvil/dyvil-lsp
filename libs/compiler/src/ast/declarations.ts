@@ -49,8 +49,8 @@ export class Declaration<K extends string> extends Node<K> {
     return this.doc;
   }
 
-  references(): Range[] {
-    return [this.location!, ...this._references.map(ref => ref.location!)];
+  references(): Node<string>[] {
+    return [this, ...this._references];
   }
 }
 
@@ -187,7 +187,7 @@ export class Constructor extends MethodLike<'constructor'> {
     ` : this.doc;
   }
 
-  references(purpose?: 'rename' | 'definition'): Range[] {
+  references(purpose?: 'rename' | 'definition'): Node<string>[] {
     return purpose === 'rename' ? [] : super.references();
   }
 }
@@ -334,7 +334,7 @@ export class Parameter extends VariableLike<'parameter'> {
     super('parameter', name, type);
   }
 
-  references(purpose?: 'rename' | 'definition'): Range[] {
+  references(purpose?: 'rename' | 'definition'): Node<string>[] {
     return purpose === 'rename' && this.name === 'this' ? [] : super.references();
   }
 
