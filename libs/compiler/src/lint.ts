@@ -18,7 +18,10 @@ export class Range {
   }
 
   includes(position: Position): boolean {
-    return this.start.line <= position.line && this.start.column <= position.column && position.line <= this.end.line && position.column <= this.end.column;
+    return this.start.line <= position.line && position.line <= this.end.line
+      && (this.start.line < position.line || this.start.column <= position.column)
+      && (position.line < this.end.line || position.column <= this.end.column)
+    ;
   }
 }
 
