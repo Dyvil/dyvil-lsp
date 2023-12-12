@@ -30,6 +30,7 @@ export function isSubConcept(sub: Concept<any>, sup: Concept<any>): boolean {
 
 export class Node<K extends string> {
   location?: Range;
+  range?: Range;
 
   constructor(
     public kind: K,

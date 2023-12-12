@@ -12,7 +12,7 @@ file returns [ast.CompilationUnit cu]:
   EOF
 ;
 
-class returns [ast.Class cn]:
+class returns [ast.Class cn] @after { $cn.range = makeRange($start, $stop); }:
   DOC? 'class' ID {
     $cn = new ast.Class($ID.text)
     $cn.location = makeRange($ID);
@@ -25,7 +25,7 @@ class returns [ast.Class cn]:
   | COMPLETION_ID { $cn.completion = new ast.ClassCompletion($COMPLETION_ID.text!); $cn.completion.location = makeRange($COMPLETION_ID); }
   )* '}'
 ;
-field returns [ast.Field fn]:
+field returns [ast.Field fn] @after { $fn.range = makeRange($start, $stop); }:
   DOC? 'var' ID {
     $fn = new ast.Field($ID.text);
     $fn.location = makeRange($ID);
@@ -35,7 +35,7 @@ field returns [ast.Field fn]:
   ('=' expression { $fn.value = $expression.e })?
   ';'?
 ;
-ctor returns [ast.Constructor cn]:
+ctor returns [ast.Constructor cn] @after { $cn.range = makeRange($start, $stop); }:
   DOC? init='init' {
     $cn = new ast.Constructor();
     $cn.location = makeRange($init);
@@ -44,7 +44,7 @@ ctor returns [ast.Constructor cn]:
   '(' parameterList { $cn.parameters = $parameterList.ps; } ')'
   blockStatement { $cn.body = $blockStatement.bs; }
 ;
-method returns [ast.Method mn]:
+method returns [ast.Method mn] @after { $mn.range = makeRange($start, $stop); }:
   DOC? 'func' ID {
     $mn = new ast.Method($ID.text);
     $mn.location = makeRange($ID);
@@ -54,7 +54,7 @@ method returns [ast.Method mn]:
   ':' type { $mn.returnType = $type.tn; }
   blockStatement { $mn.body = $blockStatement.bs; }
 ;
-parameter returns [ast.Parameter pn]:
+parameter returns [ast.Parameter pn] @after { $pn.range = makeRange($start, $stop); }:
   DOC? ID {
     $pn = new ast.Parameter($ID.text);
     $pn.location = makeRange($ID);
@@ -68,21 +68,20 @@ parameterList returns [ast.Parameter[] ps] @init { $ps = []; }:
   ','?
 ;
 
-variable returns [ast.Variable v]:
+variable returns [ast.Variable v] @after { $v.range = makeRange($start, $stop); }:
   'var' ID { $v = new ast.Variable($ID.text); }
   (':' type { $v.type = $type.tn })?
   '=' expression { $v.value = $expression.e; }
   { $v.location = makeRange($ID); }
 ;
 
-type returns [ast.Type tn] @after { $tn.location = makeRange($start, $stop); }:
-  primitiveType { $tn = new ast.PrimitiveType($primitiveType.text! as ast.PrimitiveName) }
+type returns [ast.Type tn] @after { $tn.location = $tn.range = makeRange($start, $stop); }:
+  primitiveType=('int' | 'boolean' | 'string' | 'void') { $tn = new ast.PrimitiveType($primitiveType.text! as ast.PrimitiveName) }
   |
   completableID { $tn = new ast.ClassType($completableID.text!) }
 ;
-primitiveType: 'int' | 'boolean' | 'string' | 'void';
 
-statement returns [ast.AnyStatement s] @after { $s.location = makeRange($start, $stop); }:
+statement returns [ast.AnyStatement s] @after { $s.location = $s.range = makeRange($start, $stop); }:
   variable { $s = new ast.VarStatement($variable.v) }
   |
   COMPLETION_ID { $s = new ast.CompletionStatement($COMPLETION_ID.text!) }
@@ -97,19 +96,19 @@ statement returns [ast.AnyStatement s] @after { $s.location = makeRange($start, 
   |
   ';' { $s = ast.EmptyStatement }
 ;
-blockStatement returns [ast.Block bs]:
+blockStatement returns [ast.Block bs] @after { $bs.location = $bs.range = makeRange($start, $stop); }:
   '{' { $bs = new ast.Block(); }
   (statement { $bs.statements.push($statement.s); })*
-  '}' { $bs.location = makeRange($start, $stop); }
+  '}'
 ;
 
-whileStatement returns [ast.WhileStatement ws]:
+whileStatement returns [ast.WhileStatement ws] @after { $ws.range = makeRange($start, $stop); }:
   WHILE='while' { $ws = new ast.WhileStatement(); $ws.location = makeRange($WHILE); }
   expression { $ws.condition = $expression.e; }
   blockStatement { $ws.body = $blockStatement.bs; }
 ;
 
-ifStatement returns [ast.IfStatement is]:
+ifStatement returns [ast.IfStatement is] @after { $is.range = makeRange($start, $stop); }:
   IF='if' { $is = new ast.IfStatement(); $is.location = makeRange($IF); }
   expression { $is.condition = $expression.e; }
   thenBlock=blockStatement { $is.then = $thenBlock.bs; }
@@ -120,7 +119,7 @@ ifStatement returns [ast.IfStatement is]:
   )?
 ;
 
-expression returns [ast.Expression e]:
+expression returns [ast.Expression e] @after { $e.range = makeRange($start, $stop); }:
   receiver=expression '.' ID '(' { $e = new ast.MethodCall($receiver.e, $ID.text); $e.location = makeRange($ID); }
     (expressionList { ($e as ast.MethodCall).args = $expressionList.es; })?
     ')'
@@ -139,9 +138,8 @@ expression returns [ast.Expression e]:
   |
   '(' expression ')' { $e = new ast.ParenthesizedExpression($expression.e); $e.location = makeRange($start, $stop); }
   |
-  literal { $e = $literal.l }
+  literal=(NUMBER | STRING | 'true' | 'false') { $e = new ast.Literal($literal.text!); $e.location = makeRange($literal); }
 ;
-literal returns [ast.Literal l]: (NUMBER | STRING | 'true' | 'false') { $l = new ast.Literal($text); $l.location = makeRange($start); } ;
 expressionList returns [ast.Expression[] es] @init { $es = []; }:
   expression { $es.push($expression.e); }
   (',' expression { $es.push($expression.e); })*
