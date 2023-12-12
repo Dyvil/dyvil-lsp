@@ -118,7 +118,7 @@ export class IfStatement extends Statement<'while'> {
         snippet: 'else {\n  \${1:statements...}\n}',
       }],
     });
-    return this;
+    return super.resolve(scope);
   }
 
   toString(format?: StringFormat): string {
