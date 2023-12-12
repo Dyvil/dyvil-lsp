@@ -66,6 +66,9 @@ export class Node<K extends string> {
   }
 
   findByPosition(position: Position): Node<any>[] | undefined {
+    if (this.range && !this.range.includes(position)) {
+      return;
+    }
     for (const child of children(this)) {
       const result = child.findByPosition(position);
       if (result) {
