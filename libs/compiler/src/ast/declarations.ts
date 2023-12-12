@@ -1,5 +1,5 @@
 import {ErrorExpression, Expression} from './expressions';
-import {autocomplete, CompletionItem, Diagnostic, Range, report} from '../lint';
+import {autocomplete, CompletionItem, Diagnostic, report} from '../lint';
 import {autoIndent, Concept, Node, StringFormat} from './node';
 import {Name, Scope, SimpleScope} from '../scope';
 import {Block} from './statements';
@@ -325,11 +325,9 @@ export class VariableLike<K extends string> extends Declaration<K> {
 }
 
 export class Parameter extends VariableLike<'parameter'> {
-  type!: Type;
-
   constructor(
     name: string = '<unknown>',
-    type: Type = ErrorType,
+    public type: Type = ErrorType,
   ) {
     super('parameter', name, type);
   }
