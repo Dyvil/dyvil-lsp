@@ -1,12 +1,13 @@
 import {ErrorExpression, Expression} from './expressions';
 import {autocomplete, CompletionItem, Diagnostic, report} from '../lint';
-import {autoIndent, Concept, Node, StringFormat} from './node';
+import {autoIndent, Concept, Node, ParserMethod, StringFormat} from './node';
 import {Name, Scope, SimpleScope} from '../scope';
 import {Block} from './statements';
 import {Type, ClassType, isAssignable, ErrorType} from './types';
 
 export class CompilationUnit extends Node<'unit'> {
   static enclosing = Symbol('enclosing compilation unit');
+  static parser: ParserMethod = 'file';
 
   diagnostics: Diagnostic[] = [];
 
@@ -56,6 +57,7 @@ export class Declaration<K extends string> extends Node<K> {
 
 export class Class extends Declaration<'class'> implements Scope {
   static enclosing = Symbol('enclosing class');
+  static parser: ParserMethod = 'class';
 
   completion?: ClassCompletion;
 
@@ -166,6 +168,7 @@ export class Constructor extends MethodLike<'constructor'> {
     label: 'init',
     snippet: 'init(\${1:parameters...}) {\n  \${2:statements...}\n}',
   };
+  static parser: ParserMethod = 'ctor';
 
   constructor(
     parameters: Parameter[] = [],
@@ -198,6 +201,7 @@ export class Field extends Declaration<'field'> {
     label: 'var',
     snippet: 'var \${1:name}: \${2:type} = \${3:value}',
   };
+  static parser: ParserMethod = 'field';
 
   constructor(
     name: string = '<unknown>',
@@ -238,6 +242,7 @@ export class Method extends MethodLike<'method'> {
     label: 'func',
     snippet: 'func \${1:name}(\${2:parameters...}) {\n  \${3:statements...}\n}',
   };
+  static parser: ParserMethod = 'method';
 
   constructor(
     name: string = '<unknown>',
@@ -331,6 +336,7 @@ export class Parameter extends VariableLike<'parameter'> {
   ) {
     super('parameter', name, type);
   }
+  static parser: ParserMethod = 'parameter';
 
   references(purpose?: 'rename' | 'definition'): Node<string>[] {
     return purpose === 'rename' && this.name === 'this' ? [] : super.references();
@@ -356,6 +362,7 @@ export class Variable extends VariableLike<'variable'> {
   ) {
     super('variable', name, type);
   }
+  static parser: ParserMethod = 'variable';
 
   documentation(): string | undefined {
     return `\`var ${this.name}: ${this.type?.toString()}\`${this.doc ? '\n' + this.doc : ''}`;

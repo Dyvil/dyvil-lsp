@@ -1,5 +1,7 @@
 import {Position, Range} from '../lint';
 import {Scope} from '../scope';
+import {DyvilParser} from "../parser/DyvilParser";
+import {ParserRuleContext} from "antlr4ts/ParserRuleContext";
 
 export type StringFormat = 'plain' | 'js';
 
@@ -27,6 +29,8 @@ export type Concept<T> = { new(...args: any[]): T };
 export function isSubConcept(sub: Concept<any>, sup: Concept<any>): boolean {
   return sub === sup || sub.prototype instanceof sup;
 }
+
+export type ParserMethod = keyof { [K in keyof DyvilParser]: DyvilParser[K] extends (...args: any[]) => ParserRuleContext ? K : never };
 
 export class Node<K extends string> {
   location?: Range;
