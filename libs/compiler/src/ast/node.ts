@@ -60,7 +60,7 @@ export class Node<K extends string> {
 
   link() {
     for (const [key, value] of Object.entries(this)) {
-      if (key.startsWith('_') && '_references' in value) {
+      if (key.startsWith('_') && value && '_references' in value) {
         value._references.push(this);
       }
     }
