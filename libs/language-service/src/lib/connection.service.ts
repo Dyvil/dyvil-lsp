@@ -36,6 +36,7 @@ export class ConnectionService {
           typeDefinitionProvider: true,
           hoverProvider: true,
           documentHighlightProvider: true,
+          documentSymbolProvider: true,
           semanticTokensProvider: {
             legend: {
               tokenTypes: TOKEN_TYPES,
