@@ -73,6 +73,7 @@ export class Class extends Declaration<'class'> implements Scope {
   asType(): ClassType {
     const classType = new ClassType(this.name);
     classType._class = this;
+    classType.location = this.location;
     return classType;
   }
 

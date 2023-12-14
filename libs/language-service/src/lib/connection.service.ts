@@ -33,6 +33,7 @@ export class ConnectionService {
           },
           referencesProvider: true,
           definitionProvider: true,
+          typeDefinitionProvider: true,
           hoverProvider: true,
           documentHighlightProvider: true,
           semanticTokensProvider: {

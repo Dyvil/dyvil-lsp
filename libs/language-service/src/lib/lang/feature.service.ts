@@ -18,6 +18,7 @@ import {
 import {ConnectionService} from '../connection.service';
 import {DocumentService} from '../document.service';
 import {convertRange} from './validation.service';
+import {TypeDefinitionParams} from "vscode-languageserver-protocol";
 
 export class FeatureService {
   constructor(
@@ -27,6 +28,7 @@ export class FeatureService {
     this.connectionService.connection.onPrepareRename(params => this.prepareRename(params));
     this.connectionService.connection.onRenameRequest(params => this.rename(params));
 
+    this.connectionService.connection.onTypeDefinition(params => this.typeDefinition(params));
     this.connectionService.connection.onReferences(params => this.references(params));
     this.connectionService.connection.onDefinition(params => this.definition(params));
     this.connectionService.connection.onHover(params => this.hover(params));
@@ -83,6 +85,21 @@ export class FeatureService {
     return {
       uri: params.textDocument.uri,
       range: convertRange(references[0].location!),
+    };
+  }
+
+  private typeDefinition(params: TypeDefinitionParams): Location | undefined {
+    const node = this.findNode(params);
+    if (!node) {
+      return;
+    }
+    const type = 'type' in node ? node.type : 'getType' in node && typeof node.getType === 'function' ? node.getType() : undefined;
+    if (!(type instanceof Node) || !type.location) {
+      return;
+    }
+    return {
+      uri: params.textDocument.uri,
+      range: convertRange(type.location),
     };
   }
 
