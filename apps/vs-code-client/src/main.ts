@@ -4,7 +4,8 @@ import {LanguageClient, LanguageClientOptions, ServerOptions, TransportKind} fro
 let client: LanguageClient;
 
 export async function activate(context: ExtensionContext) {
-  const module = context.asAbsolutePath(context.extensionMode === ExtensionMode.Development
+  const devMode = context.extensionMode === ExtensionMode.Development;
+  const module = context.asAbsolutePath(devMode
     ? '../language-server/main.js'
     : './server/main.js',
   );
@@ -35,6 +36,7 @@ export async function activate(context: ExtensionContext) {
     'Dyvil',
     serverOptions,
     clientOptions,
+    devMode,
   );
 
   await client.start();
