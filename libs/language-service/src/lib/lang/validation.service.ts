@@ -1,21 +1,15 @@
-import {Diagnostic, Range} from '@stc/compiler';
+import {Diagnostic} from '@stc/compiler';
 import {DiagnosticSeverity} from 'vscode-languageserver';
 import {TextDocument} from 'vscode-languageserver-textdocument';
 import {Diagnostic as LspDiagnostic} from 'vscode-languageserver/node';
 import {ConnectionService} from '../connection.service';
 import {DocumentService} from '../document.service';
-
-export function convertRange(location: Range) {
-  return {
-    start: {line: location.start.line - 1, character: location.start.column - 1},
-    end: {line: location.end.line - 1, character: location.end.column - 1},
-  };
-}
+import {convertRangeToLsp} from "./convert";
 
 function convertDiagnostic({severity, location, message}: Diagnostic): LspDiagnostic {
   return {
     severity: severity === 'error' ? DiagnosticSeverity.Error : DiagnosticSeverity.Warning,
-    range: convertRange(location),
+    range: convertRangeToLsp(location),
     message,
     source: 'dyvil',
   };

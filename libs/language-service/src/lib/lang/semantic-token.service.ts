@@ -12,10 +12,10 @@ import {
   Parameter,
   Range,
   recurse,
-  SimpleScope,
   VariableReference
 } from "@stc/compiler";
 import {DocumentService} from "../document.service";
+import {convertRangeFromLsp} from "./convert";
 
 export const TOKEN_TYPES = Object.values(SemanticTokenTypes);
 export const TOKEN_MODIFIERS = Object.values(SemanticTokenModifiers);
@@ -82,10 +82,7 @@ export class SemanticTokenService {
       return {data: []};
     }
 
-    const enclosing = unit.findEnclosing(new Range(
-      {line: params.range.start.line + 1, column: params.range.start.character + 1},
-      {line: params.range.end.line + 1, column: params.range.end.character + 1},
-    ));
+    const enclosing = unit.findEnclosing(convertRangeFromLsp(params.range));
     if (!enclosing) {
       return {data: []};
     }

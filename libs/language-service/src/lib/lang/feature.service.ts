@@ -1,7 +1,5 @@
 import {Node, Position} from '@stc/compiler';
 import {
-  CompletionItem,
-  CompletionParams,
   DeclarationParams,
   DocumentHighlight,
   DocumentHighlightParams,
@@ -17,8 +15,8 @@ import {
 } from 'vscode-languageserver';
 import {ConnectionService} from '../connection.service';
 import {DocumentService} from '../document.service';
-import {convertRange} from './validation.service';
 import {TypeDefinitionParams} from "vscode-languageserver-protocol";
+import {convertRangeToLsp} from "./convert";
 
 export class FeatureService {
   constructor(
@@ -45,7 +43,7 @@ export class FeatureService {
     if (!references || !references.length) {
       return;
     }
-    return convertRange(node.location!);
+    return convertRangeToLsp(node.location!);
   }
 
   private rename(params: RenameParams): WorkspaceEdit | undefined {
@@ -56,7 +54,7 @@ export class FeatureService {
     return {
       changes: {
         [params.textDocument.uri]: references.map(reference => ({
-          range: convertRange(reference.location!),
+          range: convertRangeToLsp(reference.location!),
           newText: params.newName,
         })),
       },
@@ -73,7 +71,7 @@ export class FeatureService {
     }
     return references.map(reference => ({
       uri: params.textDocument.uri,
-      range: convertRange(reference.location!),
+      range: convertRangeToLsp(reference.location!),
     }));
   }
 
@@ -84,7 +82,7 @@ export class FeatureService {
     }
     return {
       uri: params.textDocument.uri,
-      range: convertRange(references[0].location!),
+      range: convertRangeToLsp(references[0].location!),
     };
   }
 
@@ -99,7 +97,7 @@ export class FeatureService {
     }
     return {
       uri: params.textDocument.uri,
-      range: convertRange(type.location),
+      range: convertRangeToLsp(type.location),
     };
   }
 
@@ -123,7 +121,7 @@ export class FeatureService {
       return undefined;
     }
     return references.map(r => ({
-      range: convertRange(r.location!),
+      range: convertRangeToLsp(r.location!),
     }));
   }
 

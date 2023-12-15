@@ -2,7 +2,8 @@ import {ConnectionService} from "../connection.service";
 import {DocumentSymbol, DocumentSymbolParams, SymbolKind} from "vscode-languageserver-protocol";
 import {children, Declaration, Node} from "@stc/compiler";
 import {DocumentService} from "../document.service";
-import {convertRange} from "./validation.service";
+
+import {convertRangeToLsp} from "./convert";
 
 const SYMBOL_KINDS: Record<string, SymbolKind> = {
   class: SymbolKind.Class,
@@ -39,8 +40,8 @@ export class DocumentSymbolService {
     return [{
       name: node.name,
       kind: SYMBOL_KINDS[node.kind],
-      range: convertRange(node.range!),
-      selectionRange: convertRange(node.location!),
+      range: convertRangeToLsp(node.range!),
+      selectionRange: convertRangeToLsp(node.location!),
       children: childSymbols,
     }];
   }
