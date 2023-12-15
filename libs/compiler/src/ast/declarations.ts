@@ -46,6 +46,13 @@ export class Declaration<K extends string> extends Node<K> {
     super(kind);
   }
 
+  docComment(): string {
+    if (!this.doc) {
+      return '';
+    }
+    return '/**\n' + this.doc.trim().replace(/^/gm, ' * ') + '\n */\n';
+  }
+
   documentation(): string | undefined {
     return this.doc;
   }
@@ -86,10 +93,11 @@ export class Class extends Declaration<'class'> implements Scope {
 
   toString(format?: StringFormat): string {
     return autoIndent`
+    ${this.docComment()}\
     class ${this.name} {
       ${this.fields.map(field => field.toString(format)).join('\n')}
 
-      ${this.constructors.map(field => field.toString(format)).join('\n\n')}
+      ${this.constructors.map(ctor => ctor.toString(format)).join('\n\n')}
 
       ${this.methods.map(method => method.toString(format)).join('\n\n')}
     }`;
@@ -179,7 +187,10 @@ export class Constructor extends MethodLike<'constructor'> {
   }
 
   toString(format?: StringFormat): string {
-    return `${format === 'js' ? 'constructor' : 'init'}(${this.parameters.map(param => param.toString(format)).join(', ')}) ${this.body.toString(format)}`;
+    const keyword = format === 'js' ? 'constructor' : 'init';
+    const params = this.parameters.map(param => param.toString(format)).join(', ');
+    const body = this.body.toString(format);
+    return `${this.docComment()}${keyword}(${params}) ${body}`;
   }
 
   documentation(): string | undefined {
@@ -221,19 +232,15 @@ export class Field extends Declaration<'field'> {
   }
 
   toString(format?: StringFormat): string {
+    const value = this.value ? ' = ' + this.value.toString(format) : '';
     if (format === 'js') {
       return autoIndent`
-      _${this.name}${this.value ? ' = ' + this.value.toString(format) : ''};
-
-      get ${this.name}() {
-        return this._${this.name};
-      }
-
-      set ${this.name}(value) {
-        this._${this.name} = value;
-      }`;
+      _${this.name}${value};
+      get ${this.name}() { return this._${this.name}; }
+      set ${this.name}(value) { this._${this.name} = value; }`;
     }
-    return `var ${this.name}: ${this.type.toString(format)}${this.value ? ' = ' + this.value.toString(format) : ''}`;
+    const type = this.type.toString(format);
+    return `${this.docComment()}var ${this.name}: ${type}${value}`;
   }
 }
 
@@ -279,7 +286,11 @@ export class Method extends MethodLike<'method'> {
   }
 
   toString(format?: StringFormat): string {
-    return `${format !== 'js' ? 'func ' + this.name : this.jsName}(${this.parameters.map(param => param.toString(format)).join(', ')})${format !== 'js' ? ': ' + this.returnType.toString(format) : ''} ${this.body.toString(format)}`;
+    const name = format !== 'js' ? 'func ' + this.name : this.jsName;
+    const params = this.parameters.map(param => param.toString(format)).join(', ');
+    const returnType = format !== 'js' ? ': ' + this.returnType.toString(format) : '';
+    const body = this.body.toString(format);
+    return `${this.docComment()}${name}(${params})${returnType} ${body}`;
   }
 }
 
@@ -326,7 +337,8 @@ export class VariableLike<K extends string> extends Declaration<K> {
   }
 
   toString(format?: StringFormat): string {
-    return `${this.name}${this.type ? ': ' + this.type.toString(format) : ''}`;
+    const type = this.type ? ': ' + this.type.toString(format) : '';
+    return `${this.docComment()}${this.name}${type}`;
   }
 }
 
@@ -373,7 +385,8 @@ export class Variable extends VariableLike<'variable'> {
     if (format === 'js') {
       return `let ${this.name} = ${this.value.toString(format)}`;
     }
-    return `var ${this.name}${this.type ? ': ' + this.type.toString(format) : ''} = ${this.value.toString(format)}`;
+    const type = this.type ? ': ' + this.type.toString(format) : '';
+    return `${this.docComment()}var ${this.name}${type} = ${this.value.toString(format)}`;
   }
 
   resolve(scope: Scope): this {
