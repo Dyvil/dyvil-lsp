@@ -85,6 +85,19 @@ export class Node<K extends string> {
     return undefined;
   }
 
+  findEnclosing(range: Range): Node<any> | undefined {
+    if (!this.range || !this.range.encloses(range)) {
+      return;
+    }
+    for (const child of children(this)) {
+      const result = child.findEnclosing(range);
+      if (result) {
+        return result;
+      }
+    }
+    return this;
+  }
+
   toString(format?: StringFormat): string {
     return `<${this.kind}>`;
   }

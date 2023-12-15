@@ -23,6 +23,10 @@ export class Range {
       && (position.line < this.end.line || position.column <= this.end.column)
     ;
   }
+
+  encloses(range: Range) {
+    return this.includes(range.start) && this.includes(range.end);
+  }
 }
 
 export interface CompletionItem {
