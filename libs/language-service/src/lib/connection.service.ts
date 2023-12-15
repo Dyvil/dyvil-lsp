@@ -43,6 +43,7 @@ export class ConnectionService {
               tokenModifiers: TOKEN_MODIFIERS,
             },
             full: true,
+            range: true,
           },
         },
       };

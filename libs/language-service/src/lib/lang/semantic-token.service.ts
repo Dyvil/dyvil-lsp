@@ -2,11 +2,19 @@ import {ConnectionService} from "../connection.service";
 import {
   SemanticTokenModifiers,
   SemanticTokens,
-  SemanticTokensParams,
+  SemanticTokensParams, SemanticTokensRangeParams,
   SemanticTokenTypes,
   uinteger
 } from "vscode-languageserver-protocol";
-import {compilationUnit, FunctionCall, Parameter, Range, recurse, SimpleScope, VariableReference} from "@stc/compiler";
+import {
+  FunctionCall,
+  Node,
+  Parameter,
+  Range,
+  recurse,
+  SimpleScope,
+  VariableReference
+} from "@stc/compiler";
 import {DocumentService} from "../document.service";
 
 export const TOKEN_TYPES = Object.values(SemanticTokenTypes);
@@ -18,6 +26,7 @@ export class SemanticTokenService {
     private documentService: DocumentService,
   ) {
     connectionService.connection.languages.semanticTokens.on(params => this.provideSemanticTokens(params));
+    connectionService.connection.languages.semanticTokens.onRange(params => this.provideSemanticTokensRange(params));
   }
 
   private provideSemanticTokens(params: SemanticTokensParams): SemanticTokens {
@@ -26,9 +35,12 @@ export class SemanticTokenService {
       return {data: []};
     }
 
-    const dataCollector = new TokenDataCollector();
+    return this.collectSemanticTokens(unit);
+  }
 
-    for (const node of recurse(unit)) {
+  private collectSemanticTokens(root: Node<string>): SemanticTokens {
+    const dataCollector = new TokenDataCollector();
+    for (const node of recurse(root)) {
       switch (node.kind) {
         case 'class':
           dataCollector.addNode(node.location!, SemanticTokenTypes.class);
@@ -61,8 +73,23 @@ export class SemanticTokenService {
           break;
       }
     }
-
     return {data: dataCollector.data};
+  }
+
+  private provideSemanticTokensRange(params: SemanticTokensRangeParams): SemanticTokens {
+    const unit = this.documentService.getAST(params.textDocument.uri);
+    if (!unit) {
+      return {data: []};
+    }
+
+    const enclosing = unit.findEnclosing(new Range(
+      {line: params.range.start.line + 1, column: params.range.start.character + 1},
+      {line: params.range.end.line + 1, column: params.range.end.character + 1},
+    ));
+    if (!enclosing) {
+      return {data: []};
+    }
+    return this.collectSemanticTokens(enclosing);
   }
 }
 
