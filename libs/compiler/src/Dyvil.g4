@@ -9,7 +9,7 @@ import { CommonTokenStream } from 'antlr4ts';
 file returns [ast.CompilationUnit cu]:
   { $cu = new ast.CompilationUnit(this._input.sourceName); }
   (class { $cu.classes.push($class.cn); })*
-  EOF
+  EOF { $cu.range = makeRange($start, $EOF); }
 ;
 
 class returns [ast.Class cn] @after { $cn.range = makeRange($start, $stop); }:
