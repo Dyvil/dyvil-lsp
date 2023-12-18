@@ -40,6 +40,7 @@ export class ConnectionService {
           documentFormattingProvider: true,
           documentRangeFormattingProvider: true,
           codeActionProvider: true,
+          inlayHintProvider: true,
           semanticTokensProvider: {
             legend: {
               tokenTypes: TOKEN_TYPES,
