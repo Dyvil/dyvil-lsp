@@ -39,6 +39,7 @@ export class ConnectionService {
           documentSymbolProvider: true,
           documentFormattingProvider: true,
           documentRangeFormattingProvider: true,
+          codeActionProvider: true,
           semanticTokensProvider: {
             legend: {
               tokenTypes: TOKEN_TYPES,

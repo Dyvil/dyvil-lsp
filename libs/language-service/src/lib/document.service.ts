@@ -32,6 +32,7 @@ export class DocumentService {
     }
     const unit = compilationUnit(document.getText(), uri).resolve(new SimpleScope([]));
     unit.link();
+    unit.lint(new SimpleScope([]));
     return unit;
   }
 }

@@ -6,12 +6,13 @@ import {ConnectionService} from '../connection.service';
 import {DocumentService} from '../document.service';
 import {convertRangeToLsp} from "./convert";
 
-function convertDiagnostic({severity, location, message}: Diagnostic): LspDiagnostic {
+function convertDiagnostic({severity, location, message, replacement}: Diagnostic): LspDiagnostic {
   return {
     severity: severity === 'error' ? DiagnosticSeverity.Error : DiagnosticSeverity.Warning,
     range: convertRangeToLsp(location),
     message,
     source: 'dyvil',
+    data: {replacement: replacement?.toString()},
   };
 }
 
