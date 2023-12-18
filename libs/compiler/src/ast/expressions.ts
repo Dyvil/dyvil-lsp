@@ -197,6 +197,18 @@ export class BinaryOperation extends BaseExpression<'binary'> {
     super('binary');
   }
 
+  lint(scope: Scope) {
+    if (this.operator === '==') {
+      if (this.lhs.kind === 'expr:literal' && this.lhs.representation === 'true') {
+        report(scope, this.range!, '`== true` is redundant', 'warning', this.rhs);
+      }
+      if (this.rhs.kind === 'expr:literal' && this.rhs.representation === 'true') {
+        report(scope, this.range!, '`== true` is redundant', 'warning', this.lhs);
+      }
+    }
+    super.lint(scope);
+  }
+
   toString(format?: StringFormat): string {
     return `${this.lhs.toString(format)} ${this.operator} ${this.rhs.toString(format)}`;
   }

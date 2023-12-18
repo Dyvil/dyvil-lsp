@@ -30,6 +30,10 @@ export class CompilationUnit extends Node<'unit'> {
     return super.resolve(new SimpleScope(decls, scope));
   }
 
+  lint(scope: Scope) {
+    super.lint(new SimpleScope({[CompilationUnit.enclosing]: this}, scope));
+  }
+
   toString(format?: StringFormat): string {
     return this.classes.map(c => c.toString(format)).join('\n\n');
   }

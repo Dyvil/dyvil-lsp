@@ -69,6 +69,12 @@ export class Node<K extends string> {
     }
   }
 
+  lint(scope: Scope) {
+    for (const child of children(this)) {
+      child.lint(scope);
+    }
+  }
+
   findByPosition(position: Position): Node<any>[] | undefined {
     if (this.range && !this.range.includes(position)) {
       return;
