@@ -20,13 +20,10 @@ module.exports = (config, context) => {
     resolve: {
       extensions: ['.ts', '.js'],
       fallback: {
-        path: resolve(__dirname, '../../node_modules/path-browserify'),
+        path: require.resolve('path-browserify'),
       },
     },
     plugins: [
-      new ProvidePlugin({
-        process: 'process/browser',
-      }),
       new MonacoWebpackPlugin({
         publicPath: '/',
         languages: ['typescript', 'javascript'],
