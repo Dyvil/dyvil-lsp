@@ -1,5 +1,5 @@
 import {buildWorkerDefinition} from 'monaco-editor-workers';
-import * as monaco from 'monaco-editor/esm/vs/editor/editor.api.js';
+import * as monaco from 'monaco-editor';
 import {initServices, MonacoLanguageClient} from 'monaco-languageclient';
 import {CloseAction, ErrorAction, MessageTransports} from "vscode-languageclient";
 

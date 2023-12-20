@@ -1,9 +1,7 @@
 const {merge} = require('webpack-merge');
-const {resolve} = require('path');
 const {DefinePlugin} = require('webpack');
-const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
-module.exports = (config, context) => {
+module.exports = (config) => {
   return merge(config, {
     module: {
       rules: [
@@ -26,10 +24,6 @@ module.exports = (config, context) => {
     plugins: [
       new DefinePlugin({
         'process.env': '{}',
-      }),
-      new MonacoWebpackPlugin({
-        publicPath: '/',
-        languages: ['typescript', 'javascript'],
       }),
     ],
   });
