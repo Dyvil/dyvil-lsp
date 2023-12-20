@@ -1,7 +1,5 @@
 import {Node, Position} from '@stc/compiler';
 import {
-  CompletionItem,
-  CompletionParams,
   DeclarationParams,
   DocumentHighlight,
   DocumentHighlightParams,
@@ -17,7 +15,8 @@ import {
 } from 'vscode-languageserver';
 import {ConnectionService} from '../connection.service';
 import {DocumentService} from '../document.service';
-import {convertRange} from './validation.service';
+import {TypeDefinitionParams} from "vscode-languageserver-protocol";
+import {convertRangeToLsp} from "./convert";
 
 export class FeatureService {
   constructor(
@@ -27,6 +26,7 @@ export class FeatureService {
     this.connectionService.connection.onPrepareRename(params => this.prepareRename(params));
     this.connectionService.connection.onRenameRequest(params => this.rename(params));
 
+    this.connectionService.connection.onTypeDefinition(params => this.typeDefinition(params));
     this.connectionService.connection.onReferences(params => this.references(params));
     this.connectionService.connection.onDefinition(params => this.definition(params));
     this.connectionService.connection.onHover(params => this.hover(params));
@@ -43,7 +43,7 @@ export class FeatureService {
     if (!references || !references.length) {
       return;
     }
-    return convertRange(node.location!);
+    return convertRangeToLsp(node.location!);
   }
 
   private rename(params: RenameParams): WorkspaceEdit | undefined {
@@ -54,7 +54,7 @@ export class FeatureService {
     return {
       changes: {
         [params.textDocument.uri]: references.map(reference => ({
-          range: convertRange(reference),
+          range: convertRangeToLsp(reference.location!),
           newText: params.newName,
         })),
       },
@@ -71,7 +71,7 @@ export class FeatureService {
     }
     return references.map(reference => ({
       uri: params.textDocument.uri,
-      range: convertRange(reference),
+      range: convertRangeToLsp(reference.location!),
     }));
   }
 
@@ -82,7 +82,22 @@ export class FeatureService {
     }
     return {
       uri: params.textDocument.uri,
-      range: convertRange(references[0]),
+      range: convertRangeToLsp(references[0].location!),
+    };
+  }
+
+  private typeDefinition(params: TypeDefinitionParams): Location | undefined {
+    const node = this.findNode(params);
+    if (!node) {
+      return;
+    }
+    const type = 'type' in node ? node.type : 'getType' in node && typeof node.getType === 'function' ? node.getType() : undefined;
+    if (!(type instanceof Node) || !type.location) {
+      return;
+    }
+    return {
+      uri: params.textDocument.uri,
+      range: convertRangeToLsp(type.location),
     };
   }
 
@@ -106,7 +121,7 @@ export class FeatureService {
       return undefined;
     }
     return references.map(r => ({
-      range: convertRange(r),
+      range: convertRangeToLsp(r.location!),
     }));
   }
 

@@ -33,14 +33,21 @@ export class ConnectionService {
           },
           referencesProvider: true,
           definitionProvider: true,
+          typeDefinitionProvider: true,
           hoverProvider: true,
           documentHighlightProvider: true,
+          documentSymbolProvider: true,
+          documentFormattingProvider: true,
+          documentRangeFormattingProvider: true,
+          codeActionProvider: true,
+          inlayHintProvider: true,
           semanticTokensProvider: {
             legend: {
               tokenTypes: TOKEN_TYPES,
               tokenModifiers: TOKEN_MODIFIERS,
             },
             full: true,
+            range: true,
           },
         },
       };

@@ -1,9 +1,7 @@
 const {merge} = require('webpack-merge');
-const {resolve} = require('path');
-const {ProvidePlugin} = require('webpack');
-const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
+const {DefinePlugin} = require('webpack');
 
-module.exports = (config, context) => {
+module.exports = (config) => {
   return merge(config, {
     module: {
       rules: [
@@ -20,16 +18,12 @@ module.exports = (config, context) => {
     resolve: {
       extensions: ['.ts', '.js'],
       fallback: {
-        path: resolve(__dirname, '../../node_modules/path-browserify'),
+        path: require.resolve('path-browserify'),
       },
     },
     plugins: [
-      new ProvidePlugin({
-        process: 'process/browser',
-      }),
-      new MonacoWebpackPlugin({
-        publicPath: '/',
-        languages: ['typescript', 'javascript'],
+      new DefinePlugin({
+        'process.env': '{}',
       }),
     ],
   });

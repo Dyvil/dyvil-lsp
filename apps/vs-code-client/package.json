@@ -6,10 +6,13 @@
     "name": "Adrian Kunz",
     "email": "clashsoft@hotmail.com"
   },
-  "version": "0.0.2",
-  "main": "main.js",
+  "version": "0.0.4",
+  "main": "./main.js",
   "engines": {
     "vscode": "^1.69.0"
+  },
+  "scripts": {
+    "vscode:prepublish": "cpx ../language-server/main.js ./server/"
   },
   "contributes": {
     "commands": [

@@ -1,12 +1,13 @@
 import {ErrorExpression, Expression} from './expressions';
-import {autocomplete, CompletionItem, Diagnostic, Range, report} from '../lint';
-import {autoIndent, Concept, Node, StringFormat} from './node';
+import {autocomplete, CompletionItem, Diagnostic, report} from '../lint';
+import {autoIndent, Concept, Node, ParserMethod, StringFormat} from './node';
 import {Name, Scope, SimpleScope} from '../scope';
 import {Block} from './statements';
 import {Type, ClassType, isAssignable, ErrorType} from './types';
 
 export class CompilationUnit extends Node<'unit'> {
   static enclosing = Symbol('enclosing compilation unit');
+  static parser: ParserMethod = 'file';
 
   diagnostics: Diagnostic[] = [];
 
@@ -29,6 +30,10 @@ export class CompilationUnit extends Node<'unit'> {
     return super.resolve(new SimpleScope(decls, scope));
   }
 
+  lint(scope: Scope) {
+    super.lint(new SimpleScope({[CompilationUnit.enclosing]: this}, scope));
+  }
+
   toString(format?: StringFormat): string {
     return this.classes.map(c => c.toString(format)).join('\n\n');
   }
@@ -45,17 +50,25 @@ export class Declaration<K extends string> extends Node<K> {
     super(kind);
   }
 
+  docComment(): string {
+    if (!this.doc) {
+      return '';
+    }
+    return '/**\n' + this.doc.trim().replace(/^/gm, ' * ') + '\n */\n';
+  }
+
   documentation(): string | undefined {
     return this.doc;
   }
 
-  references(): Range[] {
-    return [this.location!, ...this._references.map(ref => ref.location!)];
+  references(): Node<string>[] {
+    return [this, ...this._references];
   }
 }
 
 export class Class extends Declaration<'class'> implements Scope {
   static enclosing = Symbol('enclosing class');
+  static parser: ParserMethod = 'class';
 
   completion?: ClassCompletion;
 
@@ -71,6 +84,7 @@ export class Class extends Declaration<'class'> implements Scope {
   asType(): ClassType {
     const classType = new ClassType(this.name);
     classType._class = this;
+    classType.location = this.location;
     return classType;
   }
 
@@ -83,10 +97,11 @@ export class Class extends Declaration<'class'> implements Scope {
 
   toString(format?: StringFormat): string {
     return autoIndent`
+    ${this.docComment()}\
     class ${this.name} {
       ${this.fields.map(field => field.toString(format)).join('\n')}
 
-      ${this.constructors.map(field => field.toString(format)).join('\n\n')}
+      ${this.constructors.map(ctor => ctor.toString(format)).join('\n\n')}
 
       ${this.methods.map(method => method.toString(format)).join('\n\n')}
     }`;
@@ -166,6 +181,7 @@ export class Constructor extends MethodLike<'constructor'> {
     label: 'init',
     snippet: 'init(\${1:parameters...}) {\n  \${2:statements...}\n}',
   };
+  static parser: ParserMethod = 'ctor';
 
   constructor(
     parameters: Parameter[] = [],
@@ -175,7 +191,10 @@ export class Constructor extends MethodLike<'constructor'> {
   }
 
   toString(format?: StringFormat): string {
-    return `${format === 'js' ? 'constructor' : 'init'}(${this.parameters.map(param => param.toString(format)).join(', ')}) ${this.body.toString(format)}`;
+    const keyword = format === 'js' ? 'constructor' : 'init';
+    const params = this.parameters.map(param => param.toString(format)).join(', ');
+    const body = this.body.toString(format);
+    return `${this.docComment()}${keyword}(${params}) ${body}`;
   }
 
   documentation(): string | undefined {
@@ -187,7 +206,7 @@ export class Constructor extends MethodLike<'constructor'> {
     ` : this.doc;
   }
 
-  references(purpose?: 'rename' | 'definition'): Range[] {
+  references(purpose?: 'rename' | 'definition'): Node<string>[] {
     return purpose === 'rename' ? [] : super.references();
   }
 }
@@ -198,6 +217,7 @@ export class Field extends Declaration<'field'> {
     label: 'var',
     snippet: 'var \${1:name}: \${2:type} = \${3:value}',
   };
+  static parser: ParserMethod = 'field';
 
   constructor(
     name: string = '<unknown>',
@@ -216,19 +236,15 @@ export class Field extends Declaration<'field'> {
   }
 
   toString(format?: StringFormat): string {
+    const value = this.value ? ' = ' + this.value.toString(format) : '';
     if (format === 'js') {
       return autoIndent`
-      _${this.name}${this.value ? ' = ' + this.value.toString(format) : ''};
-
-      get ${this.name}() {
-        return this._${this.name};
-      }
-
-      set ${this.name}(value) {
-        this._${this.name} = value;
-      }`;
+      _${this.name}${value};
+      get ${this.name}() { return this._${this.name}; }
+      set ${this.name}(value) { this._${this.name} = value; }`;
     }
-    return `var ${this.name}: ${this.type.toString(format)}${this.value ? ' = ' + this.value.toString(format) : ''}`;
+    const type = this.type.toString(format);
+    return `${this.docComment()}var ${this.name}: ${type}${value}`;
   }
 }
 
@@ -238,6 +254,7 @@ export class Method extends MethodLike<'method'> {
     label: 'func',
     snippet: 'func \${1:name}(\${2:parameters...}) {\n  \${3:statements...}\n}',
   };
+  static parser: ParserMethod = 'method';
 
   constructor(
     name: string = '<unknown>',
@@ -273,7 +290,11 @@ export class Method extends MethodLike<'method'> {
   }
 
   toString(format?: StringFormat): string {
-    return `${format !== 'js' ? 'func ' + this.name : this.jsName}(${this.parameters.map(param => param.toString(format)).join(', ')})${format !== 'js' ? ': ' + this.returnType.toString(format) : ''} ${this.body.toString(format)}`;
+    const name = format !== 'js' ? 'func ' + this.name : this.jsName;
+    const params = this.parameters.map(param => param.toString(format)).join(', ');
+    const returnType = format !== 'js' ? ': ' + this.returnType.toString(format) : '';
+    const body = this.body.toString(format);
+    return `${this.docComment()}${name}(${params})${returnType} ${body}`;
   }
 }
 
@@ -320,21 +341,21 @@ export class VariableLike<K extends string> extends Declaration<K> {
   }
 
   toString(format?: StringFormat): string {
-    return `${this.name}${this.type ? ': ' + this.type.toString(format) : ''}`;
+    const type = this.type ? ': ' + this.type.toString(format) : '';
+    return `${this.docComment()}${this.name}${type}`;
   }
 }
 
 export class Parameter extends VariableLike<'parameter'> {
-  type!: Type;
-
   constructor(
     name: string = '<unknown>',
-    type: Type = ErrorType,
+    public type: Type = ErrorType,
   ) {
     super('parameter', name, type);
   }
+  static parser: ParserMethod = 'parameter';
 
-  references(purpose?: 'rename' | 'definition'): Range[] {
+  references(purpose?: 'rename' | 'definition'): Node<string>[] {
     return purpose === 'rename' && this.name === 'this' ? [] : super.references();
   }
 
@@ -358,6 +379,7 @@ export class Variable extends VariableLike<'variable'> {
   ) {
     super('variable', name, type);
   }
+  static parser: ParserMethod = 'variable';
 
   documentation(): string | undefined {
     return `\`var ${this.name}: ${this.type?.toString()}\`${this.doc ? '\n' + this.doc : ''}`;
@@ -367,7 +389,8 @@ export class Variable extends VariableLike<'variable'> {
     if (format === 'js') {
       return `let ${this.name} = ${this.value.toString(format)}`;
     }
-    return `var ${this.name}${this.type ? ': ' + this.type.toString(format) : ''} = ${this.value.toString(format)}`;
+    const type = this.type ? ': ' + this.type.toString(format) : '';
+    return `${this.docComment()}var ${this.name}${type} = ${this.value.toString(format)}`;
   }
 
   resolve(scope: Scope): this {

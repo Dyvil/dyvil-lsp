@@ -2,12 +2,20 @@ import {ConnectionService} from "../connection.service";
 import {
   SemanticTokenModifiers,
   SemanticTokens,
-  SemanticTokensParams,
+  SemanticTokensParams, SemanticTokensRangeParams,
   SemanticTokenTypes,
   uinteger
 } from "vscode-languageserver-protocol";
-import {compilationUnit, FunctionCall, Parameter, Range, recurse, SimpleScope, VariableReference} from "@stc/compiler";
+import {
+  FunctionCall,
+  Node,
+  Parameter,
+  Range,
+  recurse,
+  VariableReference
+} from "@stc/compiler";
 import {DocumentService} from "../document.service";
+import {convertRangeFromLsp} from "./convert";
 
 export const TOKEN_TYPES = Object.values(SemanticTokenTypes);
 export const TOKEN_MODIFIERS = Object.values(SemanticTokenModifiers);
@@ -18,20 +26,21 @@ export class SemanticTokenService {
     private documentService: DocumentService,
   ) {
     connectionService.connection.languages.semanticTokens.on(params => this.provideSemanticTokens(params));
+    connectionService.connection.languages.semanticTokens.onRange(params => this.provideSemanticTokensRange(params));
   }
 
   private provideSemanticTokens(params: SemanticTokensParams): SemanticTokens {
-
-    const uri = params.textDocument.uri;
-    const document = this.documentService.documents.get(uri);
-    if (!document) {
+    const unit = this.documentService.getAST(params.textDocument.uri);
+    if (!unit) {
       return {data: []};
     }
 
-    const dataCollector = new TokenDataCollector();
-    const unit = compilationUnit(document.getText()).resolve(new SimpleScope([]));
+    return this.collectSemanticTokens(unit);
+  }
 
-    for (const node of recurse(unit)) {
+  private collectSemanticTokens(root: Node<string>): SemanticTokens {
+    const dataCollector = new TokenDataCollector();
+    for (const node of recurse(root)) {
       switch (node.kind) {
         case 'class':
           dataCollector.addNode(node.location!, SemanticTokenTypes.class);
@@ -64,8 +73,20 @@ export class SemanticTokenService {
           break;
       }
     }
-
     return {data: dataCollector.data};
+  }
+
+  private provideSemanticTokensRange(params: SemanticTokensRangeParams): SemanticTokens {
+    const unit = this.documentService.getAST(params.textDocument.uri);
+    if (!unit) {
+      return {data: []};
+    }
+
+    const enclosing = unit.findEnclosing(convertRangeFromLsp(params.range));
+    if (!enclosing) {
+      return {data: []};
+    }
+    return this.collectSemanticTokens(enclosing);
   }
 }
 

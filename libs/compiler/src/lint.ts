@@ -18,7 +18,14 @@ export class Range {
   }
 
   includes(position: Position): boolean {
-    return this.start.line <= position.line && this.start.column <= position.column && position.line <= this.end.line && position.column <= this.end.column;
+    return this.start.line <= position.line && position.line <= this.end.line
+      && (this.start.line < position.line || this.start.column <= position.column)
+      && (position.line < this.end.line || position.column <= this.end.column)
+    ;
+  }
+
+  encloses(range: Range) {
+    return this.includes(range.start) && this.includes(range.end);
   }
 }
 
@@ -40,6 +47,7 @@ export class Diagnostic {
     public readonly message: string,
     public readonly severity: Severity = 'error',
     public readonly expected?: CompletionItem[],
+    public readonly replacement?: Node<string>,
   ) {
     if (!location) {
       throw new Error('location is required');
@@ -69,9 +77,12 @@ export function log(diagnostic: Diagnostic): void {
   }
 }
 
-export function report(scope: Scope, location: Range, message: string, severity: Severity = 'error', expected?: CompletionItem[]): undefined {
+export function report(scope: Scope, location: Range, message: string, severity: Severity = 'error',
+                       expectedOrReplacement?: CompletionItem[] | Node<string>): undefined {
   const unit = scope.lookup(CompilationUnit.enclosing, CompilationUnit);
-  const diagnostic = new Diagnostic(undefined, location, message, severity, expected);
+  const expected = Array.isArray(expectedOrReplacement) ? expectedOrReplacement : undefined;
+  const replacement = Array.isArray(expectedOrReplacement) ? undefined : expectedOrReplacement;
+  const diagnostic = new Diagnostic(undefined, location, message, severity, expected, replacement);
   if (unit) {
     unit.report(diagnostic);
   } else {

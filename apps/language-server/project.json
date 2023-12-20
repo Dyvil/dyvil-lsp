@@ -5,35 +5,51 @@
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nrwl/webpack:webpack",
+      "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
       "options": {
-        "target": "node",
-        "compiler": "tsc",
+        "platform": "node",
         "outputPath": "dist/apps/language-server",
+        "format": ["cjs"],
+        "bundle": true,
         "main": "apps/language-server/src/main.ts",
-        "tsConfig": "apps/language-server/tsconfig.app.json"
+        "tsConfig": "apps/language-server/tsconfig.app.json",
+        "assets": ["apps/language-server/src/assets"],
+        "generatePackageJson": true,
+        "esbuildOptions": {
+          "sourcemap": true,
+          "outExtension": {
+            ".js": ".js"
+          }
+        }
       },
       "configurations": {
+        "development": {},
         "production": {
-          "optimization": true,
-          "extractLicenses": true,
-          "inspect": false,
-          "sourceMap": false,
-          "mode": "production",
-          "outputPath": "dist/apps/vs-code-client/server",
-          "externalDependencies": "none"
+          "minify": true,
+          "thirdParty": true,
+          "esbuildOptions": {
+            "sourcemap": false,
+            "outExtension": {
+              ".js": ".js"
+            }
+          }
         }
       }
     },
     "serve": {
       "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "language-service:build"
+        "buildTarget": "language-server:build"
       },
       "configurations": {
+        "development": {
+          "buildTarget": "language-server:build:development"
+        },
         "production": {
-          "buildTarget": "language-service:build:production"
+          "buildTarget": "language-server:build:production"
         }
       }
     },

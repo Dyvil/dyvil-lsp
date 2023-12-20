@@ -1,7 +1,7 @@
 import {Variable} from './declarations';
 import {ErrorExpression, Expression} from './expressions';
 import {autocomplete, CompletionItem} from '../lint';
-import {autoIndent, Node, StringFormat} from './node';
+import {autoIndent, Node, ParserMethod, StringFormat} from './node';
 import {Scope, SimpleScope} from '../scope';
 
 class Statement<K extends string> extends Node<`statement:${K}`> {
@@ -43,6 +43,8 @@ export class ExpressionStatement extends Statement<'expr'> {
 }
 
 export class Block extends Statement<'block'> {
+  static parser: ParserMethod = 'blockStatement';
+
   constructor(
     public statements: AnyStatement[] = [],
   ) {
@@ -118,7 +120,7 @@ export class IfStatement extends Statement<'while'> {
         snippet: 'else {\n  \${1:statements...}\n}',
       }],
     });
-    return this;
+    return super.resolve(scope);
   }
 
   toString(format?: StringFormat): string {

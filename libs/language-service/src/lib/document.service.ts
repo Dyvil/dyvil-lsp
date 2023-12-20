@@ -30,6 +30,9 @@ export class DocumentService {
     if (!document) {
       return;
     }
-    return compilationUnit(document.getText(), uri).resolve(new SimpleScope([]));
+    const unit = compilationUnit(document.getText(), uri).resolve(new SimpleScope([]));
+    unit.link();
+    unit.lint(new SimpleScope([]));
+    return unit;
   }
 }

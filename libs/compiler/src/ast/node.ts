@@ -1,5 +1,7 @@
 import {Position, Range} from '../lint';
 import {Scope} from '../scope';
+import {DyvilParser} from "../parser/DyvilParser";
+import {ParserRuleContext} from "antlr4ts/ParserRuleContext";
 
 export type StringFormat = 'plain' | 'js';
 
@@ -28,8 +30,11 @@ export function isSubConcept(sub: Concept<any>, sup: Concept<any>): boolean {
   return sub === sup || sub.prototype instanceof sup;
 }
 
+export type ParserMethod = keyof { [K in keyof DyvilParser]: DyvilParser[K] extends (...args: any[]) => ParserRuleContext ? K : never };
+
 export class Node<K extends string> {
   location?: Range;
+  range?: Range;
 
   constructor(
     public kind: K,
@@ -44,7 +49,7 @@ export class Node<K extends string> {
     return this.definition()?.documentation();
   }
 
-  references(purpose?: 'rename' | 'definition'): Range[] {
+  references(purpose?: 'rename' | 'definition'): Node<string>[] {
     return this.definition(purpose)?.references(purpose) || [];
   }
 
@@ -53,19 +58,50 @@ export class Node<K extends string> {
     return this;
   }
 
+  link() {
+    for (const [key, value] of Object.entries(this)) {
+      if (key.startsWith('_') && value && '_references' in value) {
+        value._references.push(this);
+      }
+    }
+    for (const child of children(this)) {
+      child.link();
+    }
+  }
+
+  lint(scope: Scope) {
+    for (const child of children(this)) {
+      child.lint(scope);
+    }
+  }
+
   findByPosition(position: Position): Node<any>[] | undefined {
-    let child: Node<any>[] | undefined = undefined;
-    eachChild(this, node => {
-      child ||= node.findByPosition(position);
-      return node;
-    });
-    if (child) {
-      return [this, ...child];
+    if (this.range && !this.range.includes(position)) {
+      return;
+    }
+    for (const child of children(this)) {
+      const result = child.findByPosition(position);
+      if (result) {
+        return [this, ...result];
+      }
     }
     if (this.location?.includes(position)) {
       return [this];
     }
     return undefined;
+  }
+
+  findEnclosing(range: Range): Node<any> | undefined {
+    if (!this.range || !this.range.encloses(range)) {
+      return;
+    }
+    for (const child of children(this)) {
+      const result = child.findEnclosing(range);
+      if (result) {
+        return result;
+      }
+    }
+    return this;
   }
 
   toString(format?: StringFormat): string {
@@ -92,8 +128,22 @@ function eachChild(node: Node<any>, replacer: (n: Node<any>) => Node<any>) {
   }
 }
 
+/**
+ * Iterates over all nodes in the tree.
+ * @param node the root node
+ */
 export function* recurse(node: Node<any>): Generator<Node<any>> {
   yield node;
+  for (const child of children(node)) {
+    yield* recurse(child);
+  }
+}
+
+/**
+ * Iterates over all children of a node.
+ * @param node the parent node
+ */
+export function* children(node: Node<any>): Generator<Node<any>> {
   for (const [key, value] of Object.entries(node)) {
     if (key === 'location' || key === 'kind' || key.startsWith('_') || !value) {
       continue;
@@ -102,11 +152,11 @@ export function* recurse(node: Node<any>): Generator<Node<any>> {
       for (let i = 0; i < value.length; i++) {
         const item = value[i];
         if (item instanceof Node) {
-          yield* recurse(value[i]);
+          yield value[i];
         }
       }
     } else if (value instanceof Node) {
-      yield* recurse(value);
+      yield value;
     }
   }
 }
