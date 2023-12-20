@@ -62,6 +62,7 @@
     "@angular/cli": "~17.0.0",
     "@angular/compiler-cli": "17.0.4",
     "@angular/language-service": "17.0.4",
+    "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
     "@nestjs/schematics": "10.0.1",
     "@nestjs/testing": "10.0.2",
     "@nx/cypress": "17.2.6",
@@ -108,7 +109,9 @@
     "overrides": {
       "monaco-editor": "npm:@codingame/monaco-editor-treemended@>=1.83.16 <1.84.0",
       "vscode": "npm:@codingame/monaco-vscode-api@>=1.83.16 <1.84.0"
+    },
+    "patchedDependencies": {
+      "util@0.12.5": "patches/util@0.12.5.patch"
     }
   }
 }
-
