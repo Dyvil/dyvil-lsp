@@ -36,6 +36,14 @@
           }
         ],
         "styles": ["apps/web/src/styles.scss"],
+        "plugins": ["apps/web/ttf-loader.esbuild-plugin.js"],
+        "allowedCommonJsDependencies": [
+          "antlr4ts",
+          "vscode-languageclient",
+          "vscode-languageserver",
+          "vscode-languageserver-protocol",
+          "vscode-semver"
+        ],
         "scripts": [],
         "webWorkerTsConfig": "apps/web/tsconfig.worker.json"
       },
