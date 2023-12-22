@@ -1,5 +1,5 @@
 import {ANTLRErrorListener, CharStreams, CommonTokenStream, Token} from 'antlr4ts';
-import {children, CompilationUnit, Node, recurse} from './ast';
+import {CompilationUnit, Node, recurse} from './ast';
 import {DyvilLexer} from './parser/DyvilLexer';
 import {DyvilParser} from './parser/DyvilParser';
 import {CompletionItem, Diagnostic, Position, Range} from "./lint";
@@ -15,7 +15,7 @@ export function cleanDoc(doc: Token | undefined): string | undefined {
   return doc?.text?.replace(/^\/\*\*\n?|^\s*\*(?: |\/$)?/gm, '');
 }
 
-export function compilationUnit(source: string, path?: string): CompilationUnit {
+export function compilationUnit(source: string, path?: string, attachComments?: boolean): CompilationUnit {
   const inputStream = path ? CharStreams.fromString(source, path) : CharStreams.fromString(source);
   const lexer = new DyvilLexer(inputStream);
   const tokenStream = new CommonTokenStream(lexer);
@@ -45,13 +45,15 @@ export function compilationUnit(source: string, path?: string): CompilationUnit 
   const compilationUnit = parser.file().cu;
   compilationUnit.diagnostics = diagnostics;
 
-  const comments = tokenStream.getTokens().filter(t => t.channel === DyvilLexer.HIDDEN);
-  attachComments(comments, compilationUnit);
+  if (attachComments) {
+    const comments = tokenStream.getTokens().filter(t => t.channel === DyvilLexer.HIDDEN);
+    doAttachComments(comments, compilationUnit);
+  }
 
   return compilationUnit;
 }
 
-function attachComments(comments: Token[], compilationUnit: CompilationUnit) {
+function doAttachComments(comments: Token[], compilationUnit: CompilationUnit) {
   for (const comment of comments) {
     const {
       closest,
