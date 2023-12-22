@@ -30,7 +30,10 @@ export class DocumentService {
     if (!document) {
       return;
     }
-    const unit = compilationUnit(document.getText(), uri, true).resolve(new SimpleScope([]));
+    const unit = compilationUnit(document.getText(), {
+      path: uri,
+      comments: true,
+    }).resolve(new SimpleScope([]));
     unit.link();
     unit.lint(new SimpleScope([]));
     return unit;

@@ -15,8 +15,12 @@ export function cleanDoc(doc: Token | undefined): string | undefined {
   return doc?.text?.replace(/^\/\*\*\n?|^\s*\*(?: |\/$)?/gm, '');
 }
 
-export function compilationUnit(source: string, path?: string, attachComments?: boolean): CompilationUnit {
-  const inputStream = path ? CharStreams.fromString(source, path) : CharStreams.fromString(source);
+export function compilationUnit(source: string, options?: {
+  path?: string;
+  comments?: boolean;
+  completion?: boolean;
+}): CompilationUnit {
+  const inputStream = options?.path ? CharStreams.fromString(source, options.path) : CharStreams.fromString(source);
   const lexer = new DyvilLexer(inputStream);
   const tokenStream = new CommonTokenStream(lexer);
   const parser = new DyvilParser(tokenStream);
@@ -26,16 +30,19 @@ export function compilationUnit(source: string, path?: string, attachComments?: 
       if (!offendingSymbol) {
         return;
       }
-      const expectedTokens = recognizer.state in recognizer.atn.states ? recognizer.atn.getExpectedTokens(recognizer.state, undefined).toArray() : [];
-      const expectedText = expectedTokens
-        .map(id => DyvilLexer.VOCABULARY.getLiteralName(id))
-        .filter((s): s is string => !!s)
-        .map((s): CompletionItem => ({
-          kind: /^[a-z]+$/.test(s) ? 'keyword' : 'operator',
-          label: s.slice(1, -1),
-        }))
-      ;
-      diagnostics.push(new Diagnostic(path, makeRange(offendingSymbol as Token), msg, 'error', expectedText));
+      let expected: CompletionItem[] | undefined;
+      if (options?.completion) {
+        const expectedTokens = recognizer.state in recognizer.atn.states ? recognizer.atn.getExpectedTokens(recognizer.state, undefined).toArray() : [];
+        expected = expectedTokens
+          .map(id => DyvilLexer.VOCABULARY.getLiteralName(id))
+          .filter((s): s is string => !!s)
+          .map((s): CompletionItem => ({
+            kind: /^[a-z]+$/.test(s) ? 'keyword' : 'operator',
+            label: s.slice(1, -1),
+          }))
+        ;
+      }
+      diagnostics.push(new Diagnostic(options?.path, makeRange(offendingSymbol as Token), msg, 'error', expected));
     }
   };
   lexer.removeErrorListeners();
@@ -45,7 +52,7 @@ export function compilationUnit(source: string, path?: string, attachComments?: 
   const compilationUnit = parser.file().cu;
   compilationUnit.diagnostics = diagnostics;
 
-  if (attachComments) {
+  if (options?.comments) {
     const comments = tokenStream.getTokens().filter(t => t.channel === DyvilLexer.HIDDEN);
     doAttachComments(comments, compilationUnit);
   }
