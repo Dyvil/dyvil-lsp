@@ -55,9 +55,20 @@ export class Block extends Statement<'block'> {
 
   @CommentAware()
   toString(format?: StringFormat): string {
+    if (!this.statements.length) {
+      return '{}';
+    }
+
+    let statements = this.statements[0].toString(format);
+    for (let i = 1; i < this.statements.length; i++) {
+      const newlines = this.statements[i].range!.start.line - this.statements[i - 1].range!.end.line;
+      statements += newlines > 1 ? '\n\n' : '\n';
+      statements += this.statements[i].toString(format);
+    }
+
     return autoIndent`
     {
-      ${this.statements.map(statement => statement.toString(format) + (format === 'js' ? ';' : '')).join('\n')}
+      ${statements}
     }`;
   }
 
