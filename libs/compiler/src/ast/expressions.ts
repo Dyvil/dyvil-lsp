@@ -23,8 +23,8 @@ export class Literal extends BaseExpression<'literal'> {
     super('literal');
   }
 
-  toString(): string {
-    return this.representation;
+  toString(format?: StringFormat): string {
+    return this.before(format) + this.representation + this.after(format);
   }
 
   getType(): Type {
@@ -49,8 +49,8 @@ export class VariableReference extends BaseExpression<'variable'> {
     super('variable');
   }
 
-  toString(): string {
-    return this.name;
+  toString(format?: StringFormat): string {
+    return this.before(format) + this.name + this.after(format);
   }
 
   definition(): Node<any> | undefined {
@@ -84,7 +84,7 @@ export class FunctionCall extends BaseExpression<'functionCall'> {
   }
 
   toString(format?: StringFormat): string {
-    return `${this.name}(${this.args.map(arg => arg.toString(format)).join(', ')})`;
+    return `${this.before(format)}${this.name}(${this.args.map(arg => arg.toString(format)).join(', ')})${this.after(format)}`;
   }
 
   definition(purpose?: 'rename' | 'definition'): Node<any> | undefined {

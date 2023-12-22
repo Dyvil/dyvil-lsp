@@ -1,6 +1,6 @@
 import {ErrorExpression, Expression} from './expressions';
 import {autocomplete, CompletionItem, Diagnostic, report} from '../lint';
-import {autoIndent, Concept, Node, ParserMethod, StringFormat} from './node';
+import {autoIndent, CommentAware, Concept, Node, ParserMethod, StringFormat} from './node';
 import {Name, Scope, SimpleScope} from '../scope';
 import {Block} from './statements';
 import {Type, ClassType, isAssignable, ErrorType} from './types';
@@ -34,6 +34,7 @@ export class CompilationUnit extends Node<'unit'> {
     super.lint(new SimpleScope({[CompilationUnit.enclosing]: this}, scope));
   }
 
+  @CommentAware()
   toString(format?: StringFormat): string {
     return this.classes.map(c => c.toString(format)).join('\n\n');
   }
@@ -95,6 +96,7 @@ export class Class extends Declaration<'class'> implements Scope {
     };
   }
 
+  @CommentAware()
   toString(format?: StringFormat): string {
     return autoIndent`
     ${this.docComment()}\
@@ -190,6 +192,7 @@ export class Constructor extends MethodLike<'constructor'> {
     super('constructor', 'init', parameters, body);
   }
 
+  @CommentAware()
   toString(format?: StringFormat): string {
     const keyword = format === 'js' ? 'constructor' : 'init';
     const params = this.parameters.map(param => param.toString(format)).join(', ');
@@ -235,6 +238,7 @@ export class Field extends Declaration<'field'> {
     };
   }
 
+  @CommentAware()
   toString(format?: StringFormat): string {
     const value = this.value ? ' = ' + this.value.toString(format) : '';
     if (format === 'js') {
@@ -289,6 +293,7 @@ export class Method extends MethodLike<'method'> {
     return doc;
   }
 
+  @CommentAware()
   toString(format?: StringFormat): string {
     const name = format !== 'js' ? 'func ' + this.name : this.jsName;
     const params = this.parameters.map(param => param.toString(format)).join(', ');
@@ -340,6 +345,7 @@ export class VariableLike<K extends string> extends Declaration<K> {
     };
   }
 
+  @CommentAware()
   toString(format?: StringFormat): string {
     const type = this.type ? ': ' + this.type.toString(format) : '';
     return `${this.docComment()}${this.name}${type}`;
@@ -385,6 +391,7 @@ export class Variable extends VariableLike<'variable'> {
     return `\`var ${this.name}: ${this.type?.toString()}\`${this.doc ? '\n' + this.doc : ''}`;
   }
 
+  @CommentAware()
   toString(format?: StringFormat): string {
     if (format === 'js') {
       return `let ${this.name} = ${this.value.toString(format)}`;

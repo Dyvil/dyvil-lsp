@@ -224,3 +224,13 @@ export function autoIndent(strings: TemplateStringsArray, ...values: any[]): str
     return string + indentedValue;
   }).join('');
 }
+
+export function CommentAware(): MethodDecorator {
+  return (target, propertyKey, descriptor) => {
+    const method = descriptor.value as Function;
+    descriptor.value = function (this: Node<string>, format?: StringFormat) {
+      return this.before(format) + method.call(this, format) + this.after(format);
+    } as any;
+    return descriptor;
+  };
+}

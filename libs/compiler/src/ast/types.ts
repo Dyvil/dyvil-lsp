@@ -1,6 +1,6 @@
 import {Class} from './declarations';
 import {autocomplete, report} from '../lint';
-import {Concept, Node} from './node';
+import {CommentAware, Concept, Node} from './node';
 import {Name, Scope} from '../scope';
 
 export function isAssignable(to: Type, from: Type) {
@@ -60,6 +60,7 @@ export class ClassType extends BaseType<'class'> {
     return this._class?.list() ?? [];
   }
 
+  @CommentAware()
   toString(): string {
     return this.name;
   }
@@ -76,6 +77,7 @@ export class PrimitiveType extends BaseType<'primitive'> {
     super('primitive');
   }
 
+  @CommentAware()
   toString(): string {
     return this.name;
   }
