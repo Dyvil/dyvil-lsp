@@ -35,6 +35,8 @@ export type ParserMethod = keyof { [K in keyof DyvilParser]: DyvilParser[K] exte
 export class Node<K extends string> {
   location?: Range;
   range?: Range;
+  commentBefore?: string;
+  commentAfter?: string;
 
   constructor(
     public kind: K,
@@ -102,6 +104,14 @@ export class Node<K extends string> {
       }
     }
     return this;
+  }
+
+  before(format?: StringFormat): string {
+    return this.commentBefore && format !== 'js' ? this.commentBefore.endsWith('\n') ? this.commentBefore : this.commentBefore + ' ' : '';
+  }
+
+  after(format?: StringFormat): string {
+    return this.commentAfter && format !== 'js' ? ' ' + this.commentAfter : '';
   }
 
   toString(format?: StringFormat): string {

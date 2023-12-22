@@ -12,7 +12,8 @@ class Greeter {
   }
 
   func greet(): void {
-    var greeting = "Hello, " + this.name + "!"
+    // line comment
+    var /* block comment */ greeting = "Hello, " + this.name + "!" // comment after
     this.greet(greeting)
   }
 

@@ -11,4 +11,7 @@ file = file.resolve(new SimpleScope([]));
 for (const diagnostic of file.diagnostics) {
   log(diagnostic);
 }
+console.log('---', 'Dyvil', '---');
+console.log(file.toString());
+console.log('---', 'JS', '---');
 console.log(file.toString('js'));

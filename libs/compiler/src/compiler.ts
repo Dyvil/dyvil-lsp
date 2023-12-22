@@ -1,5 +1,5 @@
 import {ANTLRErrorListener, CharStreams, CommonTokenStream, Token} from 'antlr4ts';
-import {CompilationUnit} from './ast';
+import {children, CompilationUnit, Node, recurse} from './ast';
 import {DyvilLexer} from './parser/DyvilLexer';
 import {DyvilParser} from './parser/DyvilParser';
 import {CompletionItem, Diagnostic, Position, Range} from "./lint";
@@ -44,5 +44,42 @@ export function compilationUnit(source: string, path?: string): CompilationUnit 
   parser.addErrorListener(errorListener);
   const compilationUnit = parser.file().cu;
   compilationUnit.diagnostics = diagnostics;
+
+  const comments = tokenStream.getTokens().filter(t => t.channel === DyvilLexer.HIDDEN);
+  attachComments(comments, compilationUnit);
+
   return compilationUnit;
+}
+
+function attachComments(comments: Token[], compilationUnit: CompilationUnit) {
+  for (const comment of comments) {
+    const {
+      closest,
+      distance
+    } = closestNode(compilationUnit, new Position(comment.line, comment.charPositionInLine + 1));
+    if (closest) {
+      if (distance < 0) {
+        closest.commentBefore = (closest.commentBefore ?? '') + comment.text;
+      } else {
+        closest.commentAfter = (closest.commentAfter ?? '') + comment.text;
+      }
+    }
+  }
+}
+
+// find a node in the AST with the smallest distance to the given position
+function closestNode(ast: Node<string>, position: Position) {
+  let closest: Node<string> | undefined;
+  let closestDistance = Infinity;
+  for (const node of recurse(ast)) {
+    if (node.range?.includes(position) || !node.location) {
+      continue;
+    }
+    const distance = node.location.distance(position);
+    if (Math.abs(distance) < Math.abs(closestDistance)) {
+      closest = node;
+      closestDistance = distance;
+    }
+  }
+  return {closest, distance: closestDistance};
 }

@@ -149,9 +149,9 @@ expressionList returns [ast.Expression[] es] @init { $es = []; }:
 completableID: ID | COMPLETION_ID;
 
 WS: [ \t\r\n]+ -> skip;
-LC: '//' ~[\r\n]* -> skip;
+LC: '//' ~[\r\n]* ('\r''\n'|'\r'|'\n'|EOF) -> channel(HIDDEN);
 DOC: '/**' .*? '*/';
-BC: '/*' .*? '*/' -> skip;
+BC: '/*' .*? '*/' -> channel(HIDDEN);
 
 NUMBER: [+-]?[0-9]+([.][0-9]+)?;
 COMPLETION_ID: ID? COMPLETION_MARKER;
