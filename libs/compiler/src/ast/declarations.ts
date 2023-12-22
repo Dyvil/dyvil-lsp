@@ -396,7 +396,7 @@ export class Variable extends VariableLike<'variable'> {
     if (format === 'js') {
       return `let ${this.name} = ${this.value.toString(format)}`;
     }
-    const type = this.type ? ': ' + this.type.toString(format) : '';
+    const type = this.type && this.type.location ? ': ' + this.type.toString(format) : '';
     return `${this.docComment()}var ${this.name}${type} = ${this.value.toString(format)}`;
   }
 
