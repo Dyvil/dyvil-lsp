@@ -13,6 +13,7 @@
     },
     "antlr4ts": {
       "command": "antlr4ts -no-visitor -no-listener -o parser Dyvil.g4",
+      "cache": true,
       "options": {
         "cwd": "libs/compiler/src"
       },
