@@ -39,6 +39,10 @@ export class ClassType extends BaseType<'class'> {
     super('class');
   }
 
+  definition(purpose?: "rename" | "definition"): Node<any> | undefined {
+    return this._class;
+  }
+
   resolve(scope: Scope): this {
     if (autocomplete(scope, this.location!, this.name, {
       kind: 'class',
