@@ -38,5 +38,5 @@ for (const diagnostic of units.flatMap(u => u.diagnostics)) {
 for (const unit of units) {
   const sigBuilder = new SignatureBuilder();
   unit.buildSignature(sigBuilder);
-  console.log(sigBuilder.signature, sigBuilder.hash);
+  console.log(sigBuilder.signature, sigBuilder.hash, [...sigBuilder.dependencies].map(u => u.path));
 }

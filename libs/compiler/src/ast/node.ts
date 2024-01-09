@@ -2,7 +2,7 @@ import {Position, Range} from '../lint';
 import {Scope} from '../scope';
 import {DyvilParser} from "../parser/DyvilParser";
 import {ParserRuleContext} from "antlr4ts/ParserRuleContext";
-import {CompilationUnit} from "./declarations";
+import {Declaration} from "./declarations";
 import {SignatureBuilder} from "./signature";
 
 export type StringFormat = 'plain' | 'js';
@@ -48,6 +48,10 @@ export class Node<K extends string> {
   buildSignature(builder: SignatureBuilder) {
     for (const child of children(this)) {
       child.buildSignature(builder);
+    }
+    const def = this.definition();
+    if (def && def instanceof Declaration && def._enclosingCU) {
+      builder.addDependency(def._enclosingCU);
     }
   }
 

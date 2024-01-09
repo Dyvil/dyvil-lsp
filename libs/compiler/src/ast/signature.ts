@@ -15,6 +15,10 @@ export class SignatureBuilder {
     this.#dependencies.add(dep);
   }
 
+  get dependencies(): Set<CompilationUnit> {
+    return this.#dependencies;
+  }
+
   get signature(): string {
     return this.#signature;
   }
