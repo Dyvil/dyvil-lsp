@@ -14,6 +14,11 @@ module.exports = (config) => {
           type: 'asset/resource'
         },
       ],
+      parser: {
+        javascript: {
+          url: true,
+        },
+      },
     },
     resolve: {
       extensions: ['.ts', '.js'],

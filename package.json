@@ -25,6 +25,13 @@
     "@angular/platform-browser": "17.0.4",
     "@angular/platform-browser-dynamic": "17.0.4",
     "@angular/router": "17.0.4",
+    "@codingame/monaco-vscode-editor-service-override": "~1.83.16",
+    "@codingame/monaco-vscode-extensions-service-override": "~1.83.16",
+    "@codingame/monaco-vscode-javascript-default-extension": "~1.83.16",
+    "@codingame/monaco-vscode-languages-service-override": "~1.83.16",
+    "@codingame/monaco-vscode-textmate-service-override": "~1.83.16",
+    "@codingame/monaco-vscode-theme-defaults-default-extension": "~1.83.16",
+    "@codingame/monaco-vscode-theme-service-override": "~1.83.16",
     "@nestjs/common": "10.0.2",
     "@nestjs/config": "^3.1.1",
     "@nestjs/core": "10.0.2",
@@ -107,4 +114,3 @@
     }
   }
 }
-
