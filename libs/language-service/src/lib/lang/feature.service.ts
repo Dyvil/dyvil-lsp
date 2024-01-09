@@ -51,14 +51,18 @@ export class FeatureService {
     if (!references || !references.length) {
       return;
     }
-    return {
-      changes: {
-        [params.textDocument.uri]: references.map(reference => ({
-          range: convertRangeToLsp(reference.location!),
-          newText: params.newName,
-        })),
-      },
-    };
+    const edit: WorkspaceEdit = {changes: {}};
+    for (const ref of references) {
+      const path = ref.compilationUnit()?.path;
+      if (!path) {
+        continue;
+      }
+      (edit.changes![path] ??= []).push({
+        range: convertRangeToLsp(ref.location!),
+        newText: params.newName,
+      });
+    }
+    return edit;
   }
 
   private references(params: ReferenceParams): Location[] | undefined {
@@ -70,7 +74,7 @@ export class FeatureService {
       references.shift();
     }
     return references.map(reference => ({
-      uri: params.textDocument.uri,
+      uri: reference.compilationUnit()?.path ?? '',
       range: convertRangeToLsp(reference.location!),
     }));
   }
@@ -80,8 +84,12 @@ export class FeatureService {
     if (!references || !references.length) {
       return;
     }
+    const path = references[0].compilationUnit()?.path;
+    if (!path) {
+      return;
+    }
     return {
-      uri: params.textDocument.uri,
+      uri: path,
       range: convertRangeToLsp(references[0].location!),
     };
   }
