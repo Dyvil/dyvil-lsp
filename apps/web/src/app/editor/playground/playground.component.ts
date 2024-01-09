@@ -23,18 +23,23 @@ export class PlaygroundComponent implements OnInit {
   }
 
   ngOnInit() {
-    const examplePath = 'assets/examples/Greeter.dyv';
-    this.http.get(examplePath, {responseType: 'text'}).subscribe(code => {
-      this.code = code;
-    });
+    this.worker = new Worker(new URL('./playground.worker.ts', import.meta.url));
+
+    const loadCode = localStorage.getItem('playground/dyvil');
+    if (loadCode) {
+      this.code = loadCode;
+      this.compile(loadCode).then(c => this.compiled = c);
+    } else {
+      const examplePath = 'assets/examples/Greeter.dyv';
+      this.http.get(examplePath, {responseType: 'text'}).subscribe(code => this.code = code);
+    }
 
     this.compile$.pipe(
       debounceTime(400),
     ).subscribe(code => {
+      localStorage.setItem('playground/dyvil', code);
       this.compile(code).then(c => this.compiled = c);
     });
-
-    this.worker = new Worker(new URL('./playground.worker.ts', import.meta.url));
   }
 
   async compile(compile: string): Promise<string> {
