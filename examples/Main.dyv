@@ -1,0 +1,6 @@
+class Main {
+  func main(): void {
+    var greeter = Greeter("World")
+    greeter.greet()
+  }
+}

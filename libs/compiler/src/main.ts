@@ -1,22 +1,42 @@
 import {readFileSync} from 'fs';
-import {SimpleScope} from './scope';
+import {Name, Scope} from './scope';
 import {compilationUnit} from './compiler';
 import {log} from "./lint";
-import {SignatureBuilder} from "./ast";
+import {CompilationUnit, Concept, Node, SignatureBuilder} from "./ast";
 
-const path = process.argv[2] || 'examples/Greeter.dyv';
+const paths = process.argv.slice(2);
+let units: CompilationUnit[] = [];
 
-const text = readFileSync(path, 'utf8');
-let file = compilationUnit(text, {path});
-file = file.resolve(new SimpleScope([]));
-for (const diagnostic of file.diagnostics) {
+for (const path of paths) {
+  const text = readFileSync(path, 'utf8');
+  const unit = compilationUnit(text, {path});
+  units.push(unit);
+}
+
+const topScope: Scope = {
+  lookup<N extends Node<any>>(name: Name, concept: Concept<N>): N | undefined {
+    for (const unit of units) {
+      for (const cls of unit.classes) {
+        if (cls.name === name && cls instanceof concept) {
+          return cls;
+        }
+      }
+    }
+    return;
+  },
+
+  list(): Node<any>[] {
+    return units.flatMap(u => u.classes);
+  },
+}
+
+units = units.map(u => u.resolve(topScope));
+for (const diagnostic of units.flatMap(u => u.diagnostics)) {
   log(diagnostic);
 }
-console.log('---', 'Dyvil', '---');
-console.log(file.toString());
-console.log('---', 'JS', '---');
-console.log(file.toString('js'));
-console.log('---', 'Signature', '---');
-const sigBuilder = new SignatureBuilder();
-file.buildSignature(sigBuilder);
-console.log(sigBuilder.signature, sigBuilder.hash);
+
+for (const unit of units) {
+  const sigBuilder = new SignatureBuilder();
+  unit.buildSignature(sigBuilder);
+  console.log(sigBuilder.signature, sigBuilder.hash);
+}
