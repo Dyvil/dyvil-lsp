@@ -13,7 +13,7 @@ import {
 import {editor} from 'monaco-editor/esm/vs/editor/editor.api';
 import {MonacoLanguageClient} from 'monaco-languageclient';
 import {BrowserMessageReader, BrowserMessageWriter} from 'vscode-languageserver-protocol/browser';
-import {createLanguageClient} from './monaco';
+import {createLanguageClient, ready} from './monaco';
 
 @Component({
   selector: 'stc-editor',
@@ -33,6 +33,8 @@ export class EditorComponent implements AfterViewInit, OnChanges, OnDestroy {
   lspClient?: MonacoLanguageClient;
 
   async ngAfterViewInit() {
+    await ready;
+
     const domElement = this.container.nativeElement;
     this.editor = editor.create(domElement, {
       value: this.code,

@@ -1,5 +1,4 @@
 import * as extensionManifest from 'apps/vs-code-client/package.json';
-import * as monaco from 'monaco-editor';
 
 import getEditorServiceOverride from '@codingame/monaco-vscode-editor-service-override';
 import getExtensionsServiceOverride from '@codingame/monaco-vscode-extensions-service-override';
@@ -13,8 +12,10 @@ import {CloseAction, ErrorAction, MessageTransports} from "vscode-languageclient
 import {ExtensionHostKind, registerExtension} from 'vscode/extensions'
 import {buildWorkerDefinition} from 'monaco-editor-workers';
 import {initServices, MonacoLanguageClient, useOpenEditorStub} from 'monaco-languageclient';
+import 'vscode/localExtensionHost';
+import * as monaco from 'monaco-editor';
 
-initServices({
+export const ready = initServices({
   userServices: {
     ...getExtensionsServiceOverride(),
     ...getThemeServiceOverride(),
@@ -22,12 +23,10 @@ initServices({
     ...getLanguageServiceOverride(),
     ...getEditorServiceOverride(useOpenEditorStub),
   },
-}).then(async () => {
-  await whenReady();
-
+}).then(() => {
   const extension = registerExtension(extensionManifest, ExtensionHostKind.LocalProcess);
   extension.registerFileUrl('./assets/dyvil.tmGrammar.json', new URL('apps/vs-code-client/assets/dyvil.tmGrammar.json', import.meta.url).href);
-});
+}).then(() => whenReady());
 
 buildWorkerDefinition('./assets/monaco-editor-workers/workers', document.baseURI, false);
 
