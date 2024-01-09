@@ -1,4 +1,4 @@
-class Hr {
+class Wr {
   constructor() {
     this.listeners = [], this.unexpectedErrorHandler = function(t) {
       setTimeout(() => {
@@ -23,11 +23,11 @@ class Hr {
     this.unexpectedErrorHandler(t);
   }
 }
-const Wr = new Hr();
-function pr(e) {
-  zr(e) || Wr.onUnexpectedError(e);
+const zr = new Wr();
+function Lr(e) {
+  $r(e) || zr.onUnexpectedError(e);
 }
-function Zt(e) {
+function Yt(e) {
   if (e instanceof Error) {
     const { name: t, message: n } = e, r = e.stacktrace || e.stack;
     return {
@@ -41,10 +41,10 @@ function Zt(e) {
   return e;
 }
 const Ct = "Canceled";
-function zr(e) {
-  return e instanceof $r ? !0 : e instanceof Error && e.name === Ct && e.message === Ct;
+function $r(e) {
+  return e instanceof Or ? !0 : e instanceof Error && e.name === Ct && e.message === Ct;
 }
-class $r extends Error {
+class Or extends Error {
   constructor() {
     super(Ct), this.name = this.message;
   }
@@ -63,19 +63,29 @@ class Be extends Error {
     return t.name === "CodeExpectedError";
   }
 }
-class xe extends Error {
+class be extends Error {
   constructor(t) {
-    super(t || "An unexpected bug occurred."), Object.setPrototypeOf(this, xe.prototype);
+    super(t || "An unexpected bug occurred."), Object.setPrototypeOf(this, be.prototype);
   }
 }
-function Or(e) {
-  const t = this;
-  let n = !1, r;
+function Gr(e, t) {
+  const n = this;
+  let r = !1, s;
   return function() {
-    return n || (n = !0, r = e.apply(t, arguments)), r;
+    if (r)
+      return s;
+    if (r = !0, t)
+      try {
+        s = e.apply(n, arguments);
+      } finally {
+        t();
+      }
+    else
+      s = e.apply(n, arguments);
+    return s;
   };
 }
-var ct;
+var ut;
 (function(e) {
   function t(_) {
     return _ && typeof _ == "object" && typeof _[Symbol.iterator] == "function";
@@ -94,23 +104,23 @@ var ct;
     return t(_) ? _ : s(_);
   }
   e.wrap = i;
-  function a(_) {
+  function l(_) {
     return _ || n;
   }
-  e.from = a;
+  e.from = l;
   function* o(_) {
     for (let x = _.length - 1; x >= 0; x--)
       yield _[x];
   }
   e.reverse = o;
-  function c(_) {
+  function u(_) {
     return !_ || _[Symbol.iterator]().next().done === !0;
   }
-  e.isEmpty = c;
-  function u(_) {
+  e.isEmpty = u;
+  function c(_) {
     return _[Symbol.iterator]().next().value;
   }
-  e.first = u;
+  e.first = c;
   function h(_, x) {
     for (const S of _)
       if (x(S))
@@ -137,8 +147,7 @@ var ct;
   e.map = d;
   function* g(..._) {
     for (const x of _)
-      for (const S of x)
-        yield S;
+      yield* x;
   }
   e.concat = g;
   function b(_, x, S) {
@@ -148,12 +157,12 @@ var ct;
     return N;
   }
   e.reduce = b;
-  function* w(_, x, S = _.length) {
+  function* v(_, x, S = _.length) {
     for (x < 0 && (x += _.length), S < 0 ? S += _.length : S > _.length && (S = _.length); x < S; x++)
       yield _[x];
   }
-  e.slice = w;
-  function L(_, x = Number.POSITIVE_INFINITY) {
+  e.slice = v;
+  function w(_, x = Number.POSITIVE_INFINITY) {
     const S = [];
     if (x === 0)
       return [S, _];
@@ -168,10 +177,10 @@ var ct;
       return N;
     } }];
   }
-  e.consume = L;
-})(ct || (ct = {}));
+  e.consume = w;
+})(ut || (ut = {}));
 function vr(e) {
-  if (ct.is(e)) {
+  if (ut.is(e)) {
     const t = [];
     for (const n of e)
       if (n)
@@ -188,17 +197,17 @@ function vr(e) {
   } else if (e)
     return e.dispose(), e;
 }
-function Gr(...e) {
+function jr(...e) {
   return Ge(() => vr(e));
 }
 function Ge(e) {
   return {
-    dispose: Or(() => {
+    dispose: Gr(() => {
       e();
     })
   };
 }
-class He {
+class Ae {
   constructor() {
     this._toDispose = /* @__PURE__ */ new Set(), this._isDisposed = !1;
   }
@@ -235,7 +244,7 @@ class He {
       return t;
     if (t === this)
       throw new Error("Cannot register a disposable on itself!");
-    return this._isDisposed ? He.DISABLE_DISPOSED_WARNING || console.warn(new Error("Trying to add a disposable to a DisposableStore that has already been disposed of. The added object will be leaked!").stack) : this._toDispose.add(t), t;
+    return this._isDisposed ? Ae.DISABLE_DISPOSED_WARNING || console.warn(new Error("Trying to add a disposable to a DisposableStore that has already been disposed of. The added object will be leaked!").stack) : this._toDispose.add(t), t;
   }
   /**
    * Deletes the value from the store, but does not dispose it.
@@ -244,10 +253,10 @@ class He {
     t && this._toDispose.has(t) && this._toDispose.delete(t);
   }
 }
-He.DISABLE_DISPOSED_WARNING = !1;
+Ae.DISABLE_DISPOSED_WARNING = !1;
 class je {
   constructor() {
-    this._store = new He(), this._store;
+    this._store = new Ae(), this._store;
   }
   dispose() {
     this._store.dispose();
@@ -269,7 +278,7 @@ class H {
   }
 }
 H.Undefined = new H(void 0);
-class jr {
+class Qr {
   constructor() {
     this._first = H.Undefined, this._last = H.Undefined, this._size = 0;
   }
@@ -336,13 +345,13 @@ class jr {
       yield t.element, t = t.next;
   }
 }
-const Qr = globalThis.performance && typeof globalThis.performance.now == "function";
-class _t {
+const Xr = globalThis.performance && typeof globalThis.performance.now == "function";
+class bt {
   static create(t) {
-    return new _t(t);
+    return new bt(t);
   }
   constructor(t) {
-    this._now = Qr && t === !1 ? Date.now : globalThis.performance.now.bind(globalThis.performance), this._startTime = this._now(), this._stopTime = -1;
+    this._now = Xr && t === !1 ? Date.now : globalThis.performance.now.bind(globalThis.performance), this._startTime = this._now(), this._stopTime = -1;
   }
   stop() {
     this._stopTime = this._now();
@@ -354,261 +363,263 @@ class _t {
 var At;
 (function(e) {
   e.None = () => je.None;
-  function t(p, v) {
+  function t(p, L) {
     return f(p, () => {
-    }, 0, void 0, !0, void 0, v);
+    }, 0, void 0, !0, void 0, L);
   }
   e.defer = t;
   function n(p) {
-    return (v, C = null, A) => {
-      let k = !1, F;
-      return F = p((U) => {
-        if (!k)
-          return F ? F.dispose() : k = !0, v.call(C, U);
-      }, null, A), k && F.dispose(), F;
+    return (L, C = null, A) => {
+      let E = !1, P;
+      return P = p((I) => {
+        if (!E)
+          return P ? P.dispose() : E = !0, L.call(C, I);
+      }, null, A), E && P.dispose(), P;
     };
   }
   e.once = n;
-  function r(p, v, C) {
-    return u((A, k = null, F) => p((U) => A.call(k, v(U)), null, F), C);
+  function r(p, L, C) {
+    return c((A, E = null, P) => p((I) => A.call(E, L(I)), null, P), C);
   }
   e.map = r;
-  function s(p, v, C) {
-    return u((A, k = null, F) => p((U) => {
-      v(U), A.call(k, U);
-    }, null, F), C);
+  function s(p, L, C) {
+    return c((A, E = null, P) => p((I) => {
+      L(I), A.call(E, I);
+    }, null, P), C);
   }
   e.forEach = s;
-  function i(p, v, C) {
-    return u((A, k = null, F) => p((U) => v(U) && A.call(k, U), null, F), C);
+  function i(p, L, C) {
+    return c((A, E = null, P) => p((I) => L(I) && A.call(E, I), null, P), C);
   }
   e.filter = i;
-  function a(p) {
+  function l(p) {
     return p;
   }
-  e.signal = a;
+  e.signal = l;
   function o(...p) {
-    return (v, C = null, A) => {
-      const k = Gr(...p.map((F) => F((U) => v.call(C, U))));
-      return h(k, A);
+    return (L, C = null, A) => {
+      const E = jr(...p.map((P) => P((I) => L.call(C, I))));
+      return h(E, A);
     };
   }
   e.any = o;
-  function c(p, v, C, A) {
-    let k = C;
-    return r(p, (F) => (k = v(k, F), k), A);
+  function u(p, L, C, A) {
+    let E = C;
+    return r(p, (P) => (E = L(E, P), E), A);
   }
-  e.reduce = c;
-  function u(p, v) {
+  e.reduce = u;
+  function c(p, L) {
     let C;
     const A = {
       onWillAddFirstListener() {
-        C = p(k.fire, k);
+        C = p(E.fire, E);
       },
       onDidRemoveLastListener() {
         C == null || C.dispose();
       }
-    }, k = new ie(A);
-    return v == null || v.add(k), k.event;
+    }, E = new ie(A);
+    return L == null || L.add(E), E.event;
   }
-  function h(p, v) {
-    return v instanceof Array ? v.push(p) : v && v.add(p), p;
+  function h(p, L) {
+    return L instanceof Array ? L.push(p) : L && L.add(p), p;
   }
-  function f(p, v, C = 100, A = !1, k = !1, F, U) {
-    let K, Y, ye, tt = 0, Se;
-    const qr = {
-      leakWarningThreshold: F,
+  function f(p, L, C = 100, A = !1, E = !1, P, I) {
+    let Q, Z, ye, et = 0, we;
+    const Ir = {
+      leakWarningThreshold: P,
       onWillAddFirstListener() {
-        K = p((Ir) => {
-          tt++, Y = v(Y, Ir), A && !ye && (nt.fire(Y), Y = void 0), Se = () => {
-            const Ur = Y;
-            Y = void 0, ye = void 0, (!A || tt > 1) && nt.fire(Ur), tt = 0;
-          }, typeof C == "number" ? (clearTimeout(ye), ye = setTimeout(Se, C)) : ye === void 0 && (ye = 0, queueMicrotask(Se));
+        Q = p((Ur) => {
+          et++, Z = L(Z, Ur), A && !ye && (tt.fire(Z), Z = void 0), we = () => {
+            const Hr = Z;
+            Z = void 0, ye = void 0, (!A || et > 1) && tt.fire(Hr), et = 0;
+          }, typeof C == "number" ? (clearTimeout(ye), ye = setTimeout(we, C)) : ye === void 0 && (ye = 0, queueMicrotask(we));
         });
       },
       onWillRemoveListener() {
-        k && tt > 0 && (Se == null || Se());
+        E && et > 0 && (we == null || we());
       },
       onDidRemoveLastListener() {
-        Se = void 0, K.dispose();
+        we = void 0, Q.dispose();
       }
-    }, nt = new ie(qr);
-    return U == null || U.add(nt), nt.event;
+    }, tt = new ie(Ir);
+    return I == null || I.add(tt), tt.event;
   }
   e.debounce = f;
-  function m(p, v = 0, C) {
-    return e.debounce(p, (A, k) => A ? (A.push(k), A) : [k], v, void 0, !0, void 0, C);
+  function m(p, L = 0, C) {
+    return e.debounce(p, (A, E) => A ? (A.push(E), A) : [E], L, void 0, !0, void 0, C);
   }
   e.accumulate = m;
-  function d(p, v = (A, k) => A === k, C) {
-    let A = !0, k;
-    return i(p, (F) => {
-      const U = A || !v(F, k);
-      return A = !1, k = F, U;
+  function d(p, L = (A, E) => A === E, C) {
+    let A = !0, E;
+    return i(p, (P) => {
+      const I = A || !L(P, E);
+      return A = !1, E = P, I;
     }, C);
   }
   e.latch = d;
-  function g(p, v, C) {
+  function g(p, L, C) {
     return [
-      e.filter(p, v, C),
-      e.filter(p, (A) => !v(A), C)
+      e.filter(p, L, C),
+      e.filter(p, (A) => !L(A), C)
     ];
   }
   e.split = g;
-  function b(p, v = !1, C = [], A) {
-    let k = C.slice(), F = p((Y) => {
-      k ? k.push(Y) : K.fire(Y);
+  function b(p, L = !1, C = [], A) {
+    let E = C.slice(), P = p((Z) => {
+      E ? E.push(Z) : Q.fire(Z);
     });
-    A && A.add(F);
-    const U = () => {
-      k == null || k.forEach((Y) => K.fire(Y)), k = null;
-    }, K = new ie({
+    A && A.add(P);
+    const I = () => {
+      E == null || E.forEach((Z) => Q.fire(Z)), E = null;
+    }, Q = new ie({
       onWillAddFirstListener() {
-        F || (F = p((Y) => K.fire(Y)), A && A.add(F));
+        P || (P = p((Z) => Q.fire(Z)), A && A.add(P));
       },
       onDidAddFirstListener() {
-        k && (v ? setTimeout(U) : U());
+        E && (L ? setTimeout(I) : I());
       },
       onDidRemoveLastListener() {
-        F && F.dispose(), F = null;
+        P && P.dispose(), P = null;
       }
     });
-    return A && A.add(K), K.event;
+    return A && A.add(Q), Q.event;
   }
   e.buffer = b;
-  function w(p, v) {
-    return (A, k, F) => {
-      const U = v(new _());
-      return p(function(K) {
-        const Y = U.evaluate(K);
-        Y !== L && A.call(k, Y);
-      }, void 0, F);
+  function v(p, L) {
+    return (A, E, P) => {
+      const I = L(new _());
+      return p(function(Q) {
+        const Z = I.evaluate(Q);
+        Z !== w && A.call(E, Z);
+      }, void 0, P);
     };
   }
-  e.chain = w;
-  const L = Symbol("HaltChainable");
+  e.chain = v;
+  const w = Symbol("HaltChainable");
   class _ {
     constructor() {
       this.steps = [];
     }
-    map(v) {
-      return this.steps.push(v), this;
+    map(L) {
+      return this.steps.push(L), this;
     }
-    forEach(v) {
-      return this.steps.push((C) => (v(C), C)), this;
+    forEach(L) {
+      return this.steps.push((C) => (L(C), C)), this;
     }
-    filter(v) {
-      return this.steps.push((C) => v(C) ? C : L), this;
+    filter(L) {
+      return this.steps.push((C) => L(C) ? C : w), this;
     }
-    reduce(v, C) {
+    reduce(L, C) {
       let A = C;
-      return this.steps.push((k) => (A = v(A, k), A)), this;
+      return this.steps.push((E) => (A = L(A, E), A)), this;
     }
-    latch(v = (C, A) => C === A) {
+    latch(L = (C, A) => C === A) {
       let C = !0, A;
-      return this.steps.push((k) => {
-        const F = C || !v(k, A);
-        return C = !1, A = k, F ? k : L;
+      return this.steps.push((E) => {
+        const P = C || !L(E, A);
+        return C = !1, A = E, P ? E : w;
       }), this;
     }
-    evaluate(v) {
+    evaluate(L) {
       for (const C of this.steps)
-        if (v = C(v), v === L)
+        if (L = C(L), L === w)
           break;
-      return v;
+      return L;
     }
   }
-  function x(p, v, C = (A) => A) {
-    const A = (...K) => U.fire(C(...K)), k = () => p.on(v, A), F = () => p.removeListener(v, A), U = new ie({ onWillAddFirstListener: k, onDidRemoveLastListener: F });
-    return U.event;
+  function x(p, L, C = (A) => A) {
+    const A = (...Q) => I.fire(C(...Q)), E = () => p.on(L, A), P = () => p.removeListener(L, A), I = new ie({ onWillAddFirstListener: E, onDidRemoveLastListener: P });
+    return I.event;
   }
   e.fromNodeEventEmitter = x;
-  function S(p, v, C = (A) => A) {
-    const A = (...K) => U.fire(C(...K)), k = () => p.addEventListener(v, A), F = () => p.removeEventListener(v, A), U = new ie({ onWillAddFirstListener: k, onDidRemoveLastListener: F });
-    return U.event;
+  function S(p, L, C = (A) => A) {
+    const A = (...Q) => I.fire(C(...Q)), E = () => p.addEventListener(L, A), P = () => p.removeEventListener(L, A), I = new ie({ onWillAddFirstListener: E, onDidRemoveLastListener: P });
+    return I.event;
   }
   e.fromDOMEventEmitter = S;
   function N(p) {
-    return new Promise((v) => n(p)(v));
+    return new Promise((L) => n(p)(L));
   }
   e.toPromise = N;
   function R(p) {
-    const v = new ie();
+    const L = new ie();
     return p.then((C) => {
-      v.fire(C);
+      L.fire(C);
     }, () => {
-      v.fire(void 0);
+      L.fire(void 0);
     }).finally(() => {
-      v.dispose();
-    }), v.event;
+      L.dispose();
+    }), L.event;
   }
   e.fromPromise = R;
-  function M(p, v) {
-    return v(void 0), p((C) => v(C));
+  function M(p, L, C) {
+    return L(C), p((A) => L(A));
   }
   e.runAndSubscribe = M;
-  function E(p, v) {
+  function k(p, L) {
     let C = null;
-    function A(F) {
-      C == null || C.dispose(), C = new He(), v(F, C);
+    function A(P) {
+      C == null || C.dispose(), C = new Ae(), L(P, C);
     }
     A(void 0);
-    const k = p((F) => A(F));
+    const E = p((P) => A(P));
     return Ge(() => {
-      k.dispose(), C == null || C.dispose();
+      E.dispose(), C == null || C.dispose();
     });
   }
-  e.runAndSubscribeWithStore = E;
-  class I {
-    constructor(v, C) {
-      this._observable = v, this._counter = 0, this._hasChanged = !1;
+  e.runAndSubscribeWithStore = k;
+  class U {
+    constructor(L, C) {
+      this._observable = L, this._counter = 0, this._hasChanged = !1;
       const A = {
         onWillAddFirstListener: () => {
-          v.addObserver(this);
+          L.addObserver(this);
         },
         onDidRemoveLastListener: () => {
-          v.removeObserver(this);
+          L.removeObserver(this);
         }
       };
       this.emitter = new ie(A), C && C.add(this.emitter);
     }
-    beginUpdate(v) {
+    beginUpdate(L) {
       this._counter++;
     }
-    handlePossibleChange(v) {
+    handlePossibleChange(L) {
     }
-    handleChange(v, C) {
+    handleChange(L, C) {
       this._hasChanged = !0;
     }
-    endUpdate(v) {
+    endUpdate(L) {
       this._counter--, this._counter === 0 && (this._observable.reportChanges(), this._hasChanged && (this._hasChanged = !1, this.emitter.fire(this._observable.get())));
     }
   }
-  function G(p, v) {
-    return new I(p, v).emitter.event;
+  function G(p, L) {
+    return new U(p, L).emitter.event;
   }
   e.fromObservable = G;
   function B(p) {
-    return (v) => {
-      let C = 0, A = !1;
-      const k = {
+    return (L, C, A) => {
+      let E = 0, P = !1;
+      const I = {
         beginUpdate() {
-          C++;
+          E++;
         },
         endUpdate() {
-          C--, C === 0 && (p.reportChanges(), A && (A = !1, v()));
+          E--, E === 0 && (p.reportChanges(), P && (P = !1, L.call(C)));
         },
         handlePossibleChange() {
         },
         handleChange() {
-          A = !0;
+          P = !0;
         }
       };
-      return p.addObserver(k), p.reportChanges(), {
+      p.addObserver(I), p.reportChanges();
+      const Q = {
         dispose() {
-          p.removeObserver(k);
+          p.removeObserver(I);
         }
       };
+      return A instanceof Ae ? A.add(Q) : Array.isArray(A) && A.push(Q), Q;
     };
   }
   e.fromObservableLight = B;
@@ -618,7 +629,7 @@ class qe {
     this.listenerCount = 0, this.invocationCount = 0, this.elapsedOverall = 0, this.durations = [], this.name = `${t}_${qe._idPool++}`, qe.all.add(this);
   }
   start(t) {
-    this._stopWatch = new _t(), this.listenerCount = t;
+    this._stopWatch = new bt(), this.listenerCount = t;
   }
   stop() {
     if (this._stopWatch) {
@@ -629,8 +640,8 @@ class qe {
 }
 qe.all = /* @__PURE__ */ new Set();
 qe._idPool = 0;
-let Xr = -1;
-class Jr {
+let Jr = -1;
+class Yr {
   constructor(t, n = Math.random().toString(18).slice(2, 5)) {
     this.threshold = t, this.name = n, this._warnCountdown = 0;
   }
@@ -646,10 +657,10 @@ class Jr {
     const s = this._stacks.get(t.value) || 0;
     if (this._stacks.set(t.value, s + 1), this._warnCountdown -= 1, this._warnCountdown <= 0) {
       this._warnCountdown = r * 0.5;
-      let i, a = 0;
-      for (const [o, c] of this._stacks)
-        (!i || a < c) && (i = o, a = c);
-      console.warn(`[${this.name}] potential listener LEAK detected, having ${n} listeners already. MOST frequent listener (${a}):`), console.warn(i);
+      let i, l = 0;
+      for (const [o, u] of this._stacks)
+        (!i || l < u) && (i = o, l = u);
+      console.warn(`[${this.name}] potential listener LEAK detected, having ${n} listeners already. MOST frequent listener (${l}):`), console.warn(i);
     }
     return () => {
       const i = this._stacks.get(t.value) || 0;
@@ -657,10 +668,10 @@ class Jr {
     };
   }
 }
-class jt {
+class Gt {
   static create() {
     var t;
-    return new jt((t = new Error().stack) !== null && t !== void 0 ? t : "");
+    return new Gt((t = new Error().stack) !== null && t !== void 0 ? t : "");
   }
   constructor(t) {
     this.value = t;
@@ -671,16 +682,16 @@ class jt {
 `));
   }
 }
-class xt {
+class _t {
   constructor(t) {
     this.value = t;
   }
 }
-const Yr = 2;
+const Zr = 2;
 class ie {
   constructor(t) {
-    var n, r, s, i, a;
-    this._size = 0, this._options = t, this._leakageMon = !((n = this._options) === null || n === void 0) && n.leakWarningThreshold ? new Jr((s = (r = this._options) === null || r === void 0 ? void 0 : r.leakWarningThreshold) !== null && s !== void 0 ? s : Xr) : void 0, this._perfMon = !((i = this._options) === null || i === void 0) && i._profName ? new qe(this._options._profName) : void 0, this._deliveryQueue = (a = this._options) === null || a === void 0 ? void 0 : a.deliveryQueue;
+    var n, r, s, i, l;
+    this._size = 0, this._options = t, this._leakageMon = !((n = this._options) === null || n === void 0) && n.leakWarningThreshold ? new Yr((s = (r = this._options) === null || r === void 0 ? void 0 : r.leakWarningThreshold) !== null && s !== void 0 ? s : Jr) : void 0, this._perfMon = !((i = this._options) === null || i === void 0) && i._profName ? new qe(this._options._profName) : void 0, this._deliveryQueue = (l = this._options) === null || l === void 0 ? void 0 : l.deliveryQueue;
   }
   dispose() {
     var t, n, r, s;
@@ -693,19 +704,19 @@ class ie {
   get event() {
     var t;
     return (t = this._event) !== null && t !== void 0 || (this._event = (n, r, s) => {
-      var i, a, o, c, u;
+      var i, l, o, u, c;
       if (this._leakageMon && this._size > this._leakageMon.threshold * 3)
         return console.warn(`[${this._leakageMon.name}] REFUSES to accept new listeners because it exceeded its threshold by far`), je.None;
       if (this._disposed)
         return je.None;
       r && (n = n.bind(r));
-      const h = new xt(n);
+      const h = new _t(n);
       let f;
-      this._leakageMon && this._size >= Math.ceil(this._leakageMon.threshold * 0.2) && (h.stack = jt.create(), f = this._leakageMon.check(h.stack, this._size + 1)), this._listeners ? this._listeners instanceof xt ? ((u = this._deliveryQueue) !== null && u !== void 0 || (this._deliveryQueue = new Zr()), this._listeners = [this._listeners, h]) : this._listeners.push(h) : ((a = (i = this._options) === null || i === void 0 ? void 0 : i.onWillAddFirstListener) === null || a === void 0 || a.call(i, this), this._listeners = h, (c = (o = this._options) === null || o === void 0 ? void 0 : o.onDidAddFirstListener) === null || c === void 0 || c.call(o, this)), this._size++;
+      this._leakageMon && this._size >= Math.ceil(this._leakageMon.threshold * 0.2) && (h.stack = Gt.create(), f = this._leakageMon.check(h.stack, this._size + 1)), this._listeners ? this._listeners instanceof _t ? ((c = this._deliveryQueue) !== null && c !== void 0 || (this._deliveryQueue = new Kr()), this._listeners = [this._listeners, h]) : this._listeners.push(h) : ((l = (i = this._options) === null || i === void 0 ? void 0 : i.onWillAddFirstListener) === null || l === void 0 || l.call(i, this), this._listeners = h, (u = (o = this._options) === null || o === void 0 ? void 0 : o.onDidAddFirstListener) === null || u === void 0 || u.call(o, this)), this._size++;
       const m = Ge(() => {
         f == null || f(), this._removeListener(h);
       });
-      return s instanceof He ? s.add(m) : Array.isArray(s) && s.push(m), m;
+      return s instanceof Ae ? s.add(m) : Array.isArray(s) && s.push(m), m;
     }), this._event;
   }
   _removeListener(t) {
@@ -716,23 +727,23 @@ class ie {
       this._listeners = void 0, (i = (s = this._options) === null || s === void 0 ? void 0 : s.onDidRemoveLastListener) === null || i === void 0 || i.call(s, this), this._size = 0;
       return;
     }
-    const a = this._listeners, o = a.indexOf(t);
+    const l = this._listeners, o = l.indexOf(t);
     if (o === -1)
       throw console.log("disposed?", this._disposed), console.log("size?", this._size), console.log("arr?", JSON.stringify(this._listeners)), new Error("Attempted to dispose unknown listener");
-    this._size--, a[o] = void 0;
-    const c = this._deliveryQueue.current === this;
-    if (this._size * Yr <= a.length) {
-      let u = 0;
-      for (let h = 0; h < a.length; h++)
-        a[h] ? a[u++] = a[h] : c && (this._deliveryQueue.end--, u < this._deliveryQueue.i && this._deliveryQueue.i--);
-      a.length = u;
+    this._size--, l[o] = void 0;
+    const u = this._deliveryQueue.current === this;
+    if (this._size * Zr <= l.length) {
+      let c = 0;
+      for (let h = 0; h < l.length; h++)
+        l[h] ? l[c++] = l[h] : u && (this._deliveryQueue.end--, c < this._deliveryQueue.i && this._deliveryQueue.i--);
+      l.length = c;
     }
   }
   _deliver(t, n) {
     var r;
     if (!t)
       return;
-    const s = ((r = this._options) === null || r === void 0 ? void 0 : r.onListenerError) || pr;
+    const s = ((r = this._options) === null || r === void 0 ? void 0 : r.onListenerError) || Lr;
     if (!s) {
       t.value(n);
       return;
@@ -757,11 +768,11 @@ class ie {
   fire(t) {
     var n, r, s, i;
     if (!((n = this._deliveryQueue) === null || n === void 0) && n.current && (this._deliverQueue(this._deliveryQueue), (r = this._perfMon) === null || r === void 0 || r.stop()), (s = this._perfMon) === null || s === void 0 || s.start(this._size), this._listeners)
-      if (this._listeners instanceof xt)
+      if (this._listeners instanceof _t)
         this._deliver(this._listeners, t);
       else {
-        const a = this._deliveryQueue;
-        a.enqueue(this, t, this._listeners.length), this._deliverQueue(a);
+        const l = this._deliveryQueue;
+        l.enqueue(this, t, this._listeners.length), this._deliverQueue(l);
       }
     (i = this._perfMon) === null || i === void 0 || i.stop();
   }
@@ -769,7 +780,7 @@ class ie {
     return this._size > 0;
   }
 }
-class Zr {
+class Kr {
   constructor() {
     this.i = -1, this.end = 0;
   }
@@ -780,10 +791,10 @@ class Zr {
     this.i = this.end, this.current = void 0, this.value = void 0;
   }
 }
-function Kr(e) {
+function es(e) {
   return typeof e == "string";
 }
-function es(e) {
+function ts(e) {
   let t = [];
   for (; Object.prototype !== e; )
     t = t.concat(Object.getOwnPropertyNames(e)), e = Object.getPrototypeOf(e);
@@ -791,11 +802,11 @@ function es(e) {
 }
 function Rt(e) {
   const t = [];
-  for (const n of es(e))
+  for (const n of ts(e))
     typeof e[n] == "function" && t.push(n);
   return t;
 }
-function ts(e, t) {
+function ns(e, t) {
   const n = (s) => function() {
     const i = Array.prototype.slice.call(arguments, 0);
     return t(s, i);
@@ -804,50 +815,47 @@ function ts(e, t) {
     r[s] = n(s);
   return r;
 }
-globalThis && globalThis.__awaiter;
-let ns = typeof document < "u" && document.location && document.location.hash.indexOf("pseudo=true") >= 0;
-function rs(e, t) {
+let rs = typeof document < "u" && document.location && document.location.hash.indexOf("pseudo=true") >= 0;
+function ss(e, t) {
   let n;
   return t.length === 0 ? n = e : n = e.replace(/\{(\d+)\}/g, (r, s) => {
-    const i = s[0], a = t[i];
+    const i = s[0], l = t[i];
     let o = r;
-    return typeof a == "string" ? o = a : (typeof a == "number" || typeof a == "boolean" || a === void 0 || a === null) && (o = String(a)), o;
-  }), ns && (n = "［" + n.replace(/[aouei]/g, "$&$&") + "］"), n;
+    return typeof l == "string" ? o = l : (typeof l == "number" || typeof l == "boolean" || l === void 0 || l === null) && (o = String(l)), o;
+  }), rs && (n = "［" + n.replace(/[aouei]/g, "$&$&") + "］"), n;
 }
 function z(e, t, ...n) {
-  return rs(t, n);
+  return ss(t, n);
 }
-var pt;
+var xt;
 const Fe = "en";
-let yt = !1, Mt = !1, vt = !1, wr = !1, rt, wt = Fe, Kt = Fe, ss, se;
-const le = typeof self == "object" ? self : typeof global == "object" ? global : {};
-let X;
-typeof le.vscode < "u" && typeof le.vscode.process < "u" ? X = le.vscode.process : typeof process < "u" && (X = process);
-const is = typeof ((pt = X == null ? void 0 : X.versions) === null || pt === void 0 ? void 0 : pt.electron) == "string", as = is && (X == null ? void 0 : X.type) === "renderer";
-if (typeof navigator == "object" && !as)
-  se = navigator.userAgent, yt = se.indexOf("Windows") >= 0, Mt = se.indexOf("Macintosh") >= 0, (se.indexOf("Macintosh") >= 0 || se.indexOf("iPad") >= 0 || se.indexOf("iPhone") >= 0) && navigator.maxTouchPoints && navigator.maxTouchPoints > 0, vt = se.indexOf("Linux") >= 0, (se == null ? void 0 : se.indexOf("Mobi")) >= 0, wr = !0, // This call _must_ be done in the file that calls `nls.getConfiguredDefaultLocale`
+let yt = !1, Mt = !1, pt = !1, nt, Lt = Fe, Zt = Fe, is, se;
+const Ne = globalThis;
+let J;
+typeof Ne.vscode < "u" && typeof Ne.vscode.process < "u" ? J = Ne.vscode.process : typeof process < "u" && (J = process);
+const as = typeof ((xt = J == null ? void 0 : J.versions) === null || xt === void 0 ? void 0 : xt.electron) == "string", ls = as && (J == null ? void 0 : J.type) === "renderer";
+if (typeof navigator == "object" && !ls)
+  se = navigator.userAgent, yt = se.indexOf("Windows") >= 0, Mt = se.indexOf("Macintosh") >= 0, (se.indexOf("Macintosh") >= 0 || se.indexOf("iPad") >= 0 || se.indexOf("iPhone") >= 0) && navigator.maxTouchPoints && navigator.maxTouchPoints > 0, pt = se.indexOf("Linux") >= 0, (se == null ? void 0 : se.indexOf("Mobi")) >= 0, // This call _must_ be done in the file that calls `nls.getConfiguredDefaultLocale`
   // to ensure that the NLS AMD Loader plugin has been loaded and configured.
   // This is because the loader plugin decides what the default locale is based on
   // how it's able to resolve the strings.
-  z({ key: "ensureLoaderPluginIsLoaded", comment: ["{Locked}"] }, "_"), rt = Fe, wt = rt, Kt = navigator.language;
-else if (typeof X == "object") {
-  yt = X.platform === "win32", Mt = X.platform === "darwin", vt = X.platform === "linux", vt && X.env.SNAP && X.env.SNAP_REVISION, X.env.CI || X.env.BUILD_ARTIFACTSTAGINGDIRECTORY, rt = Fe, wt = Fe;
-  const e = X.env.VSCODE_NLS_CONFIG;
+  z({ key: "ensureLoaderPluginIsLoaded", comment: ["{Locked}"] }, "_"), nt = Fe, Lt = nt, Zt = navigator.language;
+else if (typeof J == "object") {
+  yt = J.platform === "win32", Mt = J.platform === "darwin", pt = J.platform === "linux", pt && J.env.SNAP && J.env.SNAP_REVISION, J.env.CI || J.env.BUILD_ARTIFACTSTAGINGDIRECTORY, nt = Fe, Lt = Fe;
+  const e = J.env.VSCODE_NLS_CONFIG;
   if (e)
     try {
       const t = JSON.parse(e), n = t.availableLanguages["*"];
-      rt = t.locale, Kt = t.osLocale, wt = n || Fe, ss = t._translationsConfigFile;
+      nt = t.locale, Zt = t.osLocale, Lt = n || Fe, is = t._translationsConfigFile;
     } catch {
     }
 } else
   console.error("Unable to resolve platform.");
-const Qe = yt, ls = Mt;
-wr && le.importScripts;
-const ce = se, os = typeof le.postMessage == "function" && !le.importScripts;
+const Qe = yt, os = Mt, ue = se, us = typeof Ne.postMessage == "function" && !Ne.importScripts;
 (() => {
-  if (os) {
+  if (us) {
     const e = [];
-    le.addEventListener("message", (n) => {
+    Ne.addEventListener("message", (n) => {
       if (n.data && n.data.vscodeScheduleAsyncWork)
         for (let r = 0, s = e.length; r < s; r++) {
           const i = e[r];
@@ -863,17 +871,17 @@ const ce = se, os = typeof le.postMessage == "function" && !le.importScripts;
       e.push({
         id: r,
         callback: n
-      }), le.postMessage({ vscodeScheduleAsyncWork: r }, "*");
+      }), Ne.postMessage({ vscodeScheduleAsyncWork: r }, "*");
     };
   }
   return (e) => setTimeout(e);
 })();
-const us = !!(ce && ce.indexOf("Chrome") >= 0);
-ce && ce.indexOf("Firefox") >= 0;
-!us && ce && ce.indexOf("Safari") >= 0;
-ce && ce.indexOf("Edg/") >= 0;
-ce && ce.indexOf("Android") >= 0;
-class cs {
+const cs = !!(ue && ue.indexOf("Chrome") >= 0);
+ue && ue.indexOf("Firefox") >= 0;
+!cs && ue && ue.indexOf("Safari") >= 0;
+ue && ue.indexOf("Edg/") >= 0;
+ue && ue.indexOf("Android") >= 0;
+class hs {
   constructor(t) {
     this.fn = t, this.lastCache = void 0, this.lastArgKey = void 0;
   }
@@ -882,7 +890,7 @@ class cs {
     return this.lastArgKey !== n && (this.lastArgKey = n, this.lastCache = this.fn(t)), this.lastCache;
   }
 }
-class Lr {
+class wr {
   constructor(t) {
     this.executor = t, this._didRun = !1;
   }
@@ -913,13 +921,13 @@ class Lr {
   }
 }
 var Ie;
-function hs(e) {
+function fs(e) {
   return e.replace(/[\\\{\}\*\+\?\|\^\$\.\[\]\(\)]/g, "\\$&");
 }
-function fs(e) {
+function ds(e) {
   return e.split(/\r\n|\r|\n/);
 }
-function ds(e) {
+function ms(e) {
   for (let t = 0, n = e.length; t < n; t++) {
     const r = e.charCodeAt(t);
     if (r !== 32 && r !== 9)
@@ -927,7 +935,7 @@ function ds(e) {
   }
   return -1;
 }
-function ms(e, t = e.length - 1) {
+function gs(e, t = e.length - 1) {
   for (let n = t; n >= 0; n--) {
     const r = e.charCodeAt(n);
     if (r !== 32 && r !== 9)
@@ -941,24 +949,24 @@ function Nr(e) {
 function Et(e) {
   return 55296 <= e && e <= 56319;
 }
-function gs(e) {
+function bs(e) {
   return 56320 <= e && e <= 57343;
 }
-function bs(e, t) {
+function _s(e, t) {
   return (e - 55296 << 10) + (t - 56320) + 65536;
 }
-function _s(e, t, n) {
+function xs(e, t, n) {
   const r = e.charCodeAt(n);
   if (Et(r) && n + 1 < t) {
     const s = e.charCodeAt(n + 1);
-    if (gs(s))
-      return bs(r, s);
+    if (bs(s))
+      return _s(r, s);
   }
   return r;
 }
-const xs = /^[\t\n\r\x20-\x7E]*$/;
-function ps(e) {
-  return xs.test(e);
+const ps = /^[\t\n\r\x20-\x7E]*$/;
+function Ls(e) {
+  return ps.test(e);
 }
 class Re {
   static getInstance(t) {
@@ -985,82 +993,82 @@ class Re {
   }
 }
 Ie = Re;
-Re.ambiguousCharacterData = new Lr(() => JSON.parse('{"_common":[8232,32,8233,32,5760,32,8192,32,8193,32,8194,32,8195,32,8196,32,8197,32,8198,32,8200,32,8201,32,8202,32,8287,32,8199,32,8239,32,2042,95,65101,95,65102,95,65103,95,8208,45,8209,45,8210,45,65112,45,1748,45,8259,45,727,45,8722,45,10134,45,11450,45,1549,44,1643,44,8218,44,184,44,42233,44,894,59,2307,58,2691,58,1417,58,1795,58,1796,58,5868,58,65072,58,6147,58,6153,58,8282,58,1475,58,760,58,42889,58,8758,58,720,58,42237,58,451,33,11601,33,660,63,577,63,2429,63,5038,63,42731,63,119149,46,8228,46,1793,46,1794,46,42510,46,68176,46,1632,46,1776,46,42232,46,1373,96,65287,96,8219,96,8242,96,1370,96,1523,96,8175,96,65344,96,900,96,8189,96,8125,96,8127,96,8190,96,697,96,884,96,712,96,714,96,715,96,756,96,699,96,701,96,700,96,702,96,42892,96,1497,96,2036,96,2037,96,5194,96,5836,96,94033,96,94034,96,65339,91,10088,40,10098,40,12308,40,64830,40,65341,93,10089,41,10099,41,12309,41,64831,41,10100,123,119060,123,10101,125,65342,94,8270,42,1645,42,8727,42,66335,42,5941,47,8257,47,8725,47,8260,47,9585,47,10187,47,10744,47,119354,47,12755,47,12339,47,11462,47,20031,47,12035,47,65340,92,65128,92,8726,92,10189,92,10741,92,10745,92,119311,92,119355,92,12756,92,20022,92,12034,92,42872,38,708,94,710,94,5869,43,10133,43,66203,43,8249,60,10094,60,706,60,119350,60,5176,60,5810,60,5120,61,11840,61,12448,61,42239,61,8250,62,10095,62,707,62,119351,62,5171,62,94015,62,8275,126,732,126,8128,126,8764,126,65372,124,65293,45,120784,50,120794,50,120804,50,120814,50,120824,50,130034,50,42842,50,423,50,1000,50,42564,50,5311,50,42735,50,119302,51,120785,51,120795,51,120805,51,120815,51,120825,51,130035,51,42923,51,540,51,439,51,42858,51,11468,51,1248,51,94011,51,71882,51,120786,52,120796,52,120806,52,120816,52,120826,52,130036,52,5070,52,71855,52,120787,53,120797,53,120807,53,120817,53,120827,53,130037,53,444,53,71867,53,120788,54,120798,54,120808,54,120818,54,120828,54,130038,54,11474,54,5102,54,71893,54,119314,55,120789,55,120799,55,120809,55,120819,55,120829,55,130039,55,66770,55,71878,55,2819,56,2538,56,2666,56,125131,56,120790,56,120800,56,120810,56,120820,56,120830,56,130040,56,547,56,546,56,66330,56,2663,57,2920,57,2541,57,3437,57,120791,57,120801,57,120811,57,120821,57,120831,57,130041,57,42862,57,11466,57,71884,57,71852,57,71894,57,9082,97,65345,97,119834,97,119886,97,119938,97,119990,97,120042,97,120094,97,120146,97,120198,97,120250,97,120302,97,120354,97,120406,97,120458,97,593,97,945,97,120514,97,120572,97,120630,97,120688,97,120746,97,65313,65,119808,65,119860,65,119912,65,119964,65,120016,65,120068,65,120120,65,120172,65,120224,65,120276,65,120328,65,120380,65,120432,65,913,65,120488,65,120546,65,120604,65,120662,65,120720,65,5034,65,5573,65,42222,65,94016,65,66208,65,119835,98,119887,98,119939,98,119991,98,120043,98,120095,98,120147,98,120199,98,120251,98,120303,98,120355,98,120407,98,120459,98,388,98,5071,98,5234,98,5551,98,65314,66,8492,66,119809,66,119861,66,119913,66,120017,66,120069,66,120121,66,120173,66,120225,66,120277,66,120329,66,120381,66,120433,66,42932,66,914,66,120489,66,120547,66,120605,66,120663,66,120721,66,5108,66,5623,66,42192,66,66178,66,66209,66,66305,66,65347,99,8573,99,119836,99,119888,99,119940,99,119992,99,120044,99,120096,99,120148,99,120200,99,120252,99,120304,99,120356,99,120408,99,120460,99,7428,99,1010,99,11429,99,43951,99,66621,99,128844,67,71922,67,71913,67,65315,67,8557,67,8450,67,8493,67,119810,67,119862,67,119914,67,119966,67,120018,67,120174,67,120226,67,120278,67,120330,67,120382,67,120434,67,1017,67,11428,67,5087,67,42202,67,66210,67,66306,67,66581,67,66844,67,8574,100,8518,100,119837,100,119889,100,119941,100,119993,100,120045,100,120097,100,120149,100,120201,100,120253,100,120305,100,120357,100,120409,100,120461,100,1281,100,5095,100,5231,100,42194,100,8558,68,8517,68,119811,68,119863,68,119915,68,119967,68,120019,68,120071,68,120123,68,120175,68,120227,68,120279,68,120331,68,120383,68,120435,68,5024,68,5598,68,5610,68,42195,68,8494,101,65349,101,8495,101,8519,101,119838,101,119890,101,119942,101,120046,101,120098,101,120150,101,120202,101,120254,101,120306,101,120358,101,120410,101,120462,101,43826,101,1213,101,8959,69,65317,69,8496,69,119812,69,119864,69,119916,69,120020,69,120072,69,120124,69,120176,69,120228,69,120280,69,120332,69,120384,69,120436,69,917,69,120492,69,120550,69,120608,69,120666,69,120724,69,11577,69,5036,69,42224,69,71846,69,71854,69,66182,69,119839,102,119891,102,119943,102,119995,102,120047,102,120099,102,120151,102,120203,102,120255,102,120307,102,120359,102,120411,102,120463,102,43829,102,42905,102,383,102,7837,102,1412,102,119315,70,8497,70,119813,70,119865,70,119917,70,120021,70,120073,70,120125,70,120177,70,120229,70,120281,70,120333,70,120385,70,120437,70,42904,70,988,70,120778,70,5556,70,42205,70,71874,70,71842,70,66183,70,66213,70,66853,70,65351,103,8458,103,119840,103,119892,103,119944,103,120048,103,120100,103,120152,103,120204,103,120256,103,120308,103,120360,103,120412,103,120464,103,609,103,7555,103,397,103,1409,103,119814,71,119866,71,119918,71,119970,71,120022,71,120074,71,120126,71,120178,71,120230,71,120282,71,120334,71,120386,71,120438,71,1292,71,5056,71,5107,71,42198,71,65352,104,8462,104,119841,104,119945,104,119997,104,120049,104,120101,104,120153,104,120205,104,120257,104,120309,104,120361,104,120413,104,120465,104,1211,104,1392,104,5058,104,65320,72,8459,72,8460,72,8461,72,119815,72,119867,72,119919,72,120023,72,120179,72,120231,72,120283,72,120335,72,120387,72,120439,72,919,72,120494,72,120552,72,120610,72,120668,72,120726,72,11406,72,5051,72,5500,72,42215,72,66255,72,731,105,9075,105,65353,105,8560,105,8505,105,8520,105,119842,105,119894,105,119946,105,119998,105,120050,105,120102,105,120154,105,120206,105,120258,105,120310,105,120362,105,120414,105,120466,105,120484,105,618,105,617,105,953,105,8126,105,890,105,120522,105,120580,105,120638,105,120696,105,120754,105,1110,105,42567,105,1231,105,43893,105,5029,105,71875,105,65354,106,8521,106,119843,106,119895,106,119947,106,119999,106,120051,106,120103,106,120155,106,120207,106,120259,106,120311,106,120363,106,120415,106,120467,106,1011,106,1112,106,65322,74,119817,74,119869,74,119921,74,119973,74,120025,74,120077,74,120129,74,120181,74,120233,74,120285,74,120337,74,120389,74,120441,74,42930,74,895,74,1032,74,5035,74,5261,74,42201,74,119844,107,119896,107,119948,107,120000,107,120052,107,120104,107,120156,107,120208,107,120260,107,120312,107,120364,107,120416,107,120468,107,8490,75,65323,75,119818,75,119870,75,119922,75,119974,75,120026,75,120078,75,120130,75,120182,75,120234,75,120286,75,120338,75,120390,75,120442,75,922,75,120497,75,120555,75,120613,75,120671,75,120729,75,11412,75,5094,75,5845,75,42199,75,66840,75,1472,108,8739,73,9213,73,65512,73,1633,108,1777,73,66336,108,125127,108,120783,73,120793,73,120803,73,120813,73,120823,73,130033,73,65321,73,8544,73,8464,73,8465,73,119816,73,119868,73,119920,73,120024,73,120128,73,120180,73,120232,73,120284,73,120336,73,120388,73,120440,73,65356,108,8572,73,8467,108,119845,108,119897,108,119949,108,120001,108,120053,108,120105,73,120157,73,120209,73,120261,73,120313,73,120365,73,120417,73,120469,73,448,73,120496,73,120554,73,120612,73,120670,73,120728,73,11410,73,1030,73,1216,73,1493,108,1503,108,1575,108,126464,108,126592,108,65166,108,65165,108,1994,108,11599,73,5825,73,42226,73,93992,73,66186,124,66313,124,119338,76,8556,76,8466,76,119819,76,119871,76,119923,76,120027,76,120079,76,120131,76,120183,76,120235,76,120287,76,120339,76,120391,76,120443,76,11472,76,5086,76,5290,76,42209,76,93974,76,71843,76,71858,76,66587,76,66854,76,65325,77,8559,77,8499,77,119820,77,119872,77,119924,77,120028,77,120080,77,120132,77,120184,77,120236,77,120288,77,120340,77,120392,77,120444,77,924,77,120499,77,120557,77,120615,77,120673,77,120731,77,1018,77,11416,77,5047,77,5616,77,5846,77,42207,77,66224,77,66321,77,119847,110,119899,110,119951,110,120003,110,120055,110,120107,110,120159,110,120211,110,120263,110,120315,110,120367,110,120419,110,120471,110,1400,110,1404,110,65326,78,8469,78,119821,78,119873,78,119925,78,119977,78,120029,78,120081,78,120185,78,120237,78,120289,78,120341,78,120393,78,120445,78,925,78,120500,78,120558,78,120616,78,120674,78,120732,78,11418,78,42208,78,66835,78,3074,111,3202,111,3330,111,3458,111,2406,111,2662,111,2790,111,3046,111,3174,111,3302,111,3430,111,3664,111,3792,111,4160,111,1637,111,1781,111,65359,111,8500,111,119848,111,119900,111,119952,111,120056,111,120108,111,120160,111,120212,111,120264,111,120316,111,120368,111,120420,111,120472,111,7439,111,7441,111,43837,111,959,111,120528,111,120586,111,120644,111,120702,111,120760,111,963,111,120532,111,120590,111,120648,111,120706,111,120764,111,11423,111,4351,111,1413,111,1505,111,1607,111,126500,111,126564,111,126596,111,65259,111,65260,111,65258,111,65257,111,1726,111,64428,111,64429,111,64427,111,64426,111,1729,111,64424,111,64425,111,64423,111,64422,111,1749,111,3360,111,4125,111,66794,111,71880,111,71895,111,66604,111,1984,79,2534,79,2918,79,12295,79,70864,79,71904,79,120782,79,120792,79,120802,79,120812,79,120822,79,130032,79,65327,79,119822,79,119874,79,119926,79,119978,79,120030,79,120082,79,120134,79,120186,79,120238,79,120290,79,120342,79,120394,79,120446,79,927,79,120502,79,120560,79,120618,79,120676,79,120734,79,11422,79,1365,79,11604,79,4816,79,2848,79,66754,79,42227,79,71861,79,66194,79,66219,79,66564,79,66838,79,9076,112,65360,112,119849,112,119901,112,119953,112,120005,112,120057,112,120109,112,120161,112,120213,112,120265,112,120317,112,120369,112,120421,112,120473,112,961,112,120530,112,120544,112,120588,112,120602,112,120646,112,120660,112,120704,112,120718,112,120762,112,120776,112,11427,112,65328,80,8473,80,119823,80,119875,80,119927,80,119979,80,120031,80,120083,80,120187,80,120239,80,120291,80,120343,80,120395,80,120447,80,929,80,120504,80,120562,80,120620,80,120678,80,120736,80,11426,80,5090,80,5229,80,42193,80,66197,80,119850,113,119902,113,119954,113,120006,113,120058,113,120110,113,120162,113,120214,113,120266,113,120318,113,120370,113,120422,113,120474,113,1307,113,1379,113,1382,113,8474,81,119824,81,119876,81,119928,81,119980,81,120032,81,120084,81,120188,81,120240,81,120292,81,120344,81,120396,81,120448,81,11605,81,119851,114,119903,114,119955,114,120007,114,120059,114,120111,114,120163,114,120215,114,120267,114,120319,114,120371,114,120423,114,120475,114,43847,114,43848,114,7462,114,11397,114,43905,114,119318,82,8475,82,8476,82,8477,82,119825,82,119877,82,119929,82,120033,82,120189,82,120241,82,120293,82,120345,82,120397,82,120449,82,422,82,5025,82,5074,82,66740,82,5511,82,42211,82,94005,82,65363,115,119852,115,119904,115,119956,115,120008,115,120060,115,120112,115,120164,115,120216,115,120268,115,120320,115,120372,115,120424,115,120476,115,42801,115,445,115,1109,115,43946,115,71873,115,66632,115,65331,83,119826,83,119878,83,119930,83,119982,83,120034,83,120086,83,120138,83,120190,83,120242,83,120294,83,120346,83,120398,83,120450,83,1029,83,1359,83,5077,83,5082,83,42210,83,94010,83,66198,83,66592,83,119853,116,119905,116,119957,116,120009,116,120061,116,120113,116,120165,116,120217,116,120269,116,120321,116,120373,116,120425,116,120477,116,8868,84,10201,84,128872,84,65332,84,119827,84,119879,84,119931,84,119983,84,120035,84,120087,84,120139,84,120191,84,120243,84,120295,84,120347,84,120399,84,120451,84,932,84,120507,84,120565,84,120623,84,120681,84,120739,84,11430,84,5026,84,42196,84,93962,84,71868,84,66199,84,66225,84,66325,84,119854,117,119906,117,119958,117,120010,117,120062,117,120114,117,120166,117,120218,117,120270,117,120322,117,120374,117,120426,117,120478,117,42911,117,7452,117,43854,117,43858,117,651,117,965,117,120534,117,120592,117,120650,117,120708,117,120766,117,1405,117,66806,117,71896,117,8746,85,8899,85,119828,85,119880,85,119932,85,119984,85,120036,85,120088,85,120140,85,120192,85,120244,85,120296,85,120348,85,120400,85,120452,85,1357,85,4608,85,66766,85,5196,85,42228,85,94018,85,71864,85,8744,118,8897,118,65366,118,8564,118,119855,118,119907,118,119959,118,120011,118,120063,118,120115,118,120167,118,120219,118,120271,118,120323,118,120375,118,120427,118,120479,118,7456,118,957,118,120526,118,120584,118,120642,118,120700,118,120758,118,1141,118,1496,118,71430,118,43945,118,71872,118,119309,86,1639,86,1783,86,8548,86,119829,86,119881,86,119933,86,119985,86,120037,86,120089,86,120141,86,120193,86,120245,86,120297,86,120349,86,120401,86,120453,86,1140,86,11576,86,5081,86,5167,86,42719,86,42214,86,93960,86,71840,86,66845,86,623,119,119856,119,119908,119,119960,119,120012,119,120064,119,120116,119,120168,119,120220,119,120272,119,120324,119,120376,119,120428,119,120480,119,7457,119,1121,119,1309,119,1377,119,71434,119,71438,119,71439,119,43907,119,71919,87,71910,87,119830,87,119882,87,119934,87,119986,87,120038,87,120090,87,120142,87,120194,87,120246,87,120298,87,120350,87,120402,87,120454,87,1308,87,5043,87,5076,87,42218,87,5742,120,10539,120,10540,120,10799,120,65368,120,8569,120,119857,120,119909,120,119961,120,120013,120,120065,120,120117,120,120169,120,120221,120,120273,120,120325,120,120377,120,120429,120,120481,120,5441,120,5501,120,5741,88,9587,88,66338,88,71916,88,65336,88,8553,88,119831,88,119883,88,119935,88,119987,88,120039,88,120091,88,120143,88,120195,88,120247,88,120299,88,120351,88,120403,88,120455,88,42931,88,935,88,120510,88,120568,88,120626,88,120684,88,120742,88,11436,88,11613,88,5815,88,42219,88,66192,88,66228,88,66327,88,66855,88,611,121,7564,121,65369,121,119858,121,119910,121,119962,121,120014,121,120066,121,120118,121,120170,121,120222,121,120274,121,120326,121,120378,121,120430,121,120482,121,655,121,7935,121,43866,121,947,121,8509,121,120516,121,120574,121,120632,121,120690,121,120748,121,1199,121,4327,121,71900,121,65337,89,119832,89,119884,89,119936,89,119988,89,120040,89,120092,89,120144,89,120196,89,120248,89,120300,89,120352,89,120404,89,120456,89,933,89,978,89,120508,89,120566,89,120624,89,120682,89,120740,89,11432,89,1198,89,5033,89,5053,89,42220,89,94019,89,71844,89,66226,89,119859,122,119911,122,119963,122,120015,122,120067,122,120119,122,120171,122,120223,122,120275,122,120327,122,120379,122,120431,122,120483,122,7458,122,43923,122,71876,122,66293,90,71909,90,65338,90,8484,90,8488,90,119833,90,119885,90,119937,90,119989,90,120041,90,120197,90,120249,90,120301,90,120353,90,120405,90,120457,90,918,90,120493,90,120551,90,120609,90,120667,90,120725,90,5059,90,42204,90,71849,90,65282,34,65284,36,65285,37,65286,38,65290,42,65291,43,65294,46,65295,47,65296,48,65297,49,65298,50,65299,51,65300,52,65301,53,65302,54,65303,55,65304,56,65305,57,65308,60,65309,61,65310,62,65312,64,65316,68,65318,70,65319,71,65324,76,65329,81,65330,82,65333,85,65334,86,65335,87,65343,95,65346,98,65348,100,65350,102,65355,107,65357,109,65358,110,65361,113,65362,114,65364,116,65365,117,65367,119,65370,122,65371,123,65373,125,119846,109],"_default":[160,32,8211,45,65374,126,65306,58,65281,33,8216,96,8217,96,8245,96,180,96,12494,47,1047,51,1073,54,1072,97,1040,65,1068,98,1042,66,1089,99,1057,67,1077,101,1045,69,1053,72,305,105,1050,75,921,73,1052,77,1086,111,1054,79,1009,112,1088,112,1056,80,1075,114,1058,84,215,120,1093,120,1061,88,1091,121,1059,89,65283,35,65288,40,65289,41,65292,44,65307,59,65311,63],"cs":[65374,126,65306,58,65281,33,8216,96,8217,96,8245,96,180,96,12494,47,1047,51,1073,54,1072,97,1040,65,1068,98,1042,66,1089,99,1057,67,1077,101,1045,69,1053,72,305,105,1050,75,921,73,1052,77,1086,111,1054,79,1009,112,1088,112,1056,80,1075,114,1058,84,1093,120,1061,88,1091,121,1059,89,65283,35,65288,40,65289,41,65292,44,65307,59,65311,63],"de":[65374,126,65306,58,65281,33,8216,96,8217,96,8245,96,180,96,12494,47,1047,51,1073,54,1072,97,1040,65,1068,98,1042,66,1089,99,1057,67,1077,101,1045,69,1053,72,305,105,1050,75,921,73,1052,77,1086,111,1054,79,1009,112,1088,112,1056,80,1075,114,1058,84,1093,120,1061,88,1091,121,1059,89,65283,35,65288,40,65289,41,65292,44,65307,59,65311,63],"es":[8211,45,65374,126,65306,58,65281,33,8245,96,180,96,12494,47,1047,51,1073,54,1072,97,1040,65,1068,98,1042,66,1089,99,1057,67,1077,101,1045,69,1053,72,305,105,1050,75,1052,77,1086,111,1054,79,1009,112,1088,112,1056,80,1075,114,1058,84,215,120,1093,120,1061,88,1091,121,1059,89,65283,35,65288,40,65289,41,65292,44,65307,59,65311,63],"fr":[65374,126,65306,58,65281,33,8216,96,8245,96,12494,47,1047,51,1073,54,1072,97,1040,65,1068,98,1042,66,1089,99,1057,67,1077,101,1045,69,1053,72,305,105,1050,75,921,73,1052,77,1086,111,1054,79,1009,112,1088,112,1056,80,1075,114,1058,84,215,120,1093,120,1061,88,1091,121,1059,89,65283,35,65288,40,65289,41,65292,44,65307,59,65311,63],"it":[160,32,8211,45,65374,126,65306,58,65281,33,8216,96,8245,96,180,96,12494,47,1047,51,1073,54,1072,97,1040,65,1068,98,1042,66,1089,99,1057,67,1077,101,1045,69,1053,72,305,105,1050,75,921,73,1052,77,1086,111,1054,79,1009,112,1088,112,1056,80,1075,114,1058,84,215,120,1093,120,1061,88,1091,121,1059,89,65283,35,65288,40,65289,41,65292,44,65307,59,65311,63],"ja":[8211,45,65306,58,65281,33,8216,96,8217,96,8245,96,180,96,1047,51,1073,54,1072,97,1040,65,1068,98,1042,66,1089,99,1057,67,1077,101,1045,69,1053,72,305,105,1050,75,921,73,1052,77,1086,111,1054,79,1009,112,1088,112,1056,80,1075,114,1058,84,215,120,1093,120,1061,88,1091,121,1059,89,65283,35,65292,44,65307,59],"ko":[8211,45,65374,126,65306,58,65281,33,8245,96,180,96,12494,47,1047,51,1073,54,1072,97,1040,65,1068,98,1042,66,1089,99,1057,67,1077,101,1045,69,1053,72,305,105,1050,75,921,73,1052,77,1086,111,1054,79,1009,112,1088,112,1056,80,1075,114,1058,84,215,120,1093,120,1061,88,1091,121,1059,89,65283,35,65288,40,65289,41,65292,44,65307,59,65311,63],"pl":[65374,126,65306,58,65281,33,8216,96,8217,96,8245,96,180,96,12494,47,1047,51,1073,54,1072,97,1040,65,1068,98,1042,66,1089,99,1057,67,1077,101,1045,69,1053,72,305,105,1050,75,921,73,1052,77,1086,111,1054,79,1009,112,1088,112,1056,80,1075,114,1058,84,215,120,1093,120,1061,88,1091,121,1059,89,65283,35,65288,40,65289,41,65292,44,65307,59,65311,63],"pt-BR":[65374,126,65306,58,65281,33,8216,96,8217,96,8245,96,180,96,12494,47,1047,51,1073,54,1072,97,1040,65,1068,98,1042,66,1089,99,1057,67,1077,101,1045,69,1053,72,305,105,1050,75,921,73,1052,77,1086,111,1054,79,1009,112,1088,112,1056,80,1075,114,1058,84,215,120,1093,120,1061,88,1091,121,1059,89,65283,35,65288,40,65289,41,65292,44,65307,59,65311,63],"qps-ploc":[160,32,8211,45,65374,126,65306,58,65281,33,8216,96,8217,96,8245,96,180,96,12494,47,1047,51,1073,54,1072,97,1040,65,1068,98,1042,66,1089,99,1057,67,1077,101,1045,69,1053,72,305,105,1050,75,921,73,1052,77,1086,111,1054,79,1088,112,1056,80,1075,114,1058,84,215,120,1093,120,1061,88,1091,121,1059,89,65283,35,65288,40,65289,41,65292,44,65307,59,65311,63],"ru":[65374,126,65306,58,65281,33,8216,96,8217,96,8245,96,180,96,12494,47,305,105,921,73,1009,112,215,120,65283,35,65288,40,65289,41,65292,44,65307,59,65311,63],"tr":[160,32,8211,45,65374,126,65306,58,65281,33,8245,96,180,96,12494,47,1047,51,1073,54,1072,97,1040,65,1068,98,1042,66,1089,99,1057,67,1077,101,1045,69,1053,72,1050,75,921,73,1052,77,1086,111,1054,79,1009,112,1088,112,1056,80,1075,114,1058,84,215,120,1093,120,1061,88,1091,121,1059,89,65283,35,65288,40,65289,41,65292,44,65307,59,65311,63],"zh-hans":[65374,126,65306,58,65281,33,8245,96,180,96,12494,47,1047,51,1073,54,1072,97,1040,65,1068,98,1042,66,1089,99,1057,67,1077,101,1045,69,1053,72,305,105,1050,75,921,73,1052,77,1086,111,1054,79,1009,112,1088,112,1056,80,1075,114,1058,84,215,120,1093,120,1061,88,1091,121,1059,89,65288,40,65289,41],"zh-hant":[8211,45,65374,126,180,96,12494,47,1047,51,1073,54,1072,97,1040,65,1068,98,1042,66,1089,99,1057,67,1077,101,1045,69,1053,72,305,105,1050,75,921,73,1052,77,1086,111,1054,79,1009,112,1088,112,1056,80,1075,114,1058,84,215,120,1093,120,1061,88,1091,121,1059,89,65283,35,65307,59]}'));
-Re.cache = new cs((e) => {
-  function t(u) {
+Re.ambiguousCharacterData = new wr(() => JSON.parse('{"_common":[8232,32,8233,32,5760,32,8192,32,8193,32,8194,32,8195,32,8196,32,8197,32,8198,32,8200,32,8201,32,8202,32,8287,32,8199,32,8239,32,2042,95,65101,95,65102,95,65103,95,8208,45,8209,45,8210,45,65112,45,1748,45,8259,45,727,45,8722,45,10134,45,11450,45,1549,44,1643,44,8218,44,184,44,42233,44,894,59,2307,58,2691,58,1417,58,1795,58,1796,58,5868,58,65072,58,6147,58,6153,58,8282,58,1475,58,760,58,42889,58,8758,58,720,58,42237,58,451,33,11601,33,660,63,577,63,2429,63,5038,63,42731,63,119149,46,8228,46,1793,46,1794,46,42510,46,68176,46,1632,46,1776,46,42232,46,1373,96,65287,96,8219,96,8242,96,1370,96,1523,96,8175,96,65344,96,900,96,8189,96,8125,96,8127,96,8190,96,697,96,884,96,712,96,714,96,715,96,756,96,699,96,701,96,700,96,702,96,42892,96,1497,96,2036,96,2037,96,5194,96,5836,96,94033,96,94034,96,65339,91,10088,40,10098,40,12308,40,64830,40,65341,93,10089,41,10099,41,12309,41,64831,41,10100,123,119060,123,10101,125,65342,94,8270,42,1645,42,8727,42,66335,42,5941,47,8257,47,8725,47,8260,47,9585,47,10187,47,10744,47,119354,47,12755,47,12339,47,11462,47,20031,47,12035,47,65340,92,65128,92,8726,92,10189,92,10741,92,10745,92,119311,92,119355,92,12756,92,20022,92,12034,92,42872,38,708,94,710,94,5869,43,10133,43,66203,43,8249,60,10094,60,706,60,119350,60,5176,60,5810,60,5120,61,11840,61,12448,61,42239,61,8250,62,10095,62,707,62,119351,62,5171,62,94015,62,8275,126,732,126,8128,126,8764,126,65372,124,65293,45,120784,50,120794,50,120804,50,120814,50,120824,50,130034,50,42842,50,423,50,1000,50,42564,50,5311,50,42735,50,119302,51,120785,51,120795,51,120805,51,120815,51,120825,51,130035,51,42923,51,540,51,439,51,42858,51,11468,51,1248,51,94011,51,71882,51,120786,52,120796,52,120806,52,120816,52,120826,52,130036,52,5070,52,71855,52,120787,53,120797,53,120807,53,120817,53,120827,53,130037,53,444,53,71867,53,120788,54,120798,54,120808,54,120818,54,120828,54,130038,54,11474,54,5102,54,71893,54,119314,55,120789,55,120799,55,120809,55,120819,55,120829,55,130039,55,66770,55,71878,55,2819,56,2538,56,2666,56,125131,56,120790,56,120800,56,120810,56,120820,56,120830,56,130040,56,547,56,546,56,66330,56,2663,57,2920,57,2541,57,3437,57,120791,57,120801,57,120811,57,120821,57,120831,57,130041,57,42862,57,11466,57,71884,57,71852,57,71894,57,9082,97,65345,97,119834,97,119886,97,119938,97,119990,97,120042,97,120094,97,120146,97,120198,97,120250,97,120302,97,120354,97,120406,97,120458,97,593,97,945,97,120514,97,120572,97,120630,97,120688,97,120746,97,65313,65,119808,65,119860,65,119912,65,119964,65,120016,65,120068,65,120120,65,120172,65,120224,65,120276,65,120328,65,120380,65,120432,65,913,65,120488,65,120546,65,120604,65,120662,65,120720,65,5034,65,5573,65,42222,65,94016,65,66208,65,119835,98,119887,98,119939,98,119991,98,120043,98,120095,98,120147,98,120199,98,120251,98,120303,98,120355,98,120407,98,120459,98,388,98,5071,98,5234,98,5551,98,65314,66,8492,66,119809,66,119861,66,119913,66,120017,66,120069,66,120121,66,120173,66,120225,66,120277,66,120329,66,120381,66,120433,66,42932,66,914,66,120489,66,120547,66,120605,66,120663,66,120721,66,5108,66,5623,66,42192,66,66178,66,66209,66,66305,66,65347,99,8573,99,119836,99,119888,99,119940,99,119992,99,120044,99,120096,99,120148,99,120200,99,120252,99,120304,99,120356,99,120408,99,120460,99,7428,99,1010,99,11429,99,43951,99,66621,99,128844,67,71922,67,71913,67,65315,67,8557,67,8450,67,8493,67,119810,67,119862,67,119914,67,119966,67,120018,67,120174,67,120226,67,120278,67,120330,67,120382,67,120434,67,1017,67,11428,67,5087,67,42202,67,66210,67,66306,67,66581,67,66844,67,8574,100,8518,100,119837,100,119889,100,119941,100,119993,100,120045,100,120097,100,120149,100,120201,100,120253,100,120305,100,120357,100,120409,100,120461,100,1281,100,5095,100,5231,100,42194,100,8558,68,8517,68,119811,68,119863,68,119915,68,119967,68,120019,68,120071,68,120123,68,120175,68,120227,68,120279,68,120331,68,120383,68,120435,68,5024,68,5598,68,5610,68,42195,68,8494,101,65349,101,8495,101,8519,101,119838,101,119890,101,119942,101,120046,101,120098,101,120150,101,120202,101,120254,101,120306,101,120358,101,120410,101,120462,101,43826,101,1213,101,8959,69,65317,69,8496,69,119812,69,119864,69,119916,69,120020,69,120072,69,120124,69,120176,69,120228,69,120280,69,120332,69,120384,69,120436,69,917,69,120492,69,120550,69,120608,69,120666,69,120724,69,11577,69,5036,69,42224,69,71846,69,71854,69,66182,69,119839,102,119891,102,119943,102,119995,102,120047,102,120099,102,120151,102,120203,102,120255,102,120307,102,120359,102,120411,102,120463,102,43829,102,42905,102,383,102,7837,102,1412,102,119315,70,8497,70,119813,70,119865,70,119917,70,120021,70,120073,70,120125,70,120177,70,120229,70,120281,70,120333,70,120385,70,120437,70,42904,70,988,70,120778,70,5556,70,42205,70,71874,70,71842,70,66183,70,66213,70,66853,70,65351,103,8458,103,119840,103,119892,103,119944,103,120048,103,120100,103,120152,103,120204,103,120256,103,120308,103,120360,103,120412,103,120464,103,609,103,7555,103,397,103,1409,103,119814,71,119866,71,119918,71,119970,71,120022,71,120074,71,120126,71,120178,71,120230,71,120282,71,120334,71,120386,71,120438,71,1292,71,5056,71,5107,71,42198,71,65352,104,8462,104,119841,104,119945,104,119997,104,120049,104,120101,104,120153,104,120205,104,120257,104,120309,104,120361,104,120413,104,120465,104,1211,104,1392,104,5058,104,65320,72,8459,72,8460,72,8461,72,119815,72,119867,72,119919,72,120023,72,120179,72,120231,72,120283,72,120335,72,120387,72,120439,72,919,72,120494,72,120552,72,120610,72,120668,72,120726,72,11406,72,5051,72,5500,72,42215,72,66255,72,731,105,9075,105,65353,105,8560,105,8505,105,8520,105,119842,105,119894,105,119946,105,119998,105,120050,105,120102,105,120154,105,120206,105,120258,105,120310,105,120362,105,120414,105,120466,105,120484,105,618,105,617,105,953,105,8126,105,890,105,120522,105,120580,105,120638,105,120696,105,120754,105,1110,105,42567,105,1231,105,43893,105,5029,105,71875,105,65354,106,8521,106,119843,106,119895,106,119947,106,119999,106,120051,106,120103,106,120155,106,120207,106,120259,106,120311,106,120363,106,120415,106,120467,106,1011,106,1112,106,65322,74,119817,74,119869,74,119921,74,119973,74,120025,74,120077,74,120129,74,120181,74,120233,74,120285,74,120337,74,120389,74,120441,74,42930,74,895,74,1032,74,5035,74,5261,74,42201,74,119844,107,119896,107,119948,107,120000,107,120052,107,120104,107,120156,107,120208,107,120260,107,120312,107,120364,107,120416,107,120468,107,8490,75,65323,75,119818,75,119870,75,119922,75,119974,75,120026,75,120078,75,120130,75,120182,75,120234,75,120286,75,120338,75,120390,75,120442,75,922,75,120497,75,120555,75,120613,75,120671,75,120729,75,11412,75,5094,75,5845,75,42199,75,66840,75,1472,108,8739,73,9213,73,65512,73,1633,108,1777,73,66336,108,125127,108,120783,73,120793,73,120803,73,120813,73,120823,73,130033,73,65321,73,8544,73,8464,73,8465,73,119816,73,119868,73,119920,73,120024,73,120128,73,120180,73,120232,73,120284,73,120336,73,120388,73,120440,73,65356,108,8572,73,8467,108,119845,108,119897,108,119949,108,120001,108,120053,108,120105,73,120157,73,120209,73,120261,73,120313,73,120365,73,120417,73,120469,73,448,73,120496,73,120554,73,120612,73,120670,73,120728,73,11410,73,1030,73,1216,73,1493,108,1503,108,1575,108,126464,108,126592,108,65166,108,65165,108,1994,108,11599,73,5825,73,42226,73,93992,73,66186,124,66313,124,119338,76,8556,76,8466,76,119819,76,119871,76,119923,76,120027,76,120079,76,120131,76,120183,76,120235,76,120287,76,120339,76,120391,76,120443,76,11472,76,5086,76,5290,76,42209,76,93974,76,71843,76,71858,76,66587,76,66854,76,65325,77,8559,77,8499,77,119820,77,119872,77,119924,77,120028,77,120080,77,120132,77,120184,77,120236,77,120288,77,120340,77,120392,77,120444,77,924,77,120499,77,120557,77,120615,77,120673,77,120731,77,1018,77,11416,77,5047,77,5616,77,5846,77,42207,77,66224,77,66321,77,119847,110,119899,110,119951,110,120003,110,120055,110,120107,110,120159,110,120211,110,120263,110,120315,110,120367,110,120419,110,120471,110,1400,110,1404,110,65326,78,8469,78,119821,78,119873,78,119925,78,119977,78,120029,78,120081,78,120185,78,120237,78,120289,78,120341,78,120393,78,120445,78,925,78,120500,78,120558,78,120616,78,120674,78,120732,78,11418,78,42208,78,66835,78,3074,111,3202,111,3330,111,3458,111,2406,111,2662,111,2790,111,3046,111,3174,111,3302,111,3430,111,3664,111,3792,111,4160,111,1637,111,1781,111,65359,111,8500,111,119848,111,119900,111,119952,111,120056,111,120108,111,120160,111,120212,111,120264,111,120316,111,120368,111,120420,111,120472,111,7439,111,7441,111,43837,111,959,111,120528,111,120586,111,120644,111,120702,111,120760,111,963,111,120532,111,120590,111,120648,111,120706,111,120764,111,11423,111,4351,111,1413,111,1505,111,1607,111,126500,111,126564,111,126596,111,65259,111,65260,111,65258,111,65257,111,1726,111,64428,111,64429,111,64427,111,64426,111,1729,111,64424,111,64425,111,64423,111,64422,111,1749,111,3360,111,4125,111,66794,111,71880,111,71895,111,66604,111,1984,79,2534,79,2918,79,12295,79,70864,79,71904,79,120782,79,120792,79,120802,79,120812,79,120822,79,130032,79,65327,79,119822,79,119874,79,119926,79,119978,79,120030,79,120082,79,120134,79,120186,79,120238,79,120290,79,120342,79,120394,79,120446,79,927,79,120502,79,120560,79,120618,79,120676,79,120734,79,11422,79,1365,79,11604,79,4816,79,2848,79,66754,79,42227,79,71861,79,66194,79,66219,79,66564,79,66838,79,9076,112,65360,112,119849,112,119901,112,119953,112,120005,112,120057,112,120109,112,120161,112,120213,112,120265,112,120317,112,120369,112,120421,112,120473,112,961,112,120530,112,120544,112,120588,112,120602,112,120646,112,120660,112,120704,112,120718,112,120762,112,120776,112,11427,112,65328,80,8473,80,119823,80,119875,80,119927,80,119979,80,120031,80,120083,80,120187,80,120239,80,120291,80,120343,80,120395,80,120447,80,929,80,120504,80,120562,80,120620,80,120678,80,120736,80,11426,80,5090,80,5229,80,42193,80,66197,80,119850,113,119902,113,119954,113,120006,113,120058,113,120110,113,120162,113,120214,113,120266,113,120318,113,120370,113,120422,113,120474,113,1307,113,1379,113,1382,113,8474,81,119824,81,119876,81,119928,81,119980,81,120032,81,120084,81,120188,81,120240,81,120292,81,120344,81,120396,81,120448,81,11605,81,119851,114,119903,114,119955,114,120007,114,120059,114,120111,114,120163,114,120215,114,120267,114,120319,114,120371,114,120423,114,120475,114,43847,114,43848,114,7462,114,11397,114,43905,114,119318,82,8475,82,8476,82,8477,82,119825,82,119877,82,119929,82,120033,82,120189,82,120241,82,120293,82,120345,82,120397,82,120449,82,422,82,5025,82,5074,82,66740,82,5511,82,42211,82,94005,82,65363,115,119852,115,119904,115,119956,115,120008,115,120060,115,120112,115,120164,115,120216,115,120268,115,120320,115,120372,115,120424,115,120476,115,42801,115,445,115,1109,115,43946,115,71873,115,66632,115,65331,83,119826,83,119878,83,119930,83,119982,83,120034,83,120086,83,120138,83,120190,83,120242,83,120294,83,120346,83,120398,83,120450,83,1029,83,1359,83,5077,83,5082,83,42210,83,94010,83,66198,83,66592,83,119853,116,119905,116,119957,116,120009,116,120061,116,120113,116,120165,116,120217,116,120269,116,120321,116,120373,116,120425,116,120477,116,8868,84,10201,84,128872,84,65332,84,119827,84,119879,84,119931,84,119983,84,120035,84,120087,84,120139,84,120191,84,120243,84,120295,84,120347,84,120399,84,120451,84,932,84,120507,84,120565,84,120623,84,120681,84,120739,84,11430,84,5026,84,42196,84,93962,84,71868,84,66199,84,66225,84,66325,84,119854,117,119906,117,119958,117,120010,117,120062,117,120114,117,120166,117,120218,117,120270,117,120322,117,120374,117,120426,117,120478,117,42911,117,7452,117,43854,117,43858,117,651,117,965,117,120534,117,120592,117,120650,117,120708,117,120766,117,1405,117,66806,117,71896,117,8746,85,8899,85,119828,85,119880,85,119932,85,119984,85,120036,85,120088,85,120140,85,120192,85,120244,85,120296,85,120348,85,120400,85,120452,85,1357,85,4608,85,66766,85,5196,85,42228,85,94018,85,71864,85,8744,118,8897,118,65366,118,8564,118,119855,118,119907,118,119959,118,120011,118,120063,118,120115,118,120167,118,120219,118,120271,118,120323,118,120375,118,120427,118,120479,118,7456,118,957,118,120526,118,120584,118,120642,118,120700,118,120758,118,1141,118,1496,118,71430,118,43945,118,71872,118,119309,86,1639,86,1783,86,8548,86,119829,86,119881,86,119933,86,119985,86,120037,86,120089,86,120141,86,120193,86,120245,86,120297,86,120349,86,120401,86,120453,86,1140,86,11576,86,5081,86,5167,86,42719,86,42214,86,93960,86,71840,86,66845,86,623,119,119856,119,119908,119,119960,119,120012,119,120064,119,120116,119,120168,119,120220,119,120272,119,120324,119,120376,119,120428,119,120480,119,7457,119,1121,119,1309,119,1377,119,71434,119,71438,119,71439,119,43907,119,71919,87,71910,87,119830,87,119882,87,119934,87,119986,87,120038,87,120090,87,120142,87,120194,87,120246,87,120298,87,120350,87,120402,87,120454,87,1308,87,5043,87,5076,87,42218,87,5742,120,10539,120,10540,120,10799,120,65368,120,8569,120,119857,120,119909,120,119961,120,120013,120,120065,120,120117,120,120169,120,120221,120,120273,120,120325,120,120377,120,120429,120,120481,120,5441,120,5501,120,5741,88,9587,88,66338,88,71916,88,65336,88,8553,88,119831,88,119883,88,119935,88,119987,88,120039,88,120091,88,120143,88,120195,88,120247,88,120299,88,120351,88,120403,88,120455,88,42931,88,935,88,120510,88,120568,88,120626,88,120684,88,120742,88,11436,88,11613,88,5815,88,42219,88,66192,88,66228,88,66327,88,66855,88,611,121,7564,121,65369,121,119858,121,119910,121,119962,121,120014,121,120066,121,120118,121,120170,121,120222,121,120274,121,120326,121,120378,121,120430,121,120482,121,655,121,7935,121,43866,121,947,121,8509,121,120516,121,120574,121,120632,121,120690,121,120748,121,1199,121,4327,121,71900,121,65337,89,119832,89,119884,89,119936,89,119988,89,120040,89,120092,89,120144,89,120196,89,120248,89,120300,89,120352,89,120404,89,120456,89,933,89,978,89,120508,89,120566,89,120624,89,120682,89,120740,89,11432,89,1198,89,5033,89,5053,89,42220,89,94019,89,71844,89,66226,89,119859,122,119911,122,119963,122,120015,122,120067,122,120119,122,120171,122,120223,122,120275,122,120327,122,120379,122,120431,122,120483,122,7458,122,43923,122,71876,122,66293,90,71909,90,65338,90,8484,90,8488,90,119833,90,119885,90,119937,90,119989,90,120041,90,120197,90,120249,90,120301,90,120353,90,120405,90,120457,90,918,90,120493,90,120551,90,120609,90,120667,90,120725,90,5059,90,42204,90,71849,90,65282,34,65284,36,65285,37,65286,38,65290,42,65291,43,65294,46,65295,47,65296,48,65297,49,65298,50,65299,51,65300,52,65301,53,65302,54,65303,55,65304,56,65305,57,65308,60,65309,61,65310,62,65312,64,65316,68,65318,70,65319,71,65324,76,65329,81,65330,82,65333,85,65334,86,65335,87,65343,95,65346,98,65348,100,65350,102,65355,107,65357,109,65358,110,65361,113,65362,114,65364,116,65365,117,65367,119,65370,122,65371,123,65373,125,119846,109],"_default":[160,32,8211,45,65374,126,65306,58,65281,33,8216,96,8217,96,8245,96,180,96,12494,47,1047,51,1073,54,1072,97,1040,65,1068,98,1042,66,1089,99,1057,67,1077,101,1045,69,1053,72,305,105,1050,75,921,73,1052,77,1086,111,1054,79,1009,112,1088,112,1056,80,1075,114,1058,84,215,120,1093,120,1061,88,1091,121,1059,89,65283,35,65288,40,65289,41,65292,44,65307,59,65311,63],"cs":[65374,126,65306,58,65281,33,8216,96,8217,96,8245,96,180,96,12494,47,1047,51,1073,54,1072,97,1040,65,1068,98,1042,66,1089,99,1057,67,1077,101,1045,69,1053,72,305,105,1050,75,921,73,1052,77,1086,111,1054,79,1009,112,1088,112,1056,80,1075,114,1058,84,1093,120,1061,88,1091,121,1059,89,65283,35,65288,40,65289,41,65292,44,65307,59,65311,63],"de":[65374,126,65306,58,65281,33,8216,96,8217,96,8245,96,180,96,12494,47,1047,51,1073,54,1072,97,1040,65,1068,98,1042,66,1089,99,1057,67,1077,101,1045,69,1053,72,305,105,1050,75,921,73,1052,77,1086,111,1054,79,1009,112,1088,112,1056,80,1075,114,1058,84,1093,120,1061,88,1091,121,1059,89,65283,35,65288,40,65289,41,65292,44,65307,59,65311,63],"es":[8211,45,65374,126,65306,58,65281,33,8245,96,180,96,12494,47,1047,51,1073,54,1072,97,1040,65,1068,98,1042,66,1089,99,1057,67,1077,101,1045,69,1053,72,305,105,1050,75,1052,77,1086,111,1054,79,1009,112,1088,112,1056,80,1075,114,1058,84,215,120,1093,120,1061,88,1091,121,1059,89,65283,35,65288,40,65289,41,65292,44,65307,59,65311,63],"fr":[65374,126,65306,58,65281,33,8216,96,8245,96,12494,47,1047,51,1073,54,1072,97,1040,65,1068,98,1042,66,1089,99,1057,67,1077,101,1045,69,1053,72,305,105,1050,75,921,73,1052,77,1086,111,1054,79,1009,112,1088,112,1056,80,1075,114,1058,84,215,120,1093,120,1061,88,1091,121,1059,89,65283,35,65288,40,65289,41,65292,44,65307,59,65311,63],"it":[160,32,8211,45,65374,126,65306,58,65281,33,8216,96,8245,96,180,96,12494,47,1047,51,1073,54,1072,97,1040,65,1068,98,1042,66,1089,99,1057,67,1077,101,1045,69,1053,72,305,105,1050,75,921,73,1052,77,1086,111,1054,79,1009,112,1088,112,1056,80,1075,114,1058,84,215,120,1093,120,1061,88,1091,121,1059,89,65283,35,65288,40,65289,41,65292,44,65307,59,65311,63],"ja":[8211,45,65306,58,65281,33,8216,96,8217,96,8245,96,180,96,1047,51,1073,54,1072,97,1040,65,1068,98,1042,66,1089,99,1057,67,1077,101,1045,69,1053,72,305,105,1050,75,921,73,1052,77,1086,111,1054,79,1009,112,1088,112,1056,80,1075,114,1058,84,215,120,1093,120,1061,88,1091,121,1059,89,65283,35,65292,44,65307,59],"ko":[8211,45,65374,126,65306,58,65281,33,8245,96,180,96,12494,47,1047,51,1073,54,1072,97,1040,65,1068,98,1042,66,1089,99,1057,67,1077,101,1045,69,1053,72,305,105,1050,75,921,73,1052,77,1086,111,1054,79,1009,112,1088,112,1056,80,1075,114,1058,84,215,120,1093,120,1061,88,1091,121,1059,89,65283,35,65288,40,65289,41,65292,44,65307,59,65311,63],"pl":[65374,126,65306,58,65281,33,8216,96,8217,96,8245,96,180,96,12494,47,1047,51,1073,54,1072,97,1040,65,1068,98,1042,66,1089,99,1057,67,1077,101,1045,69,1053,72,305,105,1050,75,921,73,1052,77,1086,111,1054,79,1009,112,1088,112,1056,80,1075,114,1058,84,215,120,1093,120,1061,88,1091,121,1059,89,65283,35,65288,40,65289,41,65292,44,65307,59,65311,63],"pt-BR":[65374,126,65306,58,65281,33,8216,96,8217,96,8245,96,180,96,12494,47,1047,51,1073,54,1072,97,1040,65,1068,98,1042,66,1089,99,1057,67,1077,101,1045,69,1053,72,305,105,1050,75,921,73,1052,77,1086,111,1054,79,1009,112,1088,112,1056,80,1075,114,1058,84,215,120,1093,120,1061,88,1091,121,1059,89,65283,35,65288,40,65289,41,65292,44,65307,59,65311,63],"qps-ploc":[160,32,8211,45,65374,126,65306,58,65281,33,8216,96,8217,96,8245,96,180,96,12494,47,1047,51,1073,54,1072,97,1040,65,1068,98,1042,66,1089,99,1057,67,1077,101,1045,69,1053,72,305,105,1050,75,921,73,1052,77,1086,111,1054,79,1088,112,1056,80,1075,114,1058,84,215,120,1093,120,1061,88,1091,121,1059,89,65283,35,65288,40,65289,41,65292,44,65307,59,65311,63],"ru":[65374,126,65306,58,65281,33,8216,96,8217,96,8245,96,180,96,12494,47,305,105,921,73,1009,112,215,120,65283,35,65288,40,65289,41,65292,44,65307,59,65311,63],"tr":[160,32,8211,45,65374,126,65306,58,65281,33,8245,96,180,96,12494,47,1047,51,1073,54,1072,97,1040,65,1068,98,1042,66,1089,99,1057,67,1077,101,1045,69,1053,72,1050,75,921,73,1052,77,1086,111,1054,79,1009,112,1088,112,1056,80,1075,114,1058,84,215,120,1093,120,1061,88,1091,121,1059,89,65283,35,65288,40,65289,41,65292,44,65307,59,65311,63],"zh-hans":[65374,126,65306,58,65281,33,8245,96,180,96,12494,47,1047,51,1073,54,1072,97,1040,65,1068,98,1042,66,1089,99,1057,67,1077,101,1045,69,1053,72,305,105,1050,75,921,73,1052,77,1086,111,1054,79,1009,112,1088,112,1056,80,1075,114,1058,84,215,120,1093,120,1061,88,1091,121,1059,89,65288,40,65289,41],"zh-hant":[8211,45,65374,126,180,96,12494,47,1047,51,1073,54,1072,97,1040,65,1068,98,1042,66,1089,99,1057,67,1077,101,1045,69,1053,72,305,105,1050,75,921,73,1052,77,1086,111,1054,79,1009,112,1088,112,1056,80,1075,114,1058,84,215,120,1093,120,1061,88,1091,121,1059,89,65283,35,65307,59]}'));
+Re.cache = new hs((e) => {
+  function t(c) {
     const h = /* @__PURE__ */ new Map();
-    for (let f = 0; f < u.length; f += 2)
-      h.set(u[f], u[f + 1]);
+    for (let f = 0; f < c.length; f += 2)
+      h.set(c[f], c[f + 1]);
     return h;
   }
-  function n(u, h) {
-    const f = new Map(u);
+  function n(c, h) {
+    const f = new Map(c);
     for (const [m, d] of h)
       f.set(m, d);
     return f;
   }
-  function r(u, h) {
-    if (!u)
+  function r(c, h) {
+    if (!c)
       return h;
     const f = /* @__PURE__ */ new Map();
-    for (const [m, d] of u)
+    for (const [m, d] of c)
       h.has(m) && f.set(m, d);
     return f;
   }
   const s = Ie.ambiguousCharacterData.value;
-  let i = e.filter((u) => !u.startsWith("_") && u in s);
+  let i = e.filter((c) => !c.startsWith("_") && c in s);
   i.length === 0 && (i = ["_default"]);
-  let a;
-  for (const u of i) {
-    const h = t(s[u]);
-    a = r(a, h);
+  let l;
+  for (const c of i) {
+    const h = t(s[c]);
+    l = r(l, h);
   }
-  const o = t(s._common), c = n(o, a);
-  return new Ie(c);
+  const o = t(s._common), u = n(o, l);
+  return new Ie(u);
 });
-Re._locales = new Lr(() => Object.keys(Ie.ambiguousCharacterData.value).filter((e) => !e.startsWith("_")));
-class pe {
+Re._locales = new wr(() => Object.keys(Ie.ambiguousCharacterData.value).filter((e) => !e.startsWith("_")));
+class _e {
   static getRawData() {
     return JSON.parse("[9,10,11,12,13,32,127,160,173,847,1564,4447,4448,6068,6069,6155,6156,6157,6158,7355,7356,8192,8193,8194,8195,8196,8197,8198,8199,8200,8201,8202,8203,8204,8205,8206,8207,8234,8235,8236,8237,8238,8239,8287,8288,8289,8290,8291,8292,8293,8294,8295,8296,8297,8298,8299,8300,8301,8302,8303,10240,12288,12644,65024,65025,65026,65027,65028,65029,65030,65031,65032,65033,65034,65035,65036,65037,65038,65039,65279,65440,65520,65521,65522,65523,65524,65525,65526,65527,65528,65532,78844,119155,119156,119157,119158,119159,119160,119161,119162,917504,917505,917506,917507,917508,917509,917510,917511,917512,917513,917514,917515,917516,917517,917518,917519,917520,917521,917522,917523,917524,917525,917526,917527,917528,917529,917530,917531,917532,917533,917534,917535,917536,917537,917538,917539,917540,917541,917542,917543,917544,917545,917546,917547,917548,917549,917550,917551,917552,917553,917554,917555,917556,917557,917558,917559,917560,917561,917562,917563,917564,917565,917566,917567,917568,917569,917570,917571,917572,917573,917574,917575,917576,917577,917578,917579,917580,917581,917582,917583,917584,917585,917586,917587,917588,917589,917590,917591,917592,917593,917594,917595,917596,917597,917598,917599,917600,917601,917602,917603,917604,917605,917606,917607,917608,917609,917610,917611,917612,917613,917614,917615,917616,917617,917618,917619,917620,917621,917622,917623,917624,917625,917626,917627,917628,917629,917630,917631,917760,917761,917762,917763,917764,917765,917766,917767,917768,917769,917770,917771,917772,917773,917774,917775,917776,917777,917778,917779,917780,917781,917782,917783,917784,917785,917786,917787,917788,917789,917790,917791,917792,917793,917794,917795,917796,917797,917798,917799,917800,917801,917802,917803,917804,917805,917806,917807,917808,917809,917810,917811,917812,917813,917814,917815,917816,917817,917818,917819,917820,917821,917822,917823,917824,917825,917826,917827,917828,917829,917830,917831,917832,917833,917834,917835,917836,917837,917838,917839,917840,917841,917842,917843,917844,917845,917846,917847,917848,917849,917850,917851,917852,917853,917854,917855,917856,917857,917858,917859,917860,917861,917862,917863,917864,917865,917866,917867,917868,917869,917870,917871,917872,917873,917874,917875,917876,917877,917878,917879,917880,917881,917882,917883,917884,917885,917886,917887,917888,917889,917890,917891,917892,917893,917894,917895,917896,917897,917898,917899,917900,917901,917902,917903,917904,917905,917906,917907,917908,917909,917910,917911,917912,917913,917914,917915,917916,917917,917918,917919,917920,917921,917922,917923,917924,917925,917926,917927,917928,917929,917930,917931,917932,917933,917934,917935,917936,917937,917938,917939,917940,917941,917942,917943,917944,917945,917946,917947,917948,917949,917950,917951,917952,917953,917954,917955,917956,917957,917958,917959,917960,917961,917962,917963,917964,917965,917966,917967,917968,917969,917970,917971,917972,917973,917974,917975,917976,917977,917978,917979,917980,917981,917982,917983,917984,917985,917986,917987,917988,917989,917990,917991,917992,917993,917994,917995,917996,917997,917998,917999]");
   }
   static getData() {
-    return this._data || (this._data = new Set(pe.getRawData())), this._data;
+    return this._data || (this._data = new Set(_e.getRawData())), this._data;
   }
   static isInvisibleCharacter(t) {
-    return pe.getData().has(t);
+    return _e.getData().has(t);
   }
   static get codePoints() {
-    return pe.getData();
+    return _e.getData();
   }
 }
-pe._data = void 0;
+_e._data = void 0;
 const vs = "$initialize";
 class ws {
   constructor(t, n, r, s) {
     this.vsWorker = t, this.req = n, this.method = r, this.args = s, this.type = 0;
   }
 }
-class en {
+class Kt {
   constructor(t, n, r, s) {
     this.vsWorker = t, this.seq = n, this.res = r, this.err = s, this.type = 1;
   }
 }
-class Ls {
+class Ns {
   constructor(t, n, r, s) {
     this.vsWorker = t, this.req = n, this.eventName = r, this.arg = s, this.type = 2;
   }
 }
-class Ns {
+class Ss {
   constructor(t, n, r) {
     this.vsWorker = t, this.req = n, this.event = r, this.type = 3;
   }
 }
-class Ss {
+class Cs {
   constructor(t, n) {
     this.vsWorker = t, this.req = n, this.type = 4;
   }
 }
-class Cs {
+class As {
   constructor(t) {
     this._workerId = -1, this._handler = t, this._lastSentReq = 0, this._pendingReplies = /* @__PURE__ */ Object.create(null), this._pendingEmitters = /* @__PURE__ */ new Map(), this._pendingEvents = /* @__PURE__ */ new Map();
   }
@@ -1080,10 +1088,10 @@ class Cs {
     let r = null;
     const s = new ie({
       onWillAddFirstListener: () => {
-        r = String(++this._lastSentReq), this._pendingEmitters.set(r, s), this._send(new Ls(this._workerId, r, t, n));
+        r = String(++this._lastSentReq), this._pendingEmitters.set(r, s), this._send(new Ns(this._workerId, r, t, n));
       },
       onDidRemoveLastListener: () => {
-        this._pendingEmitters.delete(r), this._send(new Ss(this._workerId, r)), r = null;
+        this._pendingEmitters.delete(r), this._send(new Cs(this._workerId, r)), r = null;
       }
     });
     return s.event;
@@ -1121,14 +1129,14 @@ class Cs {
   _handleRequestMessage(t) {
     const n = t.req;
     this._handler.handleMessage(t.method, t.args).then((s) => {
-      this._send(new en(this._workerId, n, s, void 0));
+      this._send(new Kt(this._workerId, n, s, void 0));
     }, (s) => {
-      s.detail instanceof Error && (s.detail = Zt(s.detail)), this._send(new en(this._workerId, n, void 0, Zt(s)));
+      s.detail instanceof Error && (s.detail = Yt(s.detail)), this._send(new Kt(this._workerId, n, void 0, Yt(s)));
     });
   }
   _handleSubscribeEventMessage(t) {
     const n = t.req, r = this._handler.handleEvent(t.eventName, t.arg)((s) => {
-      this._send(new Ns(this._workerId, n, s));
+      this._send(new Ss(this._workerId, n, s));
     });
     this._pendingEvents.set(n, r);
   }
@@ -1162,29 +1170,29 @@ function Sr(e) {
 function Cr(e) {
   return /^onDynamic/.test(e) && Nr(e.charCodeAt(9));
 }
-function As(e, t, n) {
-  const r = (a) => function() {
+function Rs(e, t, n) {
+  const r = (l) => function() {
     const o = Array.prototype.slice.call(arguments, 0);
-    return t(a, o);
-  }, s = (a) => function(o) {
-    return n(a, o);
+    return t(l, o);
+  }, s = (l) => function(o) {
+    return n(l, o);
   }, i = {};
-  for (const a of e) {
-    if (Cr(a)) {
-      i[a] = s(a);
+  for (const l of e) {
+    if (Cr(l)) {
+      i[l] = s(l);
       continue;
     }
-    if (Sr(a)) {
-      i[a] = n(a, void 0);
+    if (Sr(l)) {
+      i[l] = n(l, void 0);
       continue;
     }
-    i[a] = r(a);
+    i[l] = r(l);
   }
   return i;
 }
-class Rs {
+class ys {
   constructor(t, n) {
-    this._requestHandlerFactory = n, this._requestHandler = null, this._protocol = new Cs({
+    this._requestHandlerFactory = n, this._requestHandler = null, this._protocol = new As({
       sendMessage: (r, s) => {
         t(r, s);
       },
@@ -1225,20 +1233,20 @@ class Rs {
   }
   initialize(t, n, r, s) {
     this._protocol.setWorkerId(t);
-    const o = As(s, (c, u) => this._protocol.sendMessage(c, u), (c, u) => this._protocol.listen(c, u));
-    return this._requestHandlerFactory ? (this._requestHandler = this._requestHandlerFactory(o), Promise.resolve(Rt(this._requestHandler))) : (n && (typeof n.baseUrl < "u" && delete n.baseUrl, typeof n.paths < "u" && typeof n.paths.vs < "u" && delete n.paths.vs, typeof n.trustedTypesPolicy !== void 0 && delete n.trustedTypesPolicy, n.catchError = !0, globalThis.require.config(n)), new Promise((c, u) => {
+    const o = Rs(s, (u, c) => this._protocol.sendMessage(u, c), (u, c) => this._protocol.listen(u, c));
+    return this._requestHandlerFactory ? (this._requestHandler = this._requestHandlerFactory(o), Promise.resolve(Rt(this._requestHandler))) : (n && (typeof n.baseUrl < "u" && delete n.baseUrl, typeof n.paths < "u" && typeof n.paths.vs < "u" && delete n.paths.vs, typeof n.trustedTypesPolicy !== void 0 && delete n.trustedTypesPolicy, n.catchError = !0, globalThis.require.config(n)), new Promise((u, c) => {
       const h = globalThis.require;
       h([r], (f) => {
         if (this._requestHandler = f.create(o), !this._requestHandler) {
-          u(new Error("No RequestHandler!"));
+          c(new Error("No RequestHandler!"));
           return;
         }
-        c(Rt(this._requestHandler));
-      }, u);
+        u(Rt(this._requestHandler));
+      }, c);
     }));
   }
 }
-class be {
+class me {
   /**
    * Constructs a new DiffChange with the given sequence information
    * and content.
@@ -1259,16 +1267,16 @@ class be {
     return this.modifiedStart + this.modifiedLength;
   }
 }
-function tn(e, t) {
+function en(e, t) {
   return (t << 5) - t + e | 0;
 }
-function ys(e, t) {
-  t = tn(149417, t);
+function Ms(e, t) {
+  t = en(149417, t);
   for (let n = 0, r = e.length; n < r; n++)
-    t = tn(e.charCodeAt(n), t);
+    t = en(e.charCodeAt(n), t);
   return t;
 }
-class nn {
+class tn {
   constructor(t) {
     this.source = t;
   }
@@ -1279,8 +1287,8 @@ class nn {
     return n;
   }
 }
-function Ms(e, t, n) {
-  return new _e(new nn(e), new nn(t)).ComputeDiff(n).changes;
+function Es(e, t, n) {
+  return new ge(new tn(e), new tn(t)).ComputeDiff(n).changes;
 }
 class Me {
   static Assert(t, n) {
@@ -1305,15 +1313,15 @@ class Ee {
    *		A 64-bit integer that represents the number of elements to copy.
    */
   static Copy(t, n, r, s, i) {
-    for (let a = 0; a < i; a++)
-      r[s + a] = t[n + a];
+    for (let l = 0; l < i; l++)
+      r[s + l] = t[n + l];
   }
   static Copy2(t, n, r, s, i) {
-    for (let a = 0; a < i; a++)
-      r[s + a] = t[n + a];
+    for (let l = 0; l < i; l++)
+      r[s + l] = t[n + l];
   }
 }
-class rn {
+class nn {
   /**
    * Constructs a new DiffChangeHelper for the given DiffSequences.
    */
@@ -1324,7 +1332,7 @@ class rn {
    * Marks the beginning of the next change in the set of differences.
    */
   MarkNextChange() {
-    (this.m_originalCount > 0 || this.m_modifiedCount > 0) && this.m_changes.push(new be(this.m_originalStart, this.m_originalCount, this.m_modifiedStart, this.m_modifiedCount)), this.m_originalCount = 0, this.m_modifiedCount = 0, this.m_originalStart = 1073741824, this.m_modifiedStart = 1073741824;
+    (this.m_originalCount > 0 || this.m_modifiedCount > 0) && this.m_changes.push(new me(this.m_originalStart, this.m_originalCount, this.m_modifiedStart, this.m_modifiedCount)), this.m_originalCount = 0, this.m_modifiedCount = 0, this.m_originalStart = 1073741824, this.m_modifiedStart = 1073741824;
   }
   /**
    * Adds the original element at the given position to the elements
@@ -1359,24 +1367,24 @@ class rn {
     return (this.m_originalCount > 0 || this.m_modifiedCount > 0) && this.MarkNextChange(), this.m_changes.reverse(), this.m_changes;
   }
 }
-class _e {
+class ge {
   /**
    * Constructs the DiffFinder
    */
   constructor(t, n, r = null) {
     this.ContinueProcessingPredicate = r, this._originalSequence = t, this._modifiedSequence = n;
-    const [s, i, a] = _e._getElements(t), [o, c, u] = _e._getElements(n);
-    this._hasStrings = a && u, this._originalStringElements = s, this._originalElementsOrHash = i, this._modifiedStringElements = o, this._modifiedElementsOrHash = c, this.m_forwardHistory = [], this.m_reverseHistory = [];
+    const [s, i, l] = ge._getElements(t), [o, u, c] = ge._getElements(n);
+    this._hasStrings = l && c, this._originalStringElements = s, this._originalElementsOrHash = i, this._modifiedStringElements = o, this._modifiedElementsOrHash = u, this.m_forwardHistory = [], this.m_reverseHistory = [];
   }
   static _isStringArray(t) {
     return t.length > 0 && typeof t[0] == "string";
   }
   static _getElements(t) {
     const n = t.getElements();
-    if (_e._isStringArray(n)) {
+    if (ge._isStringArray(n)) {
       const r = new Int32Array(n.length);
       for (let s = 0, i = n.length; s < i; s++)
-        r[s] = ys(n[s], 0);
+        r[s] = Ms(n[s], 0);
       return [n, r, !0];
     }
     return n instanceof Int32Array ? [[], n, !1] : [[], new Int32Array(n), !1];
@@ -1387,7 +1395,7 @@ class _e {
   ElementsAreStrictEqual(t, n) {
     if (!this.ElementsAreEqual(t, n))
       return !1;
-    const r = _e._getStrictElement(this._originalSequence, t), s = _e._getStrictElement(this._modifiedSequence, n);
+    const r = ge._getStrictElement(this._originalSequence, t), s = ge._getStrictElement(this._modifiedSequence, n);
     return r === s;
   }
   static _getStrictElement(t, n) {
@@ -1408,10 +1416,10 @@ class _e {
    * @returns An array of the differences between the two input sequences.
    */
   _ComputeDiff(t, n, r, s, i) {
-    const a = [!1];
-    let o = this.ComputeDiffRecursive(t, n, r, s, a);
+    const l = [!1];
+    let o = this.ComputeDiffRecursive(t, n, r, s, l);
     return i && (o = this.PrettifyChanges(o)), {
-      quitEarly: a[0],
+      quitEarly: l[0],
       changes: o
     };
   }
@@ -1428,45 +1436,45 @@ class _e {
     if (t > n || r > s) {
       let f;
       return r <= s ? (Me.Assert(t === n + 1, "originalStart should only be one more than originalEnd"), f = [
-        new be(t, 0, r, s - r + 1)
+        new me(t, 0, r, s - r + 1)
       ]) : t <= n ? (Me.Assert(r === s + 1, "modifiedStart should only be one more than modifiedEnd"), f = [
-        new be(t, n - t + 1, r, 0)
+        new me(t, n - t + 1, r, 0)
       ]) : (Me.Assert(t === n + 1, "originalStart should only be one more than originalEnd"), Me.Assert(r === s + 1, "modifiedStart should only be one more than modifiedEnd"), f = []), f;
     }
-    const a = [0], o = [0], c = this.ComputeRecursionPoint(t, n, r, s, a, o, i), u = a[0], h = o[0];
-    if (c !== null)
-      return c;
+    const l = [0], o = [0], u = this.ComputeRecursionPoint(t, n, r, s, l, o, i), c = l[0], h = o[0];
+    if (u !== null)
+      return u;
     if (!i[0]) {
-      const f = this.ComputeDiffRecursive(t, u, r, h, i);
+      const f = this.ComputeDiffRecursive(t, c, r, h, i);
       let m = [];
       return i[0] ? m = [
-        new be(u + 1, n - (u + 1) + 1, h + 1, s - (h + 1) + 1)
-      ] : m = this.ComputeDiffRecursive(u + 1, n, h + 1, s, i), this.ConcatenateChanges(f, m);
+        new me(c + 1, n - (c + 1) + 1, h + 1, s - (h + 1) + 1)
+      ] : m = this.ComputeDiffRecursive(c + 1, n, h + 1, s, i), this.ConcatenateChanges(f, m);
     }
     return [
-      new be(t, n - t + 1, r, s - r + 1)
+      new me(t, n - t + 1, r, s - r + 1)
     ];
   }
-  WALKTRACE(t, n, r, s, i, a, o, c, u, h, f, m, d, g, b, w, L, _) {
-    let x = null, S = null, N = new rn(), R = n, M = r, E = d[0] - w[0] - s, I = -1073741824, G = this.m_forwardHistory.length - 1;
+  WALKTRACE(t, n, r, s, i, l, o, u, c, h, f, m, d, g, b, v, w, _) {
+    let x = null, S = null, N = new nn(), R = n, M = r, k = d[0] - v[0] - s, U = -1073741824, G = this.m_forwardHistory.length - 1;
     do {
-      const B = E + t;
-      B === R || B < M && u[B - 1] < u[B + 1] ? (f = u[B + 1], g = f - E - s, f < I && N.MarkNextChange(), I = f, N.AddModifiedElement(f + 1, g), E = B + 1 - t) : (f = u[B - 1] + 1, g = f - E - s, f < I && N.MarkNextChange(), I = f - 1, N.AddOriginalElement(f, g + 1), E = B - 1 - t), G >= 0 && (u = this.m_forwardHistory[G], t = u[0], R = 1, M = u.length - 1);
+      const B = k + t;
+      B === R || B < M && c[B - 1] < c[B + 1] ? (f = c[B + 1], g = f - k - s, f < U && N.MarkNextChange(), U = f, N.AddModifiedElement(f + 1, g), k = B + 1 - t) : (f = c[B - 1] + 1, g = f - k - s, f < U && N.MarkNextChange(), U = f - 1, N.AddOriginalElement(f, g + 1), k = B - 1 - t), G >= 0 && (c = this.m_forwardHistory[G], t = c[0], R = 1, M = c.length - 1);
     } while (--G >= -1);
     if (x = N.getReverseChanges(), _[0]) {
-      let B = d[0] + 1, p = w[0] + 1;
+      let B = d[0] + 1, p = v[0] + 1;
       if (x !== null && x.length > 0) {
-        const v = x[x.length - 1];
-        B = Math.max(B, v.getOriginalEnd()), p = Math.max(p, v.getModifiedEnd());
+        const L = x[x.length - 1];
+        B = Math.max(B, L.getOriginalEnd()), p = Math.max(p, L.getModifiedEnd());
       }
       S = [
-        new be(B, m - B + 1, p, b - p + 1)
+        new me(B, m - B + 1, p, b - p + 1)
       ];
     } else {
-      N = new rn(), R = a, M = o, E = d[0] - w[0] - c, I = 1073741824, G = L ? this.m_reverseHistory.length - 1 : this.m_reverseHistory.length - 2;
+      N = new nn(), R = l, M = o, k = d[0] - v[0] - u, U = 1073741824, G = w ? this.m_reverseHistory.length - 1 : this.m_reverseHistory.length - 2;
       do {
-        const B = E + i;
-        B === R || B < M && h[B - 1] >= h[B + 1] ? (f = h[B + 1] - 1, g = f - E - c, f > I && N.MarkNextChange(), I = f + 1, N.AddOriginalElement(f + 1, g + 1), E = B + 1 - i) : (f = h[B - 1], g = f - E - c, f > I && N.MarkNextChange(), I = f, N.AddModifiedElement(f + 1, g + 1), E = B - 1 - i), G >= 0 && (h = this.m_reverseHistory[G], i = h[0], R = 1, M = h.length - 1);
+        const B = k + i;
+        B === R || B < M && h[B - 1] >= h[B + 1] ? (f = h[B + 1] - 1, g = f - k - u, f > U && N.MarkNextChange(), U = f + 1, N.AddOriginalElement(f + 1, g + 1), k = B + 1 - i) : (f = h[B - 1], g = f - k - u, f > U && N.MarkNextChange(), U = f, N.AddModifiedElement(f + 1, g + 1), k = B - 1 - i), G >= 0 && (h = this.m_reverseHistory[G], i = h[0], R = 1, M = h.length - 1);
       } while (--G >= -1);
       S = N.getChanges();
     }
@@ -1488,42 +1496,42 @@ class _e {
    * @param midModified The middle point of the modified sequence range
    * @returns The diff changes, if available, otherwise null
    */
-  ComputeRecursionPoint(t, n, r, s, i, a, o) {
-    let c = 0, u = 0, h = 0, f = 0, m = 0, d = 0;
-    t--, r--, i[0] = 0, a[0] = 0, this.m_forwardHistory = [], this.m_reverseHistory = [];
-    const g = n - t + (s - r), b = g + 1, w = new Int32Array(b), L = new Int32Array(b), _ = s - r, x = n - t, S = t - r, N = n - s, M = (x - _) % 2 === 0;
-    w[_] = t, L[x] = n, o[0] = !1;
-    for (let E = 1; E <= g / 2 + 1; E++) {
-      let I = 0, G = 0;
-      h = this.ClipDiagonalBound(_ - E, E, _, b), f = this.ClipDiagonalBound(_ + E, E, _, b);
+  ComputeRecursionPoint(t, n, r, s, i, l, o) {
+    let u = 0, c = 0, h = 0, f = 0, m = 0, d = 0;
+    t--, r--, i[0] = 0, l[0] = 0, this.m_forwardHistory = [], this.m_reverseHistory = [];
+    const g = n - t + (s - r), b = g + 1, v = new Int32Array(b), w = new Int32Array(b), _ = s - r, x = n - t, S = t - r, N = n - s, M = (x - _) % 2 === 0;
+    v[_] = t, w[x] = n, o[0] = !1;
+    for (let k = 1; k <= g / 2 + 1; k++) {
+      let U = 0, G = 0;
+      h = this.ClipDiagonalBound(_ - k, k, _, b), f = this.ClipDiagonalBound(_ + k, k, _, b);
       for (let p = h; p <= f; p += 2) {
-        p === h || p < f && w[p - 1] < w[p + 1] ? c = w[p + 1] : c = w[p - 1] + 1, u = c - (p - _) - S;
-        const v = c;
-        for (; c < n && u < s && this.ElementsAreEqual(c + 1, u + 1); )
-          c++, u++;
-        if (w[p] = c, c + u > I + G && (I = c, G = u), !M && Math.abs(p - x) <= E - 1 && c >= L[p])
-          return i[0] = c, a[0] = u, v <= L[p] && 1447 > 0 && E <= 1447 + 1 ? this.WALKTRACE(_, h, f, S, x, m, d, N, w, L, c, n, i, u, s, a, M, o) : null;
+        p === h || p < f && v[p - 1] < v[p + 1] ? u = v[p + 1] : u = v[p - 1] + 1, c = u - (p - _) - S;
+        const L = u;
+        for (; u < n && c < s && this.ElementsAreEqual(u + 1, c + 1); )
+          u++, c++;
+        if (v[p] = u, u + c > U + G && (U = u, G = c), !M && Math.abs(p - x) <= k - 1 && u >= w[p])
+          return i[0] = u, l[0] = c, L <= w[p] && 1447 > 0 && k <= 1448 ? this.WALKTRACE(_, h, f, S, x, m, d, N, v, w, u, n, i, c, s, l, M, o) : null;
       }
-      const B = (I - t + (G - r) - E) / 2;
-      if (this.ContinueProcessingPredicate !== null && !this.ContinueProcessingPredicate(I, B))
-        return o[0] = !0, i[0] = I, a[0] = G, B > 0 && 1447 > 0 && E <= 1447 + 1 ? this.WALKTRACE(_, h, f, S, x, m, d, N, w, L, c, n, i, u, s, a, M, o) : (t++, r++, [
-          new be(t, n - t + 1, r, s - r + 1)
+      const B = (U - t + (G - r) - k) / 2;
+      if (this.ContinueProcessingPredicate !== null && !this.ContinueProcessingPredicate(U, B))
+        return o[0] = !0, i[0] = U, l[0] = G, B > 0 && 1447 > 0 && k <= 1448 ? this.WALKTRACE(_, h, f, S, x, m, d, N, v, w, u, n, i, c, s, l, M, o) : (t++, r++, [
+          new me(t, n - t + 1, r, s - r + 1)
         ]);
-      m = this.ClipDiagonalBound(x - E, E, x, b), d = this.ClipDiagonalBound(x + E, E, x, b);
+      m = this.ClipDiagonalBound(x - k, k, x, b), d = this.ClipDiagonalBound(x + k, k, x, b);
       for (let p = m; p <= d; p += 2) {
-        p === m || p < d && L[p - 1] >= L[p + 1] ? c = L[p + 1] - 1 : c = L[p - 1], u = c - (p - x) - N;
-        const v = c;
-        for (; c > t && u > r && this.ElementsAreEqual(c, u); )
-          c--, u--;
-        if (L[p] = c, M && Math.abs(p - _) <= E && c <= w[p])
-          return i[0] = c, a[0] = u, v >= w[p] && 1447 > 0 && E <= 1447 + 1 ? this.WALKTRACE(_, h, f, S, x, m, d, N, w, L, c, n, i, u, s, a, M, o) : null;
+        p === m || p < d && w[p - 1] >= w[p + 1] ? u = w[p + 1] - 1 : u = w[p - 1], c = u - (p - x) - N;
+        const L = u;
+        for (; u > t && c > r && this.ElementsAreEqual(u, c); )
+          u--, c--;
+        if (w[p] = u, M && Math.abs(p - _) <= k && u <= v[p])
+          return i[0] = u, l[0] = c, L >= v[p] && 1447 > 0 && k <= 1448 ? this.WALKTRACE(_, h, f, S, x, m, d, N, v, w, u, n, i, c, s, l, M, o) : null;
       }
-      if (E <= 1447) {
+      if (k <= 1447) {
         let p = new Int32Array(f - h + 2);
-        p[0] = _ - h + 1, Ee.Copy2(w, h, p, 1, f - h + 1), this.m_forwardHistory.push(p), p = new Int32Array(d - m + 2), p[0] = x - m + 1, Ee.Copy2(L, m, p, 1, d - m + 1), this.m_reverseHistory.push(p);
+        p[0] = _ - h + 1, Ee.Copy2(v, h, p, 1, f - h + 1), this.m_forwardHistory.push(p), p = new Int32Array(d - m + 2), p[0] = x - m + 1, Ee.Copy2(w, m, p, 1, d - m + 1), this.m_reverseHistory.push(p);
       }
     }
-    return this.WALKTRACE(_, h, f, S, x, m, d, N, w, L, c, n, i, u, s, a, M, o);
+    return this.WALKTRACE(_, h, f, S, x, m, d, N, v, w, u, n, i, c, s, l, M, o);
   }
   /**
    * Shifts the given changes to provide a more intuitive diff.
@@ -1535,16 +1543,16 @@ class _e {
    */
   PrettifyChanges(t) {
     for (let n = 0; n < t.length; n++) {
-      const r = t[n], s = n < t.length - 1 ? t[n + 1].originalStart : this._originalElementsOrHash.length, i = n < t.length - 1 ? t[n + 1].modifiedStart : this._modifiedElementsOrHash.length, a = r.originalLength > 0, o = r.modifiedLength > 0;
-      for (; r.originalStart + r.originalLength < s && r.modifiedStart + r.modifiedLength < i && (!a || this.OriginalElementsAreEqual(r.originalStart, r.originalStart + r.originalLength)) && (!o || this.ModifiedElementsAreEqual(r.modifiedStart, r.modifiedStart + r.modifiedLength)); ) {
-        const u = this.ElementsAreStrictEqual(r.originalStart, r.modifiedStart);
-        if (this.ElementsAreStrictEqual(r.originalStart + r.originalLength, r.modifiedStart + r.modifiedLength) && !u)
+      const r = t[n], s = n < t.length - 1 ? t[n + 1].originalStart : this._originalElementsOrHash.length, i = n < t.length - 1 ? t[n + 1].modifiedStart : this._modifiedElementsOrHash.length, l = r.originalLength > 0, o = r.modifiedLength > 0;
+      for (; r.originalStart + r.originalLength < s && r.modifiedStart + r.modifiedLength < i && (!l || this.OriginalElementsAreEqual(r.originalStart, r.originalStart + r.originalLength)) && (!o || this.ModifiedElementsAreEqual(r.modifiedStart, r.modifiedStart + r.modifiedLength)); ) {
+        const c = this.ElementsAreStrictEqual(r.originalStart, r.modifiedStart);
+        if (this.ElementsAreStrictEqual(r.originalStart + r.originalLength, r.modifiedStart + r.modifiedLength) && !c)
           break;
         r.originalStart++, r.modifiedStart++;
       }
-      const c = [null];
-      if (n < t.length - 1 && this.ChangesOverlap(t[n], t[n + 1], c)) {
-        t[n] = c[0], t.splice(n + 1, 1), n--;
+      const u = [null];
+      if (n < t.length - 1 && this.ChangesOverlap(t[n], t[n + 1], u)) {
+        t[n] = u[0], t.splice(n + 1, 1), n--;
         continue;
       }
     }
@@ -1555,16 +1563,16 @@ class _e {
         const f = t[n - 1];
         s = f.originalStart + f.originalLength, i = f.modifiedStart + f.modifiedLength;
       }
-      const a = r.originalLength > 0, o = r.modifiedLength > 0;
-      let c = 0, u = this._boundaryScore(r.originalStart, r.originalLength, r.modifiedStart, r.modifiedLength);
+      const l = r.originalLength > 0, o = r.modifiedLength > 0;
+      let u = 0, c = this._boundaryScore(r.originalStart, r.originalLength, r.modifiedStart, r.modifiedLength);
       for (let f = 1; ; f++) {
         const m = r.originalStart - f, d = r.modifiedStart - f;
-        if (m < s || d < i || a && !this.OriginalElementsAreEqual(m, m + r.originalLength) || o && !this.ModifiedElementsAreEqual(d, d + r.modifiedLength))
+        if (m < s || d < i || l && !this.OriginalElementsAreEqual(m, m + r.originalLength) || o && !this.ModifiedElementsAreEqual(d, d + r.modifiedLength))
           break;
         const b = (m === s && d === i ? 5 : 0) + this._boundaryScore(m, r.originalLength, d, r.modifiedLength);
-        b > u && (u = b, c = f);
+        b > c && (c = b, u = f);
       }
-      r.originalStart -= c, r.modifiedStart -= c;
+      r.originalStart -= u, r.modifiedStart -= u;
       const h = [null];
       if (n > 0 && this.ChangesOverlap(t[n - 1], t[n], h)) {
         t[n - 1] = h[0], t.splice(n, 1), n++;
@@ -1573,12 +1581,12 @@ class _e {
     }
     if (this._hasStrings)
       for (let n = 1, r = t.length; n < r; n++) {
-        const s = t[n - 1], i = t[n], a = i.originalStart - s.originalStart - s.originalLength, o = s.originalStart, c = i.originalStart + i.originalLength, u = c - o, h = s.modifiedStart, f = i.modifiedStart + i.modifiedLength, m = f - h;
-        if (a < 5 && u < 20 && m < 20) {
-          const d = this._findBetterContiguousSequence(o, u, h, m, a);
+        const s = t[n - 1], i = t[n], l = i.originalStart - s.originalStart - s.originalLength, o = s.originalStart, u = i.originalStart + i.originalLength, c = u - o, h = s.modifiedStart, f = i.modifiedStart + i.modifiedLength, m = f - h;
+        if (l < 5 && c < 20 && m < 20) {
+          const d = this._findBetterContiguousSequence(o, c, h, m, l);
           if (d) {
             const [g, b] = d;
-            (g !== s.originalStart + s.originalLength || b !== s.modifiedStart + s.modifiedLength) && (s.originalLength = g - s.originalStart, s.modifiedLength = b - s.modifiedStart, i.originalStart = g + a, i.modifiedStart = b + a, i.originalLength = c - i.originalStart, i.modifiedLength = f - i.modifiedStart);
+            (g !== s.originalStart + s.originalLength || b !== s.modifiedStart + s.modifiedLength) && (s.originalLength = g - s.originalStart, s.modifiedLength = b - s.modifiedStart, i.originalStart = g + l, i.modifiedStart = b + l, i.originalLength = u - i.originalStart, i.modifiedLength = f - i.modifiedStart);
           }
         }
       }
@@ -1587,14 +1595,14 @@ class _e {
   _findBetterContiguousSequence(t, n, r, s, i) {
     if (n < i || s < i)
       return null;
-    const a = t + n - i + 1, o = r + s - i + 1;
-    let c = 0, u = 0, h = 0;
-    for (let f = t; f < a; f++)
+    const l = t + n - i + 1, o = r + s - i + 1;
+    let u = 0, c = 0, h = 0;
+    for (let f = t; f < l; f++)
       for (let m = r; m < o; m++) {
         const d = this._contiguousSequenceScore(f, m, i);
-        d > 0 && d > c && (c = d, u = f, h = m);
+        d > 0 && d > u && (u = d, c = f, h = m);
       }
-    return c > 0 ? [u, h] : null;
+    return u > 0 ? [c, h] : null;
   }
   _contiguousSequenceScore(t, n, r) {
     let s = 0;
@@ -1632,8 +1640,8 @@ class _e {
     return !1;
   }
   _boundaryScore(t, n, r, s) {
-    const i = this._OriginalRegionIsBoundary(t, n) ? 1 : 0, a = this._ModifiedRegionIsBoundary(r, s) ? 1 : 0;
-    return i + a;
+    const i = this._OriginalRegionIsBoundary(t, n) ? 1 : 0, l = this._ModifiedRegionIsBoundary(r, s) ? 1 : 0;
+    return i + l;
   }
   /**
    * Concatenates the two input DiffChange lists and returns the resulting
@@ -1666,9 +1674,9 @@ class _e {
     if (Me.Assert(t.originalStart <= n.originalStart, "Left change is not less than or equal to right change"), Me.Assert(t.modifiedStart <= n.modifiedStart, "Left change is not less than or equal to right change"), t.originalStart + t.originalLength >= n.originalStart || t.modifiedStart + t.modifiedLength >= n.modifiedStart) {
       const s = t.originalStart;
       let i = t.originalLength;
-      const a = t.modifiedStart;
+      const l = t.modifiedStart;
       let o = t.modifiedLength;
-      return t.originalStart + t.originalLength >= n.originalStart && (i = n.originalStart + n.originalLength - t.originalStart), t.modifiedStart + t.modifiedLength >= n.modifiedStart && (o = n.modifiedStart + n.modifiedLength - t.modifiedStart), r[0] = new be(s, i, a, o), !0;
+      return t.originalStart + t.originalLength >= n.originalStart && (i = n.originalStart + n.originalLength - t.originalStart), t.modifiedStart + t.modifiedLength >= n.modifiedStart && (o = n.modifiedStart + n.modifiedLength - t.modifiedStart), r[0] = new me(s, i, l, o), !0;
     } else
       return r[0] = null, !1;
   }
@@ -1687,19 +1695,20 @@ class _e {
   ClipDiagonalBound(t, n, r, s) {
     if (t >= 0 && t < s)
       return t;
-    const i = r, a = s - r - 1, o = n % 2 === 0;
+    const i = r, l = s - r - 1, o = n % 2 === 0;
     if (t < 0) {
-      const c = i % 2 === 0;
-      return o === c ? 0 : 1;
+      const u = i % 2 === 0;
+      return o === u ? 0 : 1;
     } else {
-      const c = a % 2 === 0;
-      return o === c ? s - 1 : s - 2;
+      const u = l % 2 === 0;
+      return o === u ? s - 1 : s - 2;
     }
   }
 }
 let Te;
-if (typeof le.vscode < "u" && typeof le.vscode.process < "u") {
-  const e = le.vscode.process;
+const vt = globalThis.vscode;
+if (typeof vt < "u" && typeof vt.process < "u") {
+  const e = vt.process;
   Te = {
     get platform() {
       return e.platform;
@@ -1731,7 +1740,7 @@ if (typeof le.vscode < "u" && typeof le.vscode.process < "u") {
   } : Te = {
     // Supported
     get platform() {
-      return Qe ? "win32" : ls ? "darwin" : "linux";
+      return Qe ? "win32" : os ? "darwin" : "linux";
     },
     get arch() {
     },
@@ -1743,17 +1752,17 @@ if (typeof le.vscode < "u" && typeof le.vscode.process < "u") {
       return "/";
     }
   };
-const ht = Te.cwd, Es = Te.env, ks = Te.platform, Ps = 65, Fs = 97, Ds = 90, Ts = 122, ve = 46, Q = 47, ee = 92, de = 58, Vs = 63;
+const ct = Te.cwd, ks = Te.env, Ps = Te.platform, Fs = 65, Ds = 97, Ts = 90, Vs = 122, xe = 46, X = 47, ee = 92, fe = 58, Bs = 63;
 class Ar extends Error {
   constructor(t, n, r) {
     let s;
     typeof n == "string" && n.indexOf("not ") === 0 ? (s = "must not be", n = n.replace(/^not /, "")) : s = "must be";
     const i = t.indexOf(".") !== -1 ? "property" : "argument";
-    let a = `The "${t}" ${i} ${s} of type ${n}`;
-    a += `. Received type ${typeof r}`, super(a), this.code = "ERR_INVALID_ARG_TYPE";
+    let l = `The "${t}" ${i} ${s} of type ${n}`;
+    l += `. Received type ${typeof r}`, super(l), this.code = "ERR_INVALID_ARG_TYPE";
   }
 }
-function Bs(e, t) {
+function qs(e, t) {
   if (e === null || typeof e != "object")
     throw new Ar(t, "Object", e);
 }
@@ -1761,54 +1770,54 @@ function $(e, t) {
   if (typeof e != "string")
     throw new Ar(t, "string", e);
 }
-const Ne = ks === "win32";
-function P(e) {
-  return e === Q || e === ee;
+const ve = Ps === "win32";
+function F(e) {
+  return e === X || e === ee;
 }
 function kt(e) {
-  return e === Q;
+  return e === X;
 }
-function me(e) {
-  return e >= Ps && e <= Ds || e >= Fs && e <= Ts;
+function de(e) {
+  return e >= Fs && e <= Ts || e >= Ds && e <= Vs;
 }
-function ft(e, t, n, r) {
-  let s = "", i = 0, a = -1, o = 0, c = 0;
-  for (let u = 0; u <= e.length; ++u) {
-    if (u < e.length)
-      c = e.charCodeAt(u);
+function ht(e, t, n, r) {
+  let s = "", i = 0, l = -1, o = 0, u = 0;
+  for (let c = 0; c <= e.length; ++c) {
+    if (c < e.length)
+      u = e.charCodeAt(c);
     else {
-      if (r(c))
+      if (r(u))
         break;
-      c = Q;
+      u = X;
     }
-    if (r(c)) {
-      if (!(a === u - 1 || o === 1))
+    if (r(u)) {
+      if (!(l === c - 1 || o === 1))
         if (o === 2) {
-          if (s.length < 2 || i !== 2 || s.charCodeAt(s.length - 1) !== ve || s.charCodeAt(s.length - 2) !== ve) {
+          if (s.length < 2 || i !== 2 || s.charCodeAt(s.length - 1) !== xe || s.charCodeAt(s.length - 2) !== xe) {
             if (s.length > 2) {
               const h = s.lastIndexOf(n);
-              h === -1 ? (s = "", i = 0) : (s = s.slice(0, h), i = s.length - 1 - s.lastIndexOf(n)), a = u, o = 0;
+              h === -1 ? (s = "", i = 0) : (s = s.slice(0, h), i = s.length - 1 - s.lastIndexOf(n)), l = c, o = 0;
               continue;
             } else if (s.length !== 0) {
-              s = "", i = 0, a = u, o = 0;
+              s = "", i = 0, l = c, o = 0;
               continue;
             }
           }
           t && (s += s.length > 0 ? `${n}..` : "..", i = 2);
         } else
-          s.length > 0 ? s += `${n}${e.slice(a + 1, u)}` : s = e.slice(a + 1, u), i = u - a - 1;
-      a = u, o = 0;
+          s.length > 0 ? s += `${n}${e.slice(l + 1, c)}` : s = e.slice(l + 1, c), i = c - l - 1;
+      l = c, o = 0;
     } else
-      c === ve && o !== -1 ? ++o : o = -1;
+      u === xe && o !== -1 ? ++o : o = -1;
   }
   return s;
 }
 function Rr(e, t) {
-  Bs(t, "pathObject");
+  qs(t, "pathObject");
   const n = t.dir || t.root, r = t.base || `${t.name || ""}${t.ext || ""}`;
   return n ? n === t.root ? `${n}${r}` : `${n}${e}${r}` : r;
 }
-const Z = {
+const K = {
   // path.resolve([from ...], to)
   resolve(...e) {
     let t = "", n = "", r = !1;
@@ -1818,44 +1827,44 @@ const Z = {
         if (i = e[s], $(i, "path"), i.length === 0)
           continue;
       } else
-        t.length === 0 ? i = ht() : (i = Es[`=${t}`] || ht(), (i === void 0 || i.slice(0, 2).toLowerCase() !== t.toLowerCase() && i.charCodeAt(2) === ee) && (i = `${t}\\`));
-      const a = i.length;
-      let o = 0, c = "", u = !1;
+        t.length === 0 ? i = ct() : (i = ks[`=${t}`] || ct(), (i === void 0 || i.slice(0, 2).toLowerCase() !== t.toLowerCase() && i.charCodeAt(2) === ee) && (i = `${t}\\`));
+      const l = i.length;
+      let o = 0, u = "", c = !1;
       const h = i.charCodeAt(0);
-      if (a === 1)
-        P(h) && (o = 1, u = !0);
-      else if (P(h))
-        if (u = !0, P(i.charCodeAt(1))) {
+      if (l === 1)
+        F(h) && (o = 1, c = !0);
+      else if (F(h))
+        if (c = !0, F(i.charCodeAt(1))) {
           let f = 2, m = f;
-          for (; f < a && !P(i.charCodeAt(f)); )
+          for (; f < l && !F(i.charCodeAt(f)); )
             f++;
-          if (f < a && f !== m) {
+          if (f < l && f !== m) {
             const d = i.slice(m, f);
-            for (m = f; f < a && P(i.charCodeAt(f)); )
+            for (m = f; f < l && F(i.charCodeAt(f)); )
               f++;
-            if (f < a && f !== m) {
-              for (m = f; f < a && !P(i.charCodeAt(f)); )
+            if (f < l && f !== m) {
+              for (m = f; f < l && !F(i.charCodeAt(f)); )
                 f++;
-              (f === a || f !== m) && (c = `\\\\${d}\\${i.slice(m, f)}`, o = f);
+              (f === l || f !== m) && (u = `\\\\${d}\\${i.slice(m, f)}`, o = f);
             }
           }
         } else
           o = 1;
       else
-        me(h) && i.charCodeAt(1) === de && (c = i.slice(0, 2), o = 2, a > 2 && P(i.charCodeAt(2)) && (u = !0, o = 3));
-      if (c.length > 0)
+        de(h) && i.charCodeAt(1) === fe && (u = i.slice(0, 2), o = 2, l > 2 && F(i.charCodeAt(2)) && (c = !0, o = 3));
+      if (u.length > 0)
         if (t.length > 0) {
-          if (c.toLowerCase() !== t.toLowerCase())
+          if (u.toLowerCase() !== t.toLowerCase())
             continue;
         } else
-          t = c;
+          t = u;
       if (r) {
         if (t.length > 0)
           break;
-      } else if (n = `${i.slice(o)}\\${n}`, r = u, u && t.length > 0)
+      } else if (n = `${i.slice(o)}\\${n}`, r = c, c && t.length > 0)
         break;
     }
-    return n = ft(n, !r, "\\", P), r ? `${t}\\${n}` : `${t}${n}` || ".";
+    return n = ht(n, !r, "\\", F), r ? `${t}\\${n}` : `${t}${n}` || ".";
   },
   normalize(e) {
     $(e, "path");
@@ -1866,29 +1875,29 @@ const Z = {
     const i = e.charCodeAt(0);
     if (t === 1)
       return kt(i) ? "\\" : e;
-    if (P(i))
-      if (s = !0, P(e.charCodeAt(1))) {
-        let o = 2, c = o;
-        for (; o < t && !P(e.charCodeAt(o)); )
+    if (F(i))
+      if (s = !0, F(e.charCodeAt(1))) {
+        let o = 2, u = o;
+        for (; o < t && !F(e.charCodeAt(o)); )
           o++;
-        if (o < t && o !== c) {
-          const u = e.slice(c, o);
-          for (c = o; o < t && P(e.charCodeAt(o)); )
+        if (o < t && o !== u) {
+          const c = e.slice(u, o);
+          for (u = o; o < t && F(e.charCodeAt(o)); )
             o++;
-          if (o < t && o !== c) {
-            for (c = o; o < t && !P(e.charCodeAt(o)); )
+          if (o < t && o !== u) {
+            for (u = o; o < t && !F(e.charCodeAt(o)); )
               o++;
             if (o === t)
-              return `\\\\${u}\\${e.slice(c)}\\`;
-            o !== c && (r = `\\\\${u}\\${e.slice(c, o)}`, n = o);
+              return `\\\\${c}\\${e.slice(u)}\\`;
+            o !== u && (r = `\\\\${c}\\${e.slice(u, o)}`, n = o);
           }
         }
       } else
         n = 1;
     else
-      me(i) && e.charCodeAt(1) === de && (r = e.slice(0, 2), n = 2, t > 2 && P(e.charCodeAt(2)) && (s = !0, n = 3));
-    let a = n < t ? ft(e.slice(n), !s, "\\", P) : "";
-    return a.length === 0 && !s && (a = "."), a.length > 0 && P(e.charCodeAt(t - 1)) && (a += "\\"), r === void 0 ? s ? `\\${a}` : a : s ? `${r}\\${a}` : `${r}${a}`;
+      de(i) && e.charCodeAt(1) === fe && (r = e.slice(0, 2), n = 2, t > 2 && F(e.charCodeAt(2)) && (s = !0, n = 3));
+    let l = n < t ? ht(e.slice(n), !s, "\\", F) : "";
+    return l.length === 0 && !s && (l = "."), l.length > 0 && F(e.charCodeAt(t - 1)) && (l += "\\"), r === void 0 ? s ? `\\${l}` : l : s ? `${r}\\${l}` : `${r}${l}`;
   },
   isAbsolute(e) {
     $(e, "path");
@@ -1896,31 +1905,31 @@ const Z = {
     if (t === 0)
       return !1;
     const n = e.charCodeAt(0);
-    return P(n) || // Possible device root
-    t > 2 && me(n) && e.charCodeAt(1) === de && P(e.charCodeAt(2));
+    return F(n) || // Possible device root
+    t > 2 && de(n) && e.charCodeAt(1) === fe && F(e.charCodeAt(2));
   },
   join(...e) {
     if (e.length === 0)
       return ".";
     let t, n;
     for (let i = 0; i < e.length; ++i) {
-      const a = e[i];
-      $(a, "path"), a.length > 0 && (t === void 0 ? t = n = a : t += `\\${a}`);
+      const l = e[i];
+      $(l, "path"), l.length > 0 && (t === void 0 ? t = n = l : t += `\\${l}`);
     }
     if (t === void 0)
       return ".";
     let r = !0, s = 0;
-    if (typeof n == "string" && P(n.charCodeAt(0))) {
+    if (typeof n == "string" && F(n.charCodeAt(0))) {
       ++s;
       const i = n.length;
-      i > 1 && P(n.charCodeAt(1)) && (++s, i > 2 && (P(n.charCodeAt(2)) ? ++s : r = !1));
+      i > 1 && F(n.charCodeAt(1)) && (++s, i > 2 && (F(n.charCodeAt(2)) ? ++s : r = !1));
     }
     if (r) {
-      for (; s < t.length && P(t.charCodeAt(s)); )
+      for (; s < t.length && F(t.charCodeAt(s)); )
         s++;
       s >= 2 && (t = `\\${t.slice(s)}`);
     }
-    return Z.normalize(t);
+    return K.normalize(t);
   },
   // It will solve the relative path from `from` to `to`, for instance:
   //  from = 'C:\\orandea\\test\\aaa'
@@ -1929,7 +1938,7 @@ const Z = {
   relative(e, t) {
     if ($(e, "from"), $(t, "to"), e === t)
       return "";
-    const n = Z.resolve(e), r = Z.resolve(t);
+    const n = K.resolve(e), r = K.resolve(t);
     if (n === r || (e = n.toLowerCase(), t = r.toLowerCase(), e === t))
       return "";
     let s = 0;
@@ -1938,14 +1947,14 @@ const Z = {
     let i = e.length;
     for (; i - 1 > s && e.charCodeAt(i - 1) === ee; )
       i--;
-    const a = i - s;
+    const l = i - s;
     let o = 0;
     for (; o < t.length && t.charCodeAt(o) === ee; )
       o++;
-    let c = t.length;
-    for (; c - 1 > o && t.charCodeAt(c - 1) === ee; )
-      c--;
-    const u = c - o, h = a < u ? a : u;
+    let u = t.length;
+    for (; u - 1 > o && t.charCodeAt(u - 1) === ee; )
+      u--;
+    const c = u - o, h = l < c ? l : c;
     let f = -1, m = 0;
     for (; m < h; m++) {
       const g = e.charCodeAt(s + m);
@@ -1957,32 +1966,32 @@ const Z = {
       if (f === -1)
         return r;
     } else {
-      if (u > h) {
+      if (c > h) {
         if (t.charCodeAt(o + m) === ee)
           return r.slice(o + m + 1);
         if (m === 2)
           return r.slice(o + m);
       }
-      a > h && (e.charCodeAt(s + m) === ee ? f = m : m === 2 && (f = 3)), f === -1 && (f = 0);
+      l > h && (e.charCodeAt(s + m) === ee ? f = m : m === 2 && (f = 3)), f === -1 && (f = 0);
     }
     let d = "";
     for (m = s + f + 1; m <= i; ++m)
       (m === i || e.charCodeAt(m) === ee) && (d += d.length === 0 ? ".." : "\\..");
-    return o += f, d.length > 0 ? `${d}${r.slice(o, c)}` : (r.charCodeAt(o) === ee && ++o, r.slice(o, c));
+    return o += f, d.length > 0 ? `${d}${r.slice(o, u)}` : (r.charCodeAt(o) === ee && ++o, r.slice(o, u));
   },
   toNamespacedPath(e) {
     if (typeof e != "string" || e.length === 0)
       return e;
-    const t = Z.resolve(e);
+    const t = K.resolve(e);
     if (t.length <= 2)
       return e;
     if (t.charCodeAt(0) === ee) {
       if (t.charCodeAt(1) === ee) {
         const n = t.charCodeAt(2);
-        if (n !== Vs && n !== ve)
+        if (n !== Bs && n !== xe)
           return `\\\\?\\UNC\\${t.slice(2)}`;
       }
-    } else if (me(t.charCodeAt(0)) && t.charCodeAt(1) === de && t.charCodeAt(2) === ee)
+    } else if (de(t.charCodeAt(0)) && t.charCodeAt(1) === fe && t.charCodeAt(2) === ee)
       return `\\\\?\\${t}`;
     return e;
   },
@@ -1994,35 +2003,35 @@ const Z = {
     let n = -1, r = 0;
     const s = e.charCodeAt(0);
     if (t === 1)
-      return P(s) ? e : ".";
-    if (P(s)) {
-      if (n = r = 1, P(e.charCodeAt(1))) {
-        let o = 2, c = o;
-        for (; o < t && !P(e.charCodeAt(o)); )
+      return F(s) ? e : ".";
+    if (F(s)) {
+      if (n = r = 1, F(e.charCodeAt(1))) {
+        let o = 2, u = o;
+        for (; o < t && !F(e.charCodeAt(o)); )
           o++;
-        if (o < t && o !== c) {
-          for (c = o; o < t && P(e.charCodeAt(o)); )
+        if (o < t && o !== u) {
+          for (u = o; o < t && F(e.charCodeAt(o)); )
             o++;
-          if (o < t && o !== c) {
-            for (c = o; o < t && !P(e.charCodeAt(o)); )
+          if (o < t && o !== u) {
+            for (u = o; o < t && !F(e.charCodeAt(o)); )
               o++;
             if (o === t)
               return e;
-            o !== c && (n = r = o + 1);
+            o !== u && (n = r = o + 1);
           }
         }
       }
     } else
-      me(s) && e.charCodeAt(1) === de && (n = t > 2 && P(e.charCodeAt(2)) ? 3 : 2, r = n);
-    let i = -1, a = !0;
+      de(s) && e.charCodeAt(1) === fe && (n = t > 2 && F(e.charCodeAt(2)) ? 3 : 2, r = n);
+    let i = -1, l = !0;
     for (let o = t - 1; o >= r; --o)
-      if (P(e.charCodeAt(o))) {
-        if (!a) {
+      if (F(e.charCodeAt(o))) {
+        if (!l) {
           i = o;
           break;
         }
       } else
-        a = !1;
+        l = !1;
     if (i === -1) {
       if (n === -1)
         return ".";
@@ -2033,24 +2042,24 @@ const Z = {
   basename(e, t) {
     t !== void 0 && $(t, "ext"), $(e, "path");
     let n = 0, r = -1, s = !0, i;
-    if (e.length >= 2 && me(e.charCodeAt(0)) && e.charCodeAt(1) === de && (n = 2), t !== void 0 && t.length > 0 && t.length <= e.length) {
+    if (e.length >= 2 && de(e.charCodeAt(0)) && e.charCodeAt(1) === fe && (n = 2), t !== void 0 && t.length > 0 && t.length <= e.length) {
       if (t === e)
         return "";
-      let a = t.length - 1, o = -1;
+      let l = t.length - 1, o = -1;
       for (i = e.length - 1; i >= n; --i) {
-        const c = e.charCodeAt(i);
-        if (P(c)) {
+        const u = e.charCodeAt(i);
+        if (F(u)) {
           if (!s) {
             n = i + 1;
             break;
           }
         } else
-          o === -1 && (s = !1, o = i + 1), a >= 0 && (c === t.charCodeAt(a) ? --a === -1 && (r = i) : (a = -1, r = o));
+          o === -1 && (s = !1, o = i + 1), l >= 0 && (u === t.charCodeAt(l) ? --l === -1 && (r = i) : (l = -1, r = o));
       }
       return n === r ? r = o : r === -1 && (r = e.length), e.slice(n, r);
     }
     for (i = e.length - 1; i >= n; --i)
-      if (P(e.charCodeAt(i))) {
+      if (F(e.charCodeAt(i))) {
         if (!s) {
           n = i + 1;
           break;
@@ -2061,22 +2070,22 @@ const Z = {
   },
   extname(e) {
     $(e, "path");
-    let t = 0, n = -1, r = 0, s = -1, i = !0, a = 0;
-    e.length >= 2 && e.charCodeAt(1) === de && me(e.charCodeAt(0)) && (t = r = 2);
+    let t = 0, n = -1, r = 0, s = -1, i = !0, l = 0;
+    e.length >= 2 && e.charCodeAt(1) === fe && de(e.charCodeAt(0)) && (t = r = 2);
     for (let o = e.length - 1; o >= t; --o) {
-      const c = e.charCodeAt(o);
-      if (P(c)) {
+      const u = e.charCodeAt(o);
+      if (F(u)) {
         if (!i) {
           r = o + 1;
           break;
         }
         continue;
       }
-      s === -1 && (i = !1, s = o + 1), c === ve ? n === -1 ? n = o : a !== 1 && (a = 1) : n !== -1 && (a = -1);
+      s === -1 && (i = !1, s = o + 1), u === xe ? n === -1 ? n = o : l !== 1 && (l = 1) : n !== -1 && (l = -1);
     }
     return n === -1 || s === -1 || // We saw a non-dot character immediately before the dot
-    a === 0 || // The (right-most) trimmed path component is exactly '..'
-    a === 1 && n === s - 1 && n === r + 1 ? "" : e.slice(n, s);
+    l === 0 || // The (right-most) trimmed path component is exactly '..'
+    l === 1 && n === s - 1 && n === r + 1 ? "" : e.slice(n, s);
   },
   format: Rr.bind(null, "\\"),
   parse(e) {
@@ -2087,78 +2096,78 @@ const Z = {
     const n = e.length;
     let r = 0, s = e.charCodeAt(0);
     if (n === 1)
-      return P(s) ? (t.root = t.dir = e, t) : (t.base = t.name = e, t);
-    if (P(s)) {
-      if (r = 1, P(e.charCodeAt(1))) {
+      return F(s) ? (t.root = t.dir = e, t) : (t.base = t.name = e, t);
+    if (F(s)) {
+      if (r = 1, F(e.charCodeAt(1))) {
         let f = 2, m = f;
-        for (; f < n && !P(e.charCodeAt(f)); )
+        for (; f < n && !F(e.charCodeAt(f)); )
           f++;
         if (f < n && f !== m) {
-          for (m = f; f < n && P(e.charCodeAt(f)); )
+          for (m = f; f < n && F(e.charCodeAt(f)); )
             f++;
           if (f < n && f !== m) {
-            for (m = f; f < n && !P(e.charCodeAt(f)); )
+            for (m = f; f < n && !F(e.charCodeAt(f)); )
               f++;
             f === n ? r = f : f !== m && (r = f + 1);
           }
         }
       }
-    } else if (me(s) && e.charCodeAt(1) === de) {
+    } else if (de(s) && e.charCodeAt(1) === fe) {
       if (n <= 2)
         return t.root = t.dir = e, t;
-      if (r = 2, P(e.charCodeAt(2))) {
+      if (r = 2, F(e.charCodeAt(2))) {
         if (n === 3)
           return t.root = t.dir = e, t;
         r = 3;
       }
     }
     r > 0 && (t.root = e.slice(0, r));
-    let i = -1, a = r, o = -1, c = !0, u = e.length - 1, h = 0;
-    for (; u >= r; --u) {
-      if (s = e.charCodeAt(u), P(s)) {
-        if (!c) {
-          a = u + 1;
+    let i = -1, l = r, o = -1, u = !0, c = e.length - 1, h = 0;
+    for (; c >= r; --c) {
+      if (s = e.charCodeAt(c), F(s)) {
+        if (!u) {
+          l = c + 1;
           break;
         }
         continue;
       }
-      o === -1 && (c = !1, o = u + 1), s === ve ? i === -1 ? i = u : h !== 1 && (h = 1) : i !== -1 && (h = -1);
+      o === -1 && (u = !1, o = c + 1), s === xe ? i === -1 ? i = c : h !== 1 && (h = 1) : i !== -1 && (h = -1);
     }
     return o !== -1 && (i === -1 || // We saw a non-dot character immediately before the dot
     h === 0 || // The (right-most) trimmed path component is exactly '..'
-    h === 1 && i === o - 1 && i === a + 1 ? t.base = t.name = e.slice(a, o) : (t.name = e.slice(a, i), t.base = e.slice(a, o), t.ext = e.slice(i, o))), a > 0 && a !== r ? t.dir = e.slice(0, a - 1) : t.dir = t.root, t;
+    h === 1 && i === o - 1 && i === l + 1 ? t.base = t.name = e.slice(l, o) : (t.name = e.slice(l, i), t.base = e.slice(l, o), t.ext = e.slice(i, o))), l > 0 && l !== r ? t.dir = e.slice(0, l - 1) : t.dir = t.root, t;
   },
   sep: "\\",
   delimiter: ";",
   win32: null,
   posix: null
-}, qs = (() => {
-  if (Ne) {
+}, Is = (() => {
+  if (ve) {
     const e = /\\/g;
     return () => {
-      const t = ht().replace(e, "/");
+      const t = ct().replace(e, "/");
       return t.slice(t.indexOf("/"));
     };
   }
-  return () => ht();
+  return () => ct();
 })(), te = {
   // path.resolve([from ...], to)
   resolve(...e) {
     let t = "", n = !1;
     for (let r = e.length - 1; r >= -1 && !n; r--) {
-      const s = r >= 0 ? e[r] : qs();
-      $(s, "path"), s.length !== 0 && (t = `${s}/${t}`, n = s.charCodeAt(0) === Q);
+      const s = r >= 0 ? e[r] : Is();
+      $(s, "path"), s.length !== 0 && (t = `${s}/${t}`, n = s.charCodeAt(0) === X);
     }
-    return t = ft(t, !n, "/", kt), n ? `/${t}` : t.length > 0 ? t : ".";
+    return t = ht(t, !n, "/", kt), n ? `/${t}` : t.length > 0 ? t : ".";
   },
   normalize(e) {
     if ($(e, "path"), e.length === 0)
       return ".";
-    const t = e.charCodeAt(0) === Q, n = e.charCodeAt(e.length - 1) === Q;
-    return e = ft(e, !t, "/", kt), e.length === 0 ? t ? "/" : n ? "./" : "." : (n && (e += "/"), t ? `/${e}` : e);
+    const t = e.charCodeAt(0) === X, n = e.charCodeAt(e.length - 1) === X;
+    return e = ht(e, !t, "/", kt), e.length === 0 ? t ? "/" : n ? "./" : "." : (n && (e += "/"), t ? `/${e}` : e);
   },
   isAbsolute(e) {
-    return $(e, "path"), e.length > 0 && e.charCodeAt(0) === Q;
+    return $(e, "path"), e.length > 0 && e.charCodeAt(0) === X;
   },
   join(...e) {
     if (e.length === 0)
@@ -2173,26 +2182,26 @@ const Z = {
   relative(e, t) {
     if ($(e, "from"), $(t, "to"), e === t || (e = te.resolve(e), t = te.resolve(t), e === t))
       return "";
-    const n = 1, r = e.length, s = r - n, i = 1, a = t.length - i, o = s < a ? s : a;
-    let c = -1, u = 0;
-    for (; u < o; u++) {
-      const f = e.charCodeAt(n + u);
-      if (f !== t.charCodeAt(i + u))
+    const n = 1, r = e.length, s = r - n, i = 1, l = t.length - i, o = s < l ? s : l;
+    let u = -1, c = 0;
+    for (; c < o; c++) {
+      const f = e.charCodeAt(n + c);
+      if (f !== t.charCodeAt(i + c))
         break;
-      f === Q && (c = u);
+      f === X && (u = c);
     }
-    if (u === o)
-      if (a > o) {
-        if (t.charCodeAt(i + u) === Q)
-          return t.slice(i + u + 1);
-        if (u === 0)
-          return t.slice(i + u);
+    if (c === o)
+      if (l > o) {
+        if (t.charCodeAt(i + c) === X)
+          return t.slice(i + c + 1);
+        if (c === 0)
+          return t.slice(i + c);
       } else
-        s > o && (e.charCodeAt(n + u) === Q ? c = u : u === 0 && (c = 0));
+        s > o && (e.charCodeAt(n + c) === X ? u = c : c === 0 && (u = 0));
     let h = "";
-    for (u = n + c + 1; u <= r; ++u)
-      (u === r || e.charCodeAt(u) === Q) && (h += h.length === 0 ? ".." : "/..");
-    return `${h}${t.slice(i + c)}`;
+    for (c = n + u + 1; c <= r; ++c)
+      (c === r || e.charCodeAt(c) === X) && (h += h.length === 0 ? ".." : "/..");
+    return `${h}${t.slice(i + u)}`;
   },
   toNamespacedPath(e) {
     return e;
@@ -2200,10 +2209,10 @@ const Z = {
   dirname(e) {
     if ($(e, "path"), e.length === 0)
       return ".";
-    const t = e.charCodeAt(0) === Q;
+    const t = e.charCodeAt(0) === X;
     let n = -1, r = !0;
     for (let s = e.length - 1; s >= 1; --s)
-      if (e.charCodeAt(s) === Q) {
+      if (e.charCodeAt(s) === X) {
         if (!r) {
           n = s;
           break;
@@ -2218,21 +2227,21 @@ const Z = {
     if (t !== void 0 && t.length > 0 && t.length <= e.length) {
       if (t === e)
         return "";
-      let a = t.length - 1, o = -1;
+      let l = t.length - 1, o = -1;
       for (i = e.length - 1; i >= 0; --i) {
-        const c = e.charCodeAt(i);
-        if (c === Q) {
+        const u = e.charCodeAt(i);
+        if (u === X) {
           if (!s) {
             n = i + 1;
             break;
           }
         } else
-          o === -1 && (s = !1, o = i + 1), a >= 0 && (c === t.charCodeAt(a) ? --a === -1 && (r = i) : (a = -1, r = o));
+          o === -1 && (s = !1, o = i + 1), l >= 0 && (u === t.charCodeAt(l) ? --l === -1 && (r = i) : (l = -1, r = o));
       }
       return n === r ? r = o : r === -1 && (r = e.length), e.slice(n, r);
     }
     for (i = e.length - 1; i >= 0; --i)
-      if (e.charCodeAt(i) === Q) {
+      if (e.charCodeAt(i) === X) {
         if (!s) {
           n = i + 1;
           break;
@@ -2244,16 +2253,16 @@ const Z = {
   extname(e) {
     $(e, "path");
     let t = -1, n = 0, r = -1, s = !0, i = 0;
-    for (let a = e.length - 1; a >= 0; --a) {
-      const o = e.charCodeAt(a);
-      if (o === Q) {
+    for (let l = e.length - 1; l >= 0; --l) {
+      const o = e.charCodeAt(l);
+      if (o === X) {
         if (!s) {
-          n = a + 1;
+          n = l + 1;
           break;
         }
         continue;
       }
-      r === -1 && (s = !1, r = a + 1), o === ve ? t === -1 ? t = a : i !== 1 && (i = 1) : t !== -1 && (i = -1);
+      r === -1 && (s = !1, r = l + 1), o === xe ? t === -1 ? t = l : i !== 1 && (i = 1) : t !== -1 && (i = -1);
     }
     return t === -1 || r === -1 || // We saw a non-dot character immediately before the dot
     i === 0 || // The (right-most) trimmed path component is exactly '..'
@@ -2265,26 +2274,26 @@ const Z = {
     const t = { root: "", dir: "", base: "", ext: "", name: "" };
     if (e.length === 0)
       return t;
-    const n = e.charCodeAt(0) === Q;
+    const n = e.charCodeAt(0) === X;
     let r;
     n ? (t.root = "/", r = 1) : r = 0;
-    let s = -1, i = 0, a = -1, o = !0, c = e.length - 1, u = 0;
-    for (; c >= r; --c) {
-      const h = e.charCodeAt(c);
-      if (h === Q) {
+    let s = -1, i = 0, l = -1, o = !0, u = e.length - 1, c = 0;
+    for (; u >= r; --u) {
+      const h = e.charCodeAt(u);
+      if (h === X) {
         if (!o) {
-          i = c + 1;
+          i = u + 1;
           break;
         }
         continue;
       }
-      a === -1 && (o = !1, a = c + 1), h === ve ? s === -1 ? s = c : u !== 1 && (u = 1) : s !== -1 && (u = -1);
+      l === -1 && (o = !1, l = u + 1), h === xe ? s === -1 ? s = u : c !== 1 && (c = 1) : s !== -1 && (c = -1);
     }
-    if (a !== -1) {
+    if (l !== -1) {
       const h = i === 0 && n ? 1 : i;
       s === -1 || // We saw a non-dot character immediately before the dot
-      u === 0 || // The (right-most) trimmed path component is exactly '..'
-      u === 1 && s === a - 1 && s === i + 1 ? t.base = t.name = e.slice(h, a) : (t.name = e.slice(h, s), t.base = e.slice(h, a), t.ext = e.slice(s, a));
+      c === 0 || // The (right-most) trimmed path component is exactly '..'
+      c === 1 && s === l - 1 && s === i + 1 ? t.base = t.name = e.slice(h, l) : (t.name = e.slice(h, s), t.base = e.slice(h, l), t.ext = e.slice(s, l));
     }
     return i > 0 ? t.dir = e.slice(0, i - 1) : n && (t.dir = "/"), t;
   },
@@ -2293,33 +2302,33 @@ const Z = {
   win32: null,
   posix: null
 };
-te.win32 = Z.win32 = Z;
-te.posix = Z.posix = te;
-Ne ? Z.normalize : te.normalize;
-Ne ? Z.resolve : te.resolve;
-Ne ? Z.relative : te.relative;
-Ne ? Z.dirname : te.dirname;
-Ne ? Z.basename : te.basename;
-Ne ? Z.extname : te.extname;
-Ne ? Z.sep : te.sep;
-const Is = /^\w[\w\d+.-]*$/, Us = /^\//, Hs = /^\/\//;
-function Ws(e, t) {
+te.win32 = K.win32 = K;
+te.posix = K.posix = te;
+ve ? K.normalize : te.normalize;
+ve ? K.resolve : te.resolve;
+ve ? K.relative : te.relative;
+ve ? K.dirname : te.dirname;
+ve ? K.basename : te.basename;
+ve ? K.extname : te.extname;
+ve ? K.sep : te.sep;
+const Us = /^\w[\w\d+.-]*$/, Hs = /^\//, Ws = /^\/\//;
+function zs(e, t) {
   if (!e.scheme && t)
     throw new Error(`[UriError]: Scheme is missing: {scheme: "", authority: "${e.authority}", path: "${e.path}", query: "${e.query}", fragment: "${e.fragment}"}`);
-  if (e.scheme && !Is.test(e.scheme))
+  if (e.scheme && !Us.test(e.scheme))
     throw new Error("[UriError]: Scheme contains illegal characters.");
   if (e.path) {
     if (e.authority) {
-      if (!Us.test(e.path))
+      if (!Hs.test(e.path))
         throw new Error('[UriError]: If a URI contains an authority component, then the path component must either be empty or begin with a slash ("/") character');
-    } else if (Hs.test(e.path))
+    } else if (Ws.test(e.path))
       throw new Error('[UriError]: If a URI does not contain an authority component, then the path cannot begin with two slash characters ("//")');
   }
 }
-function zs(e, t) {
+function $s(e, t) {
   return !e && !t ? "file" : e;
 }
-function $s(e, t) {
+function Os(e, t) {
   switch (e) {
     case "https":
     case "http":
@@ -2329,16 +2338,16 @@ function $s(e, t) {
   }
   return t;
 }
-const W = "", ae = "/", Os = /^(([^:/?#]+?):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/;
-class Ce {
+const W = "", ae = "/", Gs = /^(([^:/?#]+?):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/;
+class Se {
   static isUri(t) {
-    return t instanceof Ce ? !0 : t ? typeof t.authority == "string" && typeof t.fragment == "string" && typeof t.path == "string" && typeof t.query == "string" && typeof t.scheme == "string" && typeof t.fsPath == "string" && typeof t.with == "function" && typeof t.toString == "function" : !1;
+    return t instanceof Se ? !0 : t ? typeof t.authority == "string" && typeof t.fragment == "string" && typeof t.path == "string" && typeof t.query == "string" && typeof t.scheme == "string" && typeof t.fsPath == "string" && typeof t.with == "function" && typeof t.toString == "function" : !1;
   }
   /**
    * @internal
    */
-  constructor(t, n, r, s, i, a = !1) {
-    typeof t == "object" ? (this.scheme = t.scheme || W, this.authority = t.authority || W, this.path = t.path || W, this.query = t.query || W, this.fragment = t.fragment || W) : (this.scheme = zs(t, a), this.authority = n || W, this.path = $s(this.scheme, r || W), this.query = s || W, this.fragment = i || W, Ws(this, a));
+  constructor(t, n, r, s, i, l = !1) {
+    typeof t == "object" ? (this.scheme = t.scheme || W, this.authority = t.authority || W, this.path = t.path || W, this.query = t.query || W, this.fragment = t.fragment || W) : (this.scheme = $s(t, l), this.authority = n || W, this.path = Os(this.scheme, r || W), this.query = s || W, this.fragment = i || W, zs(this, l));
   }
   // ---- filesystem path -----------------------
   /**
@@ -2372,8 +2381,8 @@ class Ce {
   with(t) {
     if (!t)
       return this;
-    let { scheme: n, authority: r, path: s, query: i, fragment: a } = t;
-    return n === void 0 ? n = this.scheme : n === null && (n = W), r === void 0 ? r = this.authority : r === null && (r = W), s === void 0 ? s = this.path : s === null && (s = W), i === void 0 ? i = this.query : i === null && (i = W), a === void 0 ? a = this.fragment : a === null && (a = W), n === this.scheme && r === this.authority && s === this.path && i === this.query && a === this.fragment ? this : new ke(n, r, s, i, a);
+    let { scheme: n, authority: r, path: s, query: i, fragment: l } = t;
+    return n === void 0 ? n = this.scheme : n === null && (n = W), r === void 0 ? r = this.authority : r === null && (r = W), s === void 0 ? s = this.path : s === null && (s = W), i === void 0 ? i = this.query : i === null && (i = W), l === void 0 ? l = this.fragment : l === null && (l = W), n === this.scheme && r === this.authority && s === this.path && i === this.query && l === this.fragment ? this : new ke(n, r, s, i, l);
   }
   // ---- parse & validate ------------------------
   /**
@@ -2383,8 +2392,8 @@ class Ce {
    * @param value A string which represents an URI (see `URI#toString`).
    */
   static parse(t, n = !1) {
-    const r = Os.exec(t);
-    return r ? new ke(r[2] || W, st(r[4] || W), st(r[5] || W), st(r[7] || W), st(r[9] || W), n) : new ke(W, W, W, W, W);
+    const r = Gs.exec(t);
+    return r ? new ke(r[2] || W, rt(r[4] || W), rt(r[5] || W), rt(r[7] || W), rt(r[9] || W), n) : new ke(W, W, W, W, W);
   }
   /**
    * Creates a new URI from a file system path, e.g. `c:\my\files`,
@@ -2436,7 +2445,7 @@ class Ce {
     if (!t.path)
       throw new Error("[UriError]: cannot call joinPath on URI without path");
     let r;
-    return Qe && t.scheme === "file" ? r = Ce.file(Z.join(Pt(t, !0), ...n)).path : r = te.join(t.path, ...n), t.with({ path: r });
+    return Qe && t.scheme === "file" ? r = Se.file(K.join(Pt(t, !0), ...n)).path : r = te.join(t.path, ...n), t.with({ path: r });
   }
   // ---- printing/externalize ---------------------------
   /**
@@ -2459,7 +2468,7 @@ class Ce {
   static revive(t) {
     var n, r;
     if (t) {
-      if (t instanceof Ce)
+      if (t instanceof Se)
         return t;
       {
         const s = new ke(t);
@@ -2470,7 +2479,7 @@ class Ce {
   }
 }
 const yr = Qe ? 1 : void 0;
-class ke extends Ce {
+class ke extends Se {
   constructor() {
     super(...arguments), this._formatted = null, this._fsPath = null;
   }
@@ -2511,21 +2520,21 @@ const Mr = {
   61: "%3D",
   32: "%20"
 };
-function sn(e, t, n) {
+function rn(e, t, n) {
   let r, s = -1;
   for (let i = 0; i < e.length; i++) {
-    const a = e.charCodeAt(i);
-    if (a >= 97 && a <= 122 || a >= 65 && a <= 90 || a >= 48 && a <= 57 || a === 45 || a === 46 || a === 95 || a === 126 || t && a === 47 || n && a === 91 || n && a === 93 || n && a === 58)
+    const l = e.charCodeAt(i);
+    if (l >= 97 && l <= 122 || l >= 65 && l <= 90 || l >= 48 && l <= 57 || l === 45 || l === 46 || l === 95 || l === 126 || t && l === 47 || n && l === 91 || n && l === 93 || n && l === 58)
       s !== -1 && (r += encodeURIComponent(e.substring(s, i)), s = -1), r !== void 0 && (r += e.charAt(i));
     else {
       r === void 0 && (r = e.substr(0, i));
-      const o = Mr[a];
+      const o = Mr[l];
       o !== void 0 ? (s !== -1 && (r += encodeURIComponent(e.substring(s, i)), s = -1), r += o) : s === -1 && (s = i);
     }
   }
   return s !== -1 && (r += encodeURIComponent(e.substring(s))), r !== void 0 ? r : e;
 }
-function Gs(e) {
+function js(e) {
   let t;
   for (let n = 0; n < e.length; n++) {
     const r = e.charCodeAt(n);
@@ -2538,27 +2547,27 @@ function Pt(e, t) {
   return e.authority && e.path.length > 1 && e.scheme === "file" ? n = `//${e.authority}${e.path}` : e.path.charCodeAt(0) === 47 && (e.path.charCodeAt(1) >= 65 && e.path.charCodeAt(1) <= 90 || e.path.charCodeAt(1) >= 97 && e.path.charCodeAt(1) <= 122) && e.path.charCodeAt(2) === 58 ? t ? n = e.path.substr(1) : n = e.path[1].toLowerCase() + e.path.substr(2) : n = e.path, Qe && (n = n.replace(/\//g, "\\")), n;
 }
 function Ft(e, t) {
-  const n = t ? Gs : sn;
-  let r = "", { scheme: s, authority: i, path: a, query: o, fragment: c } = e;
+  const n = t ? js : rn;
+  let r = "", { scheme: s, authority: i, path: l, query: o, fragment: u } = e;
   if (s && (r += s, r += ":"), (i || s === "file") && (r += ae, r += ae), i) {
-    let u = i.indexOf("@");
-    if (u !== -1) {
-      const h = i.substr(0, u);
-      i = i.substr(u + 1), u = h.lastIndexOf(":"), u === -1 ? r += n(h, !1, !1) : (r += n(h.substr(0, u), !1, !1), r += ":", r += n(h.substr(u + 1), !1, !0)), r += "@";
+    let c = i.indexOf("@");
+    if (c !== -1) {
+      const h = i.substr(0, c);
+      i = i.substr(c + 1), c = h.lastIndexOf(":"), c === -1 ? r += n(h, !1, !1) : (r += n(h.substr(0, c), !1, !1), r += ":", r += n(h.substr(c + 1), !1, !0)), r += "@";
     }
-    i = i.toLowerCase(), u = i.lastIndexOf(":"), u === -1 ? r += n(i, !1, !0) : (r += n(i.substr(0, u), !1, !0), r += i.substr(u));
+    i = i.toLowerCase(), c = i.lastIndexOf(":"), c === -1 ? r += n(i, !1, !0) : (r += n(i.substr(0, c), !1, !0), r += i.substr(c));
   }
-  if (a) {
-    if (a.length >= 3 && a.charCodeAt(0) === 47 && a.charCodeAt(2) === 58) {
-      const u = a.charCodeAt(1);
-      u >= 65 && u <= 90 && (a = `/${String.fromCharCode(u + 32)}:${a.substr(3)}`);
-    } else if (a.length >= 2 && a.charCodeAt(1) === 58) {
-      const u = a.charCodeAt(0);
-      u >= 65 && u <= 90 && (a = `${String.fromCharCode(u + 32)}:${a.substr(2)}`);
+  if (l) {
+    if (l.length >= 3 && l.charCodeAt(0) === 47 && l.charCodeAt(2) === 58) {
+      const c = l.charCodeAt(1);
+      c >= 65 && c <= 90 && (l = `/${String.fromCharCode(c + 32)}:${l.substr(3)}`);
+    } else if (l.length >= 2 && l.charCodeAt(1) === 58) {
+      const c = l.charCodeAt(0);
+      c >= 65 && c <= 90 && (l = `${String.fromCharCode(c + 32)}:${l.substr(2)}`);
     }
-    r += n(a, !0, !1);
+    r += n(l, !0, !1);
   }
-  return o && (r += "?", r += n(o, !1, !1)), c && (r += "#", r += t ? c : sn(c, !1, !1)), r;
+  return o && (r += "?", r += n(o, !1, !1)), u && (r += "#", r += t ? u : rn(u, !1, !1)), r;
 }
 function Er(e) {
   try {
@@ -2567,11 +2576,11 @@ function Er(e) {
     return e.length > 3 ? e.substr(0, 3) + Er(e.substr(3)) : e;
   }
 }
-const an = /(%[0-9A-Za-z][0-9A-Za-z])+/g;
-function st(e) {
-  return e.match(an) ? e.replace(an, (t) => Er(t)) : e;
+const sn = /(%[0-9A-Za-z][0-9A-Za-z])+/g;
+function rt(e) {
+  return e.match(sn) ? e.replace(sn, (t) => Er(t)) : e;
 }
-class J {
+class Y {
   constructor(t, n) {
     this.lineNumber = t, this.column = n;
   }
@@ -2582,7 +2591,7 @@ class J {
    * @param newColumn new column
    */
   with(t = this.lineNumber, n = this.column) {
-    return t === this.lineNumber && n === this.column ? this : new J(t, n);
+    return t === this.lineNumber && n === this.column ? this : new Y(t, n);
   }
   /**
    * Derive a new position from this position.
@@ -2597,7 +2606,7 @@ class J {
    * Test if this position equals other position
    */
   equals(t) {
-    return J.equals(this, t);
+    return Y.equals(this, t);
   }
   /**
    * Test if position `a` equals position `b`
@@ -2610,7 +2619,7 @@ class J {
    * If the two positions are equal, the result will be false.
    */
   isBefore(t) {
-    return J.isBefore(this, t);
+    return Y.isBefore(this, t);
   }
   /**
    * Test if position `a` is before position `b`.
@@ -2624,7 +2633,7 @@ class J {
    * If the two positions are equal, the result will be true.
    */
   isBeforeOrEqual(t) {
-    return J.isBeforeOrEqual(this, t);
+    return Y.isBeforeOrEqual(this, t);
   }
   /**
    * Test if position `a` is before position `b`.
@@ -2639,8 +2648,8 @@ class J {
   static compare(t, n) {
     const r = t.lineNumber | 0, s = n.lineNumber | 0;
     if (r === s) {
-      const i = t.column | 0, a = n.column | 0;
-      return i - a;
+      const i = t.column | 0, l = n.column | 0;
+      return i - l;
     }
     return r - s;
   }
@@ -2648,7 +2657,7 @@ class J {
    * Clone this position.
    */
   clone() {
-    return new J(this.lineNumber, this.column);
+    return new Y(this.lineNumber, this.column);
   }
   /**
    * Convert to a human-readable representation.
@@ -2661,7 +2670,7 @@ class J {
    * Create a `Position` from an `IPosition`.
    */
   static lift(t) {
-    return new J(t.lineNumber, t.column);
+    return new Y(t.lineNumber, t.column);
   }
   /**
    * Test if `obj` is an `IPosition`.
@@ -2669,8 +2678,14 @@ class J {
   static isIPosition(t) {
     return t && typeof t.lineNumber == "number" && typeof t.column == "number";
   }
+  toJSON() {
+    return {
+      lineNumber: this.lineNumber,
+      column: this.column
+    };
+  }
 }
-class D {
+class T {
   constructor(t, n, r, s) {
     t > r || t === r && n > s ? (this.startLineNumber = r, this.startColumn = s, this.endLineNumber = t, this.endColumn = n) : (this.startLineNumber = t, this.startColumn = n, this.endLineNumber = r, this.endColumn = s);
   }
@@ -2678,7 +2693,7 @@ class D {
    * Test if this range is empty.
    */
   isEmpty() {
-    return D.isEmpty(this);
+    return T.isEmpty(this);
   }
   /**
    * Test if `range` is empty.
@@ -2690,7 +2705,7 @@ class D {
    * Test if position is in this range. If the position is at the edges, will return true.
    */
   containsPosition(t) {
-    return D.containsPosition(this, t);
+    return T.containsPosition(this, t);
   }
   /**
    * Test if `position` is in `range`. If the position is at the edges, will return true.
@@ -2709,7 +2724,7 @@ class D {
    * Test if range is in this range. If the range is equal to this range, will return true.
    */
   containsRange(t) {
-    return D.containsRange(this, t);
+    return T.containsRange(this, t);
   }
   /**
    * Test if `otherRange` is in `range`. If the ranges are equal, will return true.
@@ -2721,7 +2736,7 @@ class D {
    * Test if `range` is strictly in this range. `range` must start after and end before this range for the result to be true.
    */
   strictContainsRange(t) {
-    return D.strictContainsRange(this, t);
+    return T.strictContainsRange(this, t);
   }
   /**
    * Test if `otherRange` is strictly in `range` (must start after, and end before). If the ranges are equal, will return false.
@@ -2734,35 +2749,35 @@ class D {
    * The smallest position will be used as the start point, and the largest one as the end point.
    */
   plusRange(t) {
-    return D.plusRange(this, t);
+    return T.plusRange(this, t);
   }
   /**
    * A reunion of the two ranges.
    * The smallest position will be used as the start point, and the largest one as the end point.
    */
   static plusRange(t, n) {
-    let r, s, i, a;
-    return n.startLineNumber < t.startLineNumber ? (r = n.startLineNumber, s = n.startColumn) : n.startLineNumber === t.startLineNumber ? (r = n.startLineNumber, s = Math.min(n.startColumn, t.startColumn)) : (r = t.startLineNumber, s = t.startColumn), n.endLineNumber > t.endLineNumber ? (i = n.endLineNumber, a = n.endColumn) : n.endLineNumber === t.endLineNumber ? (i = n.endLineNumber, a = Math.max(n.endColumn, t.endColumn)) : (i = t.endLineNumber, a = t.endColumn), new D(r, s, i, a);
+    let r, s, i, l;
+    return n.startLineNumber < t.startLineNumber ? (r = n.startLineNumber, s = n.startColumn) : n.startLineNumber === t.startLineNumber ? (r = n.startLineNumber, s = Math.min(n.startColumn, t.startColumn)) : (r = t.startLineNumber, s = t.startColumn), n.endLineNumber > t.endLineNumber ? (i = n.endLineNumber, l = n.endColumn) : n.endLineNumber === t.endLineNumber ? (i = n.endLineNumber, l = Math.max(n.endColumn, t.endColumn)) : (i = t.endLineNumber, l = t.endColumn), new T(r, s, i, l);
   }
   /**
    * A intersection of the two ranges.
    */
   intersectRanges(t) {
-    return D.intersectRanges(this, t);
+    return T.intersectRanges(this, t);
   }
   /**
    * A intersection of the two ranges.
    */
   static intersectRanges(t, n) {
-    let r = t.startLineNumber, s = t.startColumn, i = t.endLineNumber, a = t.endColumn;
-    const o = n.startLineNumber, c = n.startColumn, u = n.endLineNumber, h = n.endColumn;
-    return r < o ? (r = o, s = c) : r === o && (s = Math.max(s, c)), i > u ? (i = u, a = h) : i === u && (a = Math.min(a, h)), r > i || r === i && s > a ? null : new D(r, s, i, a);
+    let r = t.startLineNumber, s = t.startColumn, i = t.endLineNumber, l = t.endColumn;
+    const o = n.startLineNumber, u = n.startColumn, c = n.endLineNumber, h = n.endColumn;
+    return r < o ? (r = o, s = u) : r === o && (s = Math.max(s, u)), i > c ? (i = c, l = h) : i === c && (l = Math.min(l, h)), r > i || r === i && s > l ? null : new T(r, s, i, l);
   }
   /**
    * Test if this range equals other.
    */
   equalsRange(t) {
-    return D.equalsRange(this, t);
+    return T.equalsRange(this, t);
   }
   /**
    * Test if range `a` equals `b`.
@@ -2774,25 +2789,25 @@ class D {
    * Return the end position (which will be after or equal to the start position)
    */
   getEndPosition() {
-    return D.getEndPosition(this);
+    return T.getEndPosition(this);
   }
   /**
    * Return the end position (which will be after or equal to the start position)
    */
   static getEndPosition(t) {
-    return new J(t.endLineNumber, t.endColumn);
+    return new Y(t.endLineNumber, t.endColumn);
   }
   /**
    * Return the start position (which will be before or equal to the end position)
    */
   getStartPosition() {
-    return D.getStartPosition(this);
+    return T.getStartPosition(this);
   }
   /**
    * Return the start position (which will be before or equal to the end position)
    */
   static getStartPosition(t) {
-    return new J(t.startLineNumber, t.startColumn);
+    return new Y(t.startLineNumber, t.startColumn);
   }
   /**
    * Transform to a user presentable string representation.
@@ -2804,50 +2819,50 @@ class D {
    * Create a new range using this range's start position, and using endLineNumber and endColumn as the end position.
    */
   setEndPosition(t, n) {
-    return new D(this.startLineNumber, this.startColumn, t, n);
+    return new T(this.startLineNumber, this.startColumn, t, n);
   }
   /**
    * Create a new range using this range's end position, and using startLineNumber and startColumn as the start position.
    */
   setStartPosition(t, n) {
-    return new D(t, n, this.endLineNumber, this.endColumn);
+    return new T(t, n, this.endLineNumber, this.endColumn);
   }
   /**
    * Create a new empty range using this range's start position.
    */
   collapseToStart() {
-    return D.collapseToStart(this);
+    return T.collapseToStart(this);
   }
   /**
    * Create a new empty range using this range's start position.
    */
   static collapseToStart(t) {
-    return new D(t.startLineNumber, t.startColumn, t.startLineNumber, t.startColumn);
+    return new T(t.startLineNumber, t.startColumn, t.startLineNumber, t.startColumn);
   }
   /**
    * Create a new empty range using this range's end position.
    */
   collapseToEnd() {
-    return D.collapseToEnd(this);
+    return T.collapseToEnd(this);
   }
   /**
    * Create a new empty range using this range's end position.
    */
   static collapseToEnd(t) {
-    return new D(t.endLineNumber, t.endColumn, t.endLineNumber, t.endColumn);
+    return new T(t.endLineNumber, t.endColumn, t.endLineNumber, t.endColumn);
   }
   /**
    * Moves the range by the given amount of lines.
    */
   delta(t) {
-    return new D(this.startLineNumber + t, this.startColumn, this.endLineNumber + t, this.endColumn);
+    return new T(this.startLineNumber + t, this.startColumn, this.endLineNumber + t, this.endColumn);
   }
   // ---
   static fromPositions(t, n = t) {
-    return new D(t.lineNumber, t.column, n.lineNumber, n.column);
+    return new T(t.lineNumber, t.column, n.lineNumber, n.column);
   }
   static lift(t) {
-    return t ? new D(t.startLineNumber, t.startColumn, t.endLineNumber, t.endColumn) : null;
+    return t ? new T(t.startLineNumber, t.startColumn, t.endLineNumber, t.endColumn) : null;
   }
   /**
    * Test if `obj` is an `IRange`.
@@ -2873,20 +2888,20 @@ class D {
    */
   static compareRangesUsingStarts(t, n) {
     if (t && n) {
-      const i = t.startLineNumber | 0, a = n.startLineNumber | 0;
-      if (i === a) {
-        const o = t.startColumn | 0, c = n.startColumn | 0;
-        if (o === c) {
-          const u = t.endLineNumber | 0, h = n.endLineNumber | 0;
-          if (u === h) {
+      const i = t.startLineNumber | 0, l = n.startLineNumber | 0;
+      if (i === l) {
+        const o = t.startColumn | 0, u = n.startColumn | 0;
+        if (o === u) {
+          const c = t.endLineNumber | 0, h = n.endLineNumber | 0;
+          if (c === h) {
             const f = t.endColumn | 0, m = n.endColumn | 0;
             return f - m;
           }
-          return u - h;
+          return c - h;
         }
-        return o - c;
+        return o - u;
       }
-      return i - a;
+      return i - l;
     }
     return (t ? 1 : 0) - (n ? 1 : 0);
   }
@@ -2907,7 +2922,7 @@ class D {
     return this;
   }
 }
-function js(e, t, n = (r, s) => r === s) {
+function Qs(e, t, n = (r, s) => r === s) {
   if (e === t)
     return !0;
   if (!e || !t || e.length !== t.length)
@@ -2917,25 +2932,25 @@ function js(e, t, n = (r, s) => r === s) {
       return !1;
   return !0;
 }
-function* Qs(e, t) {
+function* Xs(e, t) {
   let n, r;
   for (const s of e)
     r !== void 0 && t(r, s) ? n.push(s) : (n && (yield n), n = [s]), r = s;
   n && (yield n);
 }
-function Xs(e, t) {
+function Js(e, t) {
   for (let n = 0; n <= e.length; n++)
     t(n === 0 ? void 0 : e[n - 1], n === e.length ? void 0 : e[n]);
 }
-function Js(e, t) {
+function Ys(e, t) {
   for (let n = 0; n < e.length; n++)
     t(n === 0 ? void 0 : e[n - 1], e[n], n + 1 === e.length ? void 0 : e[n + 1]);
 }
-function Ys(e, t) {
+function Zs(e, t) {
   for (const n of t)
     e.push(n);
 }
-var ln;
+var an;
 (function(e) {
   function t(i) {
     return i < 0;
@@ -2953,21 +2968,21 @@ var ln;
     return i === 0;
   }
   e.isNeitherLessOrGreaterThan = s, e.greaterThan = 1, e.lessThan = -1, e.neitherLessOrGreaterThan = 0;
-})(ln || (ln = {}));
-function it(e, t) {
+})(an || (an = {}));
+function st(e, t) {
   return (n, r) => t(e(n), e(r));
 }
-const at = (e, t) => e - t;
-function Zs(e) {
+const it = (e, t) => e - t;
+function Ks(e) {
   return (t, n) => -e(t, n);
 }
-function on(e) {
+function ln(e) {
   return e < 0 ? 0 : e > 255 ? 255 : e | 0;
 }
 function Pe(e) {
   return e < 0 ? 0 : e > 4294967295 ? 4294967295 : e | 0;
 }
-class Ks {
+class ei {
   constructor(t) {
     this.values = t, this.prefixSum = new Uint32Array(t.length), this.prefixSumValidIndex = new Int32Array(1), this.prefixSumValidIndex[0] = -1;
   }
@@ -3008,23 +3023,23 @@ class Ks {
   }
   getIndexOf(t) {
     t = Math.floor(t), this.getTotalSum();
-    let n = 0, r = this.values.length - 1, s = 0, i = 0, a = 0;
+    let n = 0, r = this.values.length - 1, s = 0, i = 0, l = 0;
     for (; n <= r; )
-      if (s = n + (r - n) / 2 | 0, i = this.prefixSum[s], a = i - this.values[s], t < a)
+      if (s = n + (r - n) / 2 | 0, i = this.prefixSum[s], l = i - this.values[s], t < l)
         r = s - 1;
       else if (t >= i)
         n = s + 1;
       else
         break;
-    return new ei(s, t - a);
+    return new ti(s, t - l);
   }
 }
-class ei {
+class ti {
   constructor(t, n) {
     this.index = t, this.remainder = n, this._prefixSumIndexOfResultBrand = void 0, this.index = t, this.remainder = n;
   }
 }
-class ti {
+class ni {
   constructor(t, n, r, s) {
     this._uri = t, this._lines = n, this._eol = r, this._versionId = s, this._lineStarts = null, this._cachedTextValue = null;
   }
@@ -3041,7 +3056,7 @@ class ti {
     t.eol && t.eol !== this._eol && (this._eol = t.eol, this._lineStarts = null);
     const n = t.changes;
     for (const r of n)
-      this._acceptDeleteRange(r.range), this._acceptInsertText(new J(r.range.startLineNumber, r.range.startColumn), r.text);
+      this._acceptDeleteRange(r.range), this._acceptInsertText(new Y(r.range.startLineNumber, r.range.startColumn), r.text);
     this._versionId = t.versionId, this._cachedTextValue = null;
   }
   _ensureLineStarts() {
@@ -3049,7 +3064,7 @@ class ti {
       const t = this._eol.length, n = this._lines.length, r = new Uint32Array(n);
       for (let s = 0; s < n; s++)
         r[s] = this._lines[s].length + t;
-      this._lineStarts = new Ks(r);
+      this._lineStarts = new ei(r);
     }
   }
   /**
@@ -3070,7 +3085,7 @@ class ti {
   _acceptInsertText(t, n) {
     if (n.length === 0)
       return;
-    const r = fs(n);
+    const r = ds(n);
     if (r.length === 1) {
       this._setLineText(t.lineNumber - 1, this._lines[t.lineNumber - 1].substring(0, t.column - 1) + r[0] + this._lines[t.lineNumber - 1].substring(t.column - 1));
       return;
@@ -3082,15 +3097,15 @@ class ti {
     this._lineStarts && this._lineStarts.insertValues(t.lineNumber, s);
   }
 }
-const ni = "`~!@#$%^&*()-=+[{]}\\|;:'\",.<>/?";
-function ri(e = "") {
+const ri = "`~!@#$%^&*()-=+[{]}\\|;:'\",.<>/?";
+function si(e = "") {
   let t = "(-?\\d*\\.\\d\\w*)|([^";
-  for (const n of ni)
+  for (const n of ri)
     e.indexOf(n) >= 0 || (t += "\\" + n);
   return t += "\\s]+)", new RegExp(t, "g");
 }
-const kr = ri();
-function si(e) {
+const kr = si();
+function Pr(e) {
   let t = kr;
   if (e && e instanceof RegExp)
     if (e.global)
@@ -3101,34 +3116,34 @@ function si(e) {
     }
   return t.lastIndex = 0, t;
 }
-const Pr = new jr();
-Pr.unshift({
+const Fr = new Qr();
+Fr.unshift({
   maxLen: 1e3,
   windowSize: 15,
   timeBudget: 150
 });
-function Qt(e, t, n, r, s) {
-  if (s || (s = ct.first(Pr)), n.length > s.maxLen) {
-    let u = e - s.maxLen / 2;
-    return u < 0 ? u = 0 : r += u, n = n.substring(u, e + s.maxLen / 2), Qt(e, t, n, r, s);
+function jt(e, t, n, r, s) {
+  if (t = Pr(t), s || (s = ut.first(Fr)), n.length > s.maxLen) {
+    let c = e - s.maxLen / 2;
+    return c < 0 ? c = 0 : r += c, n = n.substring(c, e + s.maxLen / 2), jt(e, t, n, r, s);
   }
-  const i = Date.now(), a = e - 1 - r;
-  let o = -1, c = null;
-  for (let u = 1; !(Date.now() - i >= s.timeBudget); u++) {
-    const h = a - s.windowSize * u;
+  const i = Date.now(), l = e - 1 - r;
+  let o = -1, u = null;
+  for (let c = 1; !(Date.now() - i >= s.timeBudget); c++) {
+    const h = l - s.windowSize * c;
     t.lastIndex = Math.max(0, h);
-    const f = ii(t, n, a, o);
-    if (!f && c || (c = f, h <= 0))
+    const f = ii(t, n, l, o);
+    if (!f && u || (u = f, h <= 0))
       break;
     o = h;
   }
-  if (c) {
-    const u = {
-      word: c[0],
-      startColumn: r + 1 + c.index,
-      endColumn: r + 1 + c.index + c[0].length
+  if (u) {
+    const c = {
+      word: u[0],
+      startColumn: r + 1 + u.index,
+      endColumn: r + 1 + u.index + u[0].length
     };
-    return t.lastIndex = 0, u;
+    return t.lastIndex = 0, c;
   }
   return null;
 }
@@ -3143,17 +3158,17 @@ function ii(e, t, n, r) {
   }
   return null;
 }
-class Xt {
+class Qt {
   constructor(t) {
-    const n = on(t);
-    this._defaultValue = n, this._asciiMap = Xt._createAsciiMap(n), this._map = /* @__PURE__ */ new Map();
+    const n = ln(t);
+    this._defaultValue = n, this._asciiMap = Qt._createAsciiMap(n), this._map = /* @__PURE__ */ new Map();
   }
   static _createAsciiMap(t) {
     const n = new Uint8Array(256);
     return n.fill(t), n;
   }
   set(t, n) {
-    const r = on(n);
+    const r = ln(n);
     t >= 0 && t < 256 ? this._asciiMap[t] = r : this._map.set(t, r);
   }
   get(t) {
@@ -3166,7 +3181,7 @@ class Xt {
 class ai {
   constructor(t, n, r) {
     const s = new Uint8Array(t * n);
-    for (let i = 0, a = t * n; i < a; i++)
+    for (let i = 0, l = t * n; i < l; i++)
       s[i] = r;
     this._data = s, this.rows = t, this.cols = n;
   }
@@ -3180,9 +3195,9 @@ class ai {
 class li {
   constructor(t) {
     let n = 0, r = 0;
-    for (let i = 0, a = t.length; i < a; i++) {
-      const [o, c, u] = t[i];
-      c > n && (n = c), o > r && (r = o), u > r && (r = u);
+    for (let i = 0, l = t.length; i < l; i++) {
+      const [o, u, c] = t[i];
+      u > n && (n = u), o > r && (r = o), c > r && (r = c);
     }
     n++, r++;
     const s = new ai(
@@ -3191,9 +3206,9 @@ class li {
       0
       /* State.Invalid */
     );
-    for (let i = 0, a = t.length; i < a; i++) {
-      const [o, c, u] = t[i];
-      s.set(o, c, u);
+    for (let i = 0, l = t.length; i < l; i++) {
+      const [o, u, c] = t[i];
+      s.set(o, u, c);
     }
     this._states = s, this._maxCharCode = n;
   }
@@ -3201,9 +3216,9 @@ class li {
     return n < 0 || n >= this._maxCharCode ? 0 : this._states.get(t, n);
   }
 }
-let Lt = null;
+let wt = null;
 function oi() {
-  return Lt === null && (Lt = new li([
+  return wt === null && (wt = new li([
     [
       1,
       104,
@@ -3336,12 +3351,12 @@ function oi() {
       12
       /* State.End */
     ]
-  ])), Lt;
+  ])), wt;
 }
 let We = null;
 function ui() {
   if (We === null) {
-    We = new Xt(
+    We = new Qt(
       0
       /* CharacterClass.None */
     );
@@ -3362,37 +3377,37 @@ function ui() {
   }
   return We;
 }
-class dt {
+class ft {
   static _createLink(t, n, r, s, i) {
-    let a = i - 1;
+    let l = i - 1;
     do {
-      const o = n.charCodeAt(a);
+      const o = n.charCodeAt(l);
       if (t.get(o) !== 2)
         break;
-      a--;
-    } while (a > s);
+      l--;
+    } while (l > s);
     if (s > 0) {
-      const o = n.charCodeAt(s - 1), c = n.charCodeAt(a);
-      (o === 40 && c === 41 || o === 91 && c === 93 || o === 123 && c === 125) && a--;
+      const o = n.charCodeAt(s - 1), u = n.charCodeAt(l);
+      (o === 40 && u === 41 || o === 91 && u === 93 || o === 123 && u === 125) && l--;
     }
     return {
       range: {
         startLineNumber: r,
         startColumn: s + 1,
         endLineNumber: r,
-        endColumn: a + 2
+        endColumn: l + 2
       },
-      url: n.substring(s, a + 1)
+      url: n.substring(s, l + 1)
     };
   }
   static computeLinks(t, n = oi()) {
     const r = ui(), s = [];
-    for (let i = 1, a = t.getLineCount(); i <= a; i++) {
-      const o = t.getLineContent(i), c = o.length;
-      let u = 0, h = 0, f = 0, m = 1, d = !1, g = !1, b = !1, w = !1;
-      for (; u < c; ) {
-        let L = !1;
-        const _ = o.charCodeAt(u);
+    for (let i = 1, l = t.getLineCount(); i <= l; i++) {
+      const o = t.getLineContent(i), u = o.length;
+      let c = 0, h = 0, f = 0, m = 1, d = !1, g = !1, b = !1, v = !1;
+      for (; c < u; ) {
+        let w = !1;
+        const _ = o.charCodeAt(c);
         if (m === 13) {
           let x;
           switch (_) {
@@ -3409,10 +3424,10 @@ class dt {
               b = !1, x = g ? 0 : 1;
               break;
             case 123:
-              w = !0, x = 0;
+              v = !0, x = 0;
               break;
             case 125:
-              x = w ? 0 : 1;
+              x = v ? 0 : 1;
               break;
             case 39:
             case 34:
@@ -3431,21 +3446,21 @@ class dt {
             default:
               x = r.get(_);
           }
-          x === 1 && (s.push(dt._createLink(r, o, i, h, u)), L = !0);
+          x === 1 && (s.push(ft._createLink(r, o, i, h, c)), w = !0);
         } else if (m === 12) {
           let x;
-          _ === 91 ? (g = !0, x = 0) : x = r.get(_), x === 1 ? L = !0 : m = 13;
+          _ === 91 ? (g = !0, x = 0) : x = r.get(_), x === 1 ? w = !0 : m = 13;
         } else
-          m = n.nextState(m, _), m === 0 && (L = !0);
-        L && (m = 1, d = !1, g = !1, w = !1, h = u + 1, f = _), u++;
+          m = n.nextState(m, _), m === 0 && (w = !0);
+        w && (m = 1, d = !1, g = !1, v = !1, h = c + 1, f = _), c++;
       }
-      m === 13 && s.push(dt._createLink(r, o, i, h, c));
+      m === 13 && s.push(ft._createLink(r, o, i, h, u));
     }
     return s;
   }
 }
 function ci(e) {
-  return !e || typeof e.getLineCount != "function" || typeof e.getLineContent != "function" ? [] : dt.computeLinks(e);
+  return !e || typeof e.getLineCount != "function" || typeof e.getLineContent != "function" ? [] : ft.computeLinks(e);
 }
 class Dt {
   constructor() {
@@ -3458,19 +3473,19 @@ class Dt {
   }
   navigateValueSet(t, n, r, s, i) {
     if (t && n) {
-      const a = this.doNavigateValueSet(n, i);
-      if (a)
+      const l = this.doNavigateValueSet(n, i);
+      if (l)
         return {
           range: t,
-          value: a
+          value: l
         };
     }
     if (r && s) {
-      const a = this.doNavigateValueSet(s, i);
-      if (a)
+      const l = this.doNavigateValueSet(s, i);
+      if (l)
         return {
           range: r,
-          value: a
+          value: l
         };
     }
     return null;
@@ -3490,7 +3505,7 @@ class Dt {
   }
   valueSetsReplace(t, n, r) {
     let s = null;
-    for (let i = 0, a = t.length; s === null && i < a; i++)
+    for (let i = 0, l = t.length; s === null && i < l; i++)
       s = this.valueSetReplace(t[i], n, r);
     return s;
   }
@@ -3500,26 +3515,26 @@ class Dt {
   }
 }
 Dt.INSTANCE = new Dt();
-const Fr = Object.freeze(function(e, t) {
+const Dr = Object.freeze(function(e, t) {
   const n = setTimeout(e.bind(t), 0);
   return { dispose() {
     clearTimeout(n);
   } };
 });
-var mt;
+var dt;
 (function(e) {
   function t(n) {
-    return n === e.None || n === e.Cancelled || n instanceof lt ? !0 : !n || typeof n != "object" ? !1 : typeof n.isCancellationRequested == "boolean" && typeof n.onCancellationRequested == "function";
+    return n === e.None || n === e.Cancelled || n instanceof at ? !0 : !n || typeof n != "object" ? !1 : typeof n.isCancellationRequested == "boolean" && typeof n.onCancellationRequested == "function";
   }
   e.isCancellationToken = t, e.None = Object.freeze({
     isCancellationRequested: !1,
     onCancellationRequested: At.None
   }), e.Cancelled = Object.freeze({
     isCancellationRequested: !0,
-    onCancellationRequested: Fr
+    onCancellationRequested: Dr
   });
-})(mt || (mt = {}));
-class lt {
+})(dt || (dt = {}));
+class at {
   constructor() {
     this._isCancelled = !1, this._emitter = null;
   }
@@ -3530,7 +3545,7 @@ class lt {
     return this._isCancelled;
   }
   get onCancellationRequested() {
-    return this._isCancelled ? Fr : (this._emitter || (this._emitter = new ie()), this._emitter.event);
+    return this._isCancelled ? Dr : (this._emitter || (this._emitter = new ie()), this._emitter.event);
   }
   dispose() {
     this._emitter && (this._emitter.dispose(), this._emitter = null);
@@ -3541,17 +3556,17 @@ class hi {
     this._token = void 0, this._parentListener = void 0, this._parentListener = t && t.onCancellationRequested(this.cancel, this);
   }
   get token() {
-    return this._token || (this._token = new lt()), this._token;
+    return this._token || (this._token = new at()), this._token;
   }
   cancel() {
-    this._token ? this._token instanceof lt && this._token.cancel() : this._token = mt.Cancelled;
+    this._token ? this._token instanceof at && this._token.cancel() : this._token = dt.Cancelled;
   }
   dispose(t = !1) {
     var n;
-    t && this.cancel(), (n = this._parentListener) === null || n === void 0 || n.dispose(), this._token ? this._token instanceof lt && this._token.dispose() : this._token = mt.None;
+    t && this.cancel(), (n = this._parentListener) === null || n === void 0 || n.dispose(), this._token ? this._token instanceof at && this._token.dispose() : this._token = dt.None;
   }
 }
-class Jt {
+class Xt {
   constructor() {
     this._keyCodeToStr = [], this._strToKeyCode = /* @__PURE__ */ Object.create(null);
   }
@@ -3565,7 +3580,7 @@ class Jt {
     return this._strToKeyCode[t.toLowerCase()] || 0;
   }
 }
-const ot = new Jt(), Tt = new Jt(), Vt = new Jt(), fi = new Array(230), di = /* @__PURE__ */ Object.create(null), mi = /* @__PURE__ */ Object.create(null);
+const lt = new Xt(), Tt = new Xt(), Vt = new Xt(), fi = new Array(230), di = /* @__PURE__ */ Object.create(null), mi = /* @__PURE__ */ Object.create(null);
 (function() {
   const e = "", t = [
     // immutable, scanCode, scanCodeStr, keyCode, keyCodeStr, eventKeyCode, vkey, usUserSettingsLabel, generalUserSettingsLabel
@@ -3803,23 +3818,23 @@ const ot = new Jt(), Tt = new Jt(), Vt = new Jt(), fi = new Array(230), di = /* 
     [1, 0, e, 0, e, 0, "VK_OEM_CLEAR", e, e]
   ], n = [], r = [];
   for (const s of t) {
-    const [i, a, o, c, u, h, f, m, d] = s;
-    if (r[a] || (r[a] = !0, di[o] = a, mi[o.toLowerCase()] = a), !n[c]) {
-      if (n[c] = !0, !u)
-        throw new Error(`String representation missing for key code ${c} around scan code ${o}`);
-      ot.define(c, u), Tt.define(c, m || u), Vt.define(c, d || m || u);
+    const [i, l, o, u, c, h, f, m, d] = s;
+    if (r[l] || (r[l] = !0, di[o] = l, mi[o.toLowerCase()] = l), !n[u]) {
+      if (n[u] = !0, !c)
+        throw new Error(`String representation missing for key code ${u} around scan code ${o}`);
+      lt.define(u, c), Tt.define(u, m || c), Vt.define(u, d || m || c);
     }
-    h && (fi[h] = c);
+    h && (fi[h] = u);
   }
 })();
-var un;
+var on;
 (function(e) {
   function t(o) {
-    return ot.keyCodeToStr(o);
+    return lt.keyCodeToStr(o);
   }
   e.toString = t;
   function n(o) {
-    return ot.strToKeyCode(o);
+    return lt.strToKeyCode(o);
   }
   e.fromString = n;
   function r(o) {
@@ -3834,7 +3849,7 @@ var un;
     return Tt.strToKeyCode(o) || Vt.strToKeyCode(o);
   }
   e.fromUserSettings = i;
-  function a(o) {
+  function l(o) {
     if (o >= 98 && o <= 113)
       return null;
     switch (o) {
@@ -3847,15 +3862,15 @@ var un;
       case 17:
         return "Right";
     }
-    return ot.keyCodeToStr(o);
+    return lt.keyCodeToStr(o);
   }
-  e.toElectronAccelerator = a;
-})(un || (un = {}));
+  e.toElectronAccelerator = l;
+})(on || (on = {}));
 function gi(e, t) {
   const n = (t & 65535) << 16 >>> 0;
   return (e | n) >>> 0;
 }
-class ne extends D {
+class ne extends T {
   constructor(t, n, r, s) {
     super(t, n, r, s), this.selectionStartLineNumber = t, this.selectionStartColumn = n, this.positionLineNumber = r, this.positionColumn = s;
   }
@@ -3893,13 +3908,13 @@ class ne extends D {
    * Get the position at `positionLineNumber` and `positionColumn`.
    */
   getPosition() {
-    return new J(this.positionLineNumber, this.positionColumn);
+    return new Y(this.positionLineNumber, this.positionColumn);
   }
   /**
    * Get the position at the start of the selection.
   */
   getSelectionStart() {
-    return new J(this.selectionStartLineNumber, this.selectionStartColumn);
+    return new Y(this.selectionStartLineNumber, this.selectionStartColumn);
   }
   /**
    * Create a new selection with a different `selectionStartLineNumber` and `selectionStartColumn`.
@@ -3954,590 +3969,581 @@ class ne extends D {
     return i === 0 ? new ne(t, n, r, s) : new ne(r, s, t, n);
   }
 }
-const cn = /* @__PURE__ */ Object.create(null);
-function l(e, t) {
-  if (Kr(t)) {
-    const n = cn[t];
+const un = /* @__PURE__ */ Object.create(null);
+function a(e, t) {
+  if (es(t)) {
+    const n = un[t];
     if (n === void 0)
       throw new Error(`${e} references an unknown codicon: ${t}`);
     t = n;
   }
-  return cn[e] = t, { id: e };
+  return un[e] = t, { id: e };
 }
 const y = {
   // built-in icons, with image name
-  add: l("add", 6e4),
-  plus: l("plus", 6e4),
-  gistNew: l("gist-new", 6e4),
-  repoCreate: l("repo-create", 6e4),
-  lightbulb: l("lightbulb", 60001),
-  lightBulb: l("light-bulb", 60001),
-  repo: l("repo", 60002),
-  repoDelete: l("repo-delete", 60002),
-  gistFork: l("gist-fork", 60003),
-  repoForked: l("repo-forked", 60003),
-  gitPullRequest: l("git-pull-request", 60004),
-  gitPullRequestAbandoned: l("git-pull-request-abandoned", 60004),
-  recordKeys: l("record-keys", 60005),
-  keyboard: l("keyboard", 60005),
-  tag: l("tag", 60006),
-  tagAdd: l("tag-add", 60006),
-  tagRemove: l("tag-remove", 60006),
-  gitPullRequestLabel: l("git-pull-request-label", 60006),
-  person: l("person", 60007),
-  personFollow: l("person-follow", 60007),
-  personOutline: l("person-outline", 60007),
-  personFilled: l("person-filled", 60007),
-  gitBranch: l("git-branch", 60008),
-  gitBranchCreate: l("git-branch-create", 60008),
-  gitBranchDelete: l("git-branch-delete", 60008),
-  sourceControl: l("source-control", 60008),
-  mirror: l("mirror", 60009),
-  mirrorPublic: l("mirror-public", 60009),
-  star: l("star", 60010),
-  starAdd: l("star-add", 60010),
-  starDelete: l("star-delete", 60010),
-  starEmpty: l("star-empty", 60010),
-  comment: l("comment", 60011),
-  commentAdd: l("comment-add", 60011),
-  alert: l("alert", 60012),
-  warning: l("warning", 60012),
-  search: l("search", 60013),
-  searchSave: l("search-save", 60013),
-  logOut: l("log-out", 60014),
-  signOut: l("sign-out", 60014),
-  logIn: l("log-in", 60015),
-  signIn: l("sign-in", 60015),
-  eye: l("eye", 60016),
-  eyeUnwatch: l("eye-unwatch", 60016),
-  eyeWatch: l("eye-watch", 60016),
-  circleFilled: l("circle-filled", 60017),
-  primitiveDot: l("primitive-dot", 60017),
-  closeDirty: l("close-dirty", 60017),
-  debugBreakpoint: l("debug-breakpoint", 60017),
-  debugBreakpointDisabled: l("debug-breakpoint-disabled", 60017),
-  debugHint: l("debug-hint", 60017),
-  primitiveSquare: l("primitive-square", 60018),
-  edit: l("edit", 60019),
-  pencil: l("pencil", 60019),
-  info: l("info", 60020),
-  issueOpened: l("issue-opened", 60020),
-  gistPrivate: l("gist-private", 60021),
-  gitForkPrivate: l("git-fork-private", 60021),
-  lock: l("lock", 60021),
-  mirrorPrivate: l("mirror-private", 60021),
-  close: l("close", 60022),
-  removeClose: l("remove-close", 60022),
-  x: l("x", 60022),
-  repoSync: l("repo-sync", 60023),
-  sync: l("sync", 60023),
-  clone: l("clone", 60024),
-  desktopDownload: l("desktop-download", 60024),
-  beaker: l("beaker", 60025),
-  microscope: l("microscope", 60025),
-  vm: l("vm", 60026),
-  deviceDesktop: l("device-desktop", 60026),
-  file: l("file", 60027),
-  fileText: l("file-text", 60027),
-  more: l("more", 60028),
-  ellipsis: l("ellipsis", 60028),
-  kebabHorizontal: l("kebab-horizontal", 60028),
-  mailReply: l("mail-reply", 60029),
-  reply: l("reply", 60029),
-  organization: l("organization", 60030),
-  organizationFilled: l("organization-filled", 60030),
-  organizationOutline: l("organization-outline", 60030),
-  newFile: l("new-file", 60031),
-  fileAdd: l("file-add", 60031),
-  newFolder: l("new-folder", 60032),
-  fileDirectoryCreate: l("file-directory-create", 60032),
-  trash: l("trash", 60033),
-  trashcan: l("trashcan", 60033),
-  history: l("history", 60034),
-  clock: l("clock", 60034),
-  folder: l("folder", 60035),
-  fileDirectory: l("file-directory", 60035),
-  symbolFolder: l("symbol-folder", 60035),
-  logoGithub: l("logo-github", 60036),
-  markGithub: l("mark-github", 60036),
-  github: l("github", 60036),
-  terminal: l("terminal", 60037),
-  console: l("console", 60037),
-  repl: l("repl", 60037),
-  zap: l("zap", 60038),
-  symbolEvent: l("symbol-event", 60038),
-  error: l("error", 60039),
-  stop: l("stop", 60039),
-  variable: l("variable", 60040),
-  symbolVariable: l("symbol-variable", 60040),
-  array: l("array", 60042),
-  symbolArray: l("symbol-array", 60042),
-  symbolModule: l("symbol-module", 60043),
-  symbolPackage: l("symbol-package", 60043),
-  symbolNamespace: l("symbol-namespace", 60043),
-  symbolObject: l("symbol-object", 60043),
-  symbolMethod: l("symbol-method", 60044),
-  symbolFunction: l("symbol-function", 60044),
-  symbolConstructor: l("symbol-constructor", 60044),
-  symbolBoolean: l("symbol-boolean", 60047),
-  symbolNull: l("symbol-null", 60047),
-  symbolNumeric: l("symbol-numeric", 60048),
-  symbolNumber: l("symbol-number", 60048),
-  symbolStructure: l("symbol-structure", 60049),
-  symbolStruct: l("symbol-struct", 60049),
-  symbolParameter: l("symbol-parameter", 60050),
-  symbolTypeParameter: l("symbol-type-parameter", 60050),
-  symbolKey: l("symbol-key", 60051),
-  symbolText: l("symbol-text", 60051),
-  symbolReference: l("symbol-reference", 60052),
-  goToFile: l("go-to-file", 60052),
-  symbolEnum: l("symbol-enum", 60053),
-  symbolValue: l("symbol-value", 60053),
-  symbolRuler: l("symbol-ruler", 60054),
-  symbolUnit: l("symbol-unit", 60054),
-  activateBreakpoints: l("activate-breakpoints", 60055),
-  archive: l("archive", 60056),
-  arrowBoth: l("arrow-both", 60057),
-  arrowDown: l("arrow-down", 60058),
-  arrowLeft: l("arrow-left", 60059),
-  arrowRight: l("arrow-right", 60060),
-  arrowSmallDown: l("arrow-small-down", 60061),
-  arrowSmallLeft: l("arrow-small-left", 60062),
-  arrowSmallRight: l("arrow-small-right", 60063),
-  arrowSmallUp: l("arrow-small-up", 60064),
-  arrowUp: l("arrow-up", 60065),
-  bell: l("bell", 60066),
-  bold: l("bold", 60067),
-  book: l("book", 60068),
-  bookmark: l("bookmark", 60069),
-  debugBreakpointConditionalUnverified: l("debug-breakpoint-conditional-unverified", 60070),
-  debugBreakpointConditional: l("debug-breakpoint-conditional", 60071),
-  debugBreakpointConditionalDisabled: l("debug-breakpoint-conditional-disabled", 60071),
-  debugBreakpointDataUnverified: l("debug-breakpoint-data-unverified", 60072),
-  debugBreakpointData: l("debug-breakpoint-data", 60073),
-  debugBreakpointDataDisabled: l("debug-breakpoint-data-disabled", 60073),
-  debugBreakpointLogUnverified: l("debug-breakpoint-log-unverified", 60074),
-  debugBreakpointLog: l("debug-breakpoint-log", 60075),
-  debugBreakpointLogDisabled: l("debug-breakpoint-log-disabled", 60075),
-  briefcase: l("briefcase", 60076),
-  broadcast: l("broadcast", 60077),
-  browser: l("browser", 60078),
-  bug: l("bug", 60079),
-  calendar: l("calendar", 60080),
-  caseSensitive: l("case-sensitive", 60081),
-  check: l("check", 60082),
-  checklist: l("checklist", 60083),
-  chevronDown: l("chevron-down", 60084),
-  dropDownButton: l("drop-down-button", 60084),
-  chevronLeft: l("chevron-left", 60085),
-  chevronRight: l("chevron-right", 60086),
-  chevronUp: l("chevron-up", 60087),
-  chromeClose: l("chrome-close", 60088),
-  chromeMaximize: l("chrome-maximize", 60089),
-  chromeMinimize: l("chrome-minimize", 60090),
-  chromeRestore: l("chrome-restore", 60091),
-  circle: l("circle", 60092),
-  circleOutline: l("circle-outline", 60092),
-  debugBreakpointUnverified: l("debug-breakpoint-unverified", 60092),
-  circleSlash: l("circle-slash", 60093),
-  circuitBoard: l("circuit-board", 60094),
-  clearAll: l("clear-all", 60095),
-  clippy: l("clippy", 60096),
-  closeAll: l("close-all", 60097),
-  cloudDownload: l("cloud-download", 60098),
-  cloudUpload: l("cloud-upload", 60099),
-  code: l("code", 60100),
-  collapseAll: l("collapse-all", 60101),
-  colorMode: l("color-mode", 60102),
-  commentDiscussion: l("comment-discussion", 60103),
-  compareChanges: l("compare-changes", 60157),
-  creditCard: l("credit-card", 60105),
-  dash: l("dash", 60108),
-  dashboard: l("dashboard", 60109),
-  database: l("database", 60110),
-  debugContinue: l("debug-continue", 60111),
-  debugDisconnect: l("debug-disconnect", 60112),
-  debugPause: l("debug-pause", 60113),
-  debugRestart: l("debug-restart", 60114),
-  debugStart: l("debug-start", 60115),
-  debugStepInto: l("debug-step-into", 60116),
-  debugStepOut: l("debug-step-out", 60117),
-  debugStepOver: l("debug-step-over", 60118),
-  debugStop: l("debug-stop", 60119),
-  debug: l("debug", 60120),
-  deviceCameraVideo: l("device-camera-video", 60121),
-  deviceCamera: l("device-camera", 60122),
-  deviceMobile: l("device-mobile", 60123),
-  diffAdded: l("diff-added", 60124),
-  diffIgnored: l("diff-ignored", 60125),
-  diffModified: l("diff-modified", 60126),
-  diffRemoved: l("diff-removed", 60127),
-  diffRenamed: l("diff-renamed", 60128),
-  diff: l("diff", 60129),
-  discard: l("discard", 60130),
-  editorLayout: l("editor-layout", 60131),
-  emptyWindow: l("empty-window", 60132),
-  exclude: l("exclude", 60133),
-  extensions: l("extensions", 60134),
-  eyeClosed: l("eye-closed", 60135),
-  fileBinary: l("file-binary", 60136),
-  fileCode: l("file-code", 60137),
-  fileMedia: l("file-media", 60138),
-  filePdf: l("file-pdf", 60139),
-  fileSubmodule: l("file-submodule", 60140),
-  fileSymlinkDirectory: l("file-symlink-directory", 60141),
-  fileSymlinkFile: l("file-symlink-file", 60142),
-  fileZip: l("file-zip", 60143),
-  files: l("files", 60144),
-  filter: l("filter", 60145),
-  flame: l("flame", 60146),
-  foldDown: l("fold-down", 60147),
-  foldUp: l("fold-up", 60148),
-  fold: l("fold", 60149),
-  folderActive: l("folder-active", 60150),
-  folderOpened: l("folder-opened", 60151),
-  gear: l("gear", 60152),
-  gift: l("gift", 60153),
-  gistSecret: l("gist-secret", 60154),
-  gist: l("gist", 60155),
-  gitCommit: l("git-commit", 60156),
-  gitCompare: l("git-compare", 60157),
-  gitMerge: l("git-merge", 60158),
-  githubAction: l("github-action", 60159),
-  githubAlt: l("github-alt", 60160),
-  globe: l("globe", 60161),
-  grabber: l("grabber", 60162),
-  graph: l("graph", 60163),
-  gripper: l("gripper", 60164),
-  heart: l("heart", 60165),
-  home: l("home", 60166),
-  horizontalRule: l("horizontal-rule", 60167),
-  hubot: l("hubot", 60168),
-  inbox: l("inbox", 60169),
-  issueClosed: l("issue-closed", 60324),
-  issueReopened: l("issue-reopened", 60171),
-  issues: l("issues", 60172),
-  italic: l("italic", 60173),
-  jersey: l("jersey", 60174),
-  json: l("json", 60175),
-  bracket: l("bracket", 60175),
-  kebabVertical: l("kebab-vertical", 60176),
-  key: l("key", 60177),
-  law: l("law", 60178),
-  lightbulbAutofix: l("lightbulb-autofix", 60179),
-  linkExternal: l("link-external", 60180),
-  link: l("link", 60181),
-  listOrdered: l("list-ordered", 60182),
-  listUnordered: l("list-unordered", 60183),
-  liveShare: l("live-share", 60184),
-  loading: l("loading", 60185),
-  location: l("location", 60186),
-  mailRead: l("mail-read", 60187),
-  mail: l("mail", 60188),
-  markdown: l("markdown", 60189),
-  megaphone: l("megaphone", 60190),
-  mention: l("mention", 60191),
-  milestone: l("milestone", 60192),
-  gitPullRequestMilestone: l("git-pull-request-milestone", 60192),
-  mortarBoard: l("mortar-board", 60193),
-  move: l("move", 60194),
-  multipleWindows: l("multiple-windows", 60195),
-  mute: l("mute", 60196),
-  noNewline: l("no-newline", 60197),
-  note: l("note", 60198),
-  octoface: l("octoface", 60199),
-  openPreview: l("open-preview", 60200),
-  package: l("package", 60201),
-  paintcan: l("paintcan", 60202),
-  pin: l("pin", 60203),
-  play: l("play", 60204),
-  run: l("run", 60204),
-  plug: l("plug", 60205),
-  preserveCase: l("preserve-case", 60206),
-  preview: l("preview", 60207),
-  project: l("project", 60208),
-  pulse: l("pulse", 60209),
-  question: l("question", 60210),
-  quote: l("quote", 60211),
-  radioTower: l("radio-tower", 60212),
-  reactions: l("reactions", 60213),
-  references: l("references", 60214),
-  refresh: l("refresh", 60215),
-  regex: l("regex", 60216),
-  remoteExplorer: l("remote-explorer", 60217),
-  remote: l("remote", 60218),
-  remove: l("remove", 60219),
-  replaceAll: l("replace-all", 60220),
-  replace: l("replace", 60221),
-  repoClone: l("repo-clone", 60222),
-  repoForcePush: l("repo-force-push", 60223),
-  repoPull: l("repo-pull", 60224),
-  repoPush: l("repo-push", 60225),
-  report: l("report", 60226),
-  requestChanges: l("request-changes", 60227),
-  rocket: l("rocket", 60228),
-  rootFolderOpened: l("root-folder-opened", 60229),
-  rootFolder: l("root-folder", 60230),
-  rss: l("rss", 60231),
-  ruby: l("ruby", 60232),
-  saveAll: l("save-all", 60233),
-  saveAs: l("save-as", 60234),
-  save: l("save", 60235),
-  screenFull: l("screen-full", 60236),
-  screenNormal: l("screen-normal", 60237),
-  searchStop: l("search-stop", 60238),
-  server: l("server", 60240),
-  settingsGear: l("settings-gear", 60241),
-  settings: l("settings", 60242),
-  shield: l("shield", 60243),
-  smiley: l("smiley", 60244),
-  sortPrecedence: l("sort-precedence", 60245),
-  splitHorizontal: l("split-horizontal", 60246),
-  splitVertical: l("split-vertical", 60247),
-  squirrel: l("squirrel", 60248),
-  starFull: l("star-full", 60249),
-  starHalf: l("star-half", 60250),
-  symbolClass: l("symbol-class", 60251),
-  symbolColor: l("symbol-color", 60252),
-  symbolCustomColor: l("symbol-customcolor", 60252),
-  symbolConstant: l("symbol-constant", 60253),
-  symbolEnumMember: l("symbol-enum-member", 60254),
-  symbolField: l("symbol-field", 60255),
-  symbolFile: l("symbol-file", 60256),
-  symbolInterface: l("symbol-interface", 60257),
-  symbolKeyword: l("symbol-keyword", 60258),
-  symbolMisc: l("symbol-misc", 60259),
-  symbolOperator: l("symbol-operator", 60260),
-  symbolProperty: l("symbol-property", 60261),
-  wrench: l("wrench", 60261),
-  wrenchSubaction: l("wrench-subaction", 60261),
-  symbolSnippet: l("symbol-snippet", 60262),
-  tasklist: l("tasklist", 60263),
-  telescope: l("telescope", 60264),
-  textSize: l("text-size", 60265),
-  threeBars: l("three-bars", 60266),
-  thumbsdown: l("thumbsdown", 60267),
-  thumbsup: l("thumbsup", 60268),
-  tools: l("tools", 60269),
-  triangleDown: l("triangle-down", 60270),
-  triangleLeft: l("triangle-left", 60271),
-  triangleRight: l("triangle-right", 60272),
-  triangleUp: l("triangle-up", 60273),
-  twitter: l("twitter", 60274),
-  unfold: l("unfold", 60275),
-  unlock: l("unlock", 60276),
-  unmute: l("unmute", 60277),
-  unverified: l("unverified", 60278),
-  verified: l("verified", 60279),
-  versions: l("versions", 60280),
-  vmActive: l("vm-active", 60281),
-  vmOutline: l("vm-outline", 60282),
-  vmRunning: l("vm-running", 60283),
-  watch: l("watch", 60284),
-  whitespace: l("whitespace", 60285),
-  wholeWord: l("whole-word", 60286),
-  window: l("window", 60287),
-  wordWrap: l("word-wrap", 60288),
-  zoomIn: l("zoom-in", 60289),
-  zoomOut: l("zoom-out", 60290),
-  listFilter: l("list-filter", 60291),
-  listFlat: l("list-flat", 60292),
-  listSelection: l("list-selection", 60293),
-  selection: l("selection", 60293),
-  listTree: l("list-tree", 60294),
-  debugBreakpointFunctionUnverified: l("debug-breakpoint-function-unverified", 60295),
-  debugBreakpointFunction: l("debug-breakpoint-function", 60296),
-  debugBreakpointFunctionDisabled: l("debug-breakpoint-function-disabled", 60296),
-  debugStackframeActive: l("debug-stackframe-active", 60297),
-  circleSmallFilled: l("circle-small-filled", 60298),
-  debugStackframeDot: l("debug-stackframe-dot", 60298),
-  debugStackframe: l("debug-stackframe", 60299),
-  debugStackframeFocused: l("debug-stackframe-focused", 60299),
-  debugBreakpointUnsupported: l("debug-breakpoint-unsupported", 60300),
-  symbolString: l("symbol-string", 60301),
-  debugReverseContinue: l("debug-reverse-continue", 60302),
-  debugStepBack: l("debug-step-back", 60303),
-  debugRestartFrame: l("debug-restart-frame", 60304),
-  callIncoming: l("call-incoming", 60306),
-  callOutgoing: l("call-outgoing", 60307),
-  menu: l("menu", 60308),
-  expandAll: l("expand-all", 60309),
-  feedback: l("feedback", 60310),
-  gitPullRequestReviewer: l("git-pull-request-reviewer", 60310),
-  groupByRefType: l("group-by-ref-type", 60311),
-  ungroupByRefType: l("ungroup-by-ref-type", 60312),
-  account: l("account", 60313),
-  gitPullRequestAssignee: l("git-pull-request-assignee", 60313),
-  bellDot: l("bell-dot", 60314),
-  debugConsole: l("debug-console", 60315),
-  library: l("library", 60316),
-  output: l("output", 60317),
-  runAll: l("run-all", 60318),
-  syncIgnored: l("sync-ignored", 60319),
-  pinned: l("pinned", 60320),
-  githubInverted: l("github-inverted", 60321),
-  debugAlt: l("debug-alt", 60305),
-  serverProcess: l("server-process", 60322),
-  serverEnvironment: l("server-environment", 60323),
-  pass: l("pass", 60324),
-  stopCircle: l("stop-circle", 60325),
-  playCircle: l("play-circle", 60326),
-  record: l("record", 60327),
-  debugAltSmall: l("debug-alt-small", 60328),
-  vmConnect: l("vm-connect", 60329),
-  cloud: l("cloud", 60330),
-  merge: l("merge", 60331),
-  exportIcon: l("export", 60332),
-  graphLeft: l("graph-left", 60333),
-  magnet: l("magnet", 60334),
-  notebook: l("notebook", 60335),
-  redo: l("redo", 60336),
-  checkAll: l("check-all", 60337),
-  pinnedDirty: l("pinned-dirty", 60338),
-  passFilled: l("pass-filled", 60339),
-  circleLargeFilled: l("circle-large-filled", 60340),
-  circleLarge: l("circle-large", 60341),
-  circleLargeOutline: l("circle-large-outline", 60341),
-  combine: l("combine", 60342),
-  gather: l("gather", 60342),
-  table: l("table", 60343),
-  variableGroup: l("variable-group", 60344),
-  typeHierarchy: l("type-hierarchy", 60345),
-  typeHierarchySub: l("type-hierarchy-sub", 60346),
-  typeHierarchySuper: l("type-hierarchy-super", 60347),
-  gitPullRequestCreate: l("git-pull-request-create", 60348),
-  runAbove: l("run-above", 60349),
-  runBelow: l("run-below", 60350),
-  notebookTemplate: l("notebook-template", 60351),
-  debugRerun: l("debug-rerun", 60352),
-  workspaceTrusted: l("workspace-trusted", 60353),
-  workspaceUntrusted: l("workspace-untrusted", 60354),
-  workspaceUnspecified: l("workspace-unspecified", 60355),
-  terminalCmd: l("terminal-cmd", 60356),
-  terminalDebian: l("terminal-debian", 60357),
-  terminalLinux: l("terminal-linux", 60358),
-  terminalPowershell: l("terminal-powershell", 60359),
-  terminalTmux: l("terminal-tmux", 60360),
-  terminalUbuntu: l("terminal-ubuntu", 60361),
-  terminalBash: l("terminal-bash", 60362),
-  arrowSwap: l("arrow-swap", 60363),
-  copy: l("copy", 60364),
-  personAdd: l("person-add", 60365),
-  filterFilled: l("filter-filled", 60366),
-  wand: l("wand", 60367),
-  debugLineByLine: l("debug-line-by-line", 60368),
-  inspect: l("inspect", 60369),
-  layers: l("layers", 60370),
-  layersDot: l("layers-dot", 60371),
-  layersActive: l("layers-active", 60372),
-  compass: l("compass", 60373),
-  compassDot: l("compass-dot", 60374),
-  compassActive: l("compass-active", 60375),
-  azure: l("azure", 60376),
-  issueDraft: l("issue-draft", 60377),
-  gitPullRequestClosed: l("git-pull-request-closed", 60378),
-  gitPullRequestDraft: l("git-pull-request-draft", 60379),
-  debugAll: l("debug-all", 60380),
-  debugCoverage: l("debug-coverage", 60381),
-  runErrors: l("run-errors", 60382),
-  folderLibrary: l("folder-library", 60383),
-  debugContinueSmall: l("debug-continue-small", 60384),
-  beakerStop: l("beaker-stop", 60385),
-  graphLine: l("graph-line", 60386),
-  graphScatter: l("graph-scatter", 60387),
-  pieChart: l("pie-chart", 60388),
-  bracketDot: l("bracket-dot", 60389),
-  bracketError: l("bracket-error", 60390),
-  lockSmall: l("lock-small", 60391),
-  azureDevops: l("azure-devops", 60392),
-  verifiedFilled: l("verified-filled", 60393),
-  newLine: l("newline", 60394),
-  layout: l("layout", 60395),
-  layoutActivitybarLeft: l("layout-activitybar-left", 60396),
-  layoutActivitybarRight: l("layout-activitybar-right", 60397),
-  layoutPanelLeft: l("layout-panel-left", 60398),
-  layoutPanelCenter: l("layout-panel-center", 60399),
-  layoutPanelJustify: l("layout-panel-justify", 60400),
-  layoutPanelRight: l("layout-panel-right", 60401),
-  layoutPanel: l("layout-panel", 60402),
-  layoutSidebarLeft: l("layout-sidebar-left", 60403),
-  layoutSidebarRight: l("layout-sidebar-right", 60404),
-  layoutStatusbar: l("layout-statusbar", 60405),
-  layoutMenubar: l("layout-menubar", 60406),
-  layoutCentered: l("layout-centered", 60407),
-  layoutSidebarRightOff: l("layout-sidebar-right-off", 60416),
-  layoutPanelOff: l("layout-panel-off", 60417),
-  layoutSidebarLeftOff: l("layout-sidebar-left-off", 60418),
-  target: l("target", 60408),
-  indent: l("indent", 60409),
-  recordSmall: l("record-small", 60410),
-  errorSmall: l("error-small", 60411),
-  arrowCircleDown: l("arrow-circle-down", 60412),
-  arrowCircleLeft: l("arrow-circle-left", 60413),
-  arrowCircleRight: l("arrow-circle-right", 60414),
-  arrowCircleUp: l("arrow-circle-up", 60415),
-  heartFilled: l("heart-filled", 60420),
-  map: l("map", 60421),
-  mapFilled: l("map-filled", 60422),
-  circleSmall: l("circle-small", 60423),
-  bellSlash: l("bell-slash", 60424),
-  bellSlashDot: l("bell-slash-dot", 60425),
-  commentUnresolved: l("comment-unresolved", 60426),
-  gitPullRequestGoToChanges: l("git-pull-request-go-to-changes", 60427),
-  gitPullRequestNewChanges: l("git-pull-request-new-changes", 60428),
-  searchFuzzy: l("search-fuzzy", 60429),
-  commentDraft: l("comment-draft", 60430),
-  send: l("send", 60431),
-  sparkle: l("sparkle", 60432),
-  insert: l("insert", 60433),
-  mic: l("mic", 60434),
+  add: a("add", 6e4),
+  plus: a("plus", 6e4),
+  gistNew: a("gist-new", 6e4),
+  repoCreate: a("repo-create", 6e4),
+  lightbulb: a("lightbulb", 60001),
+  lightBulb: a("light-bulb", 60001),
+  repo: a("repo", 60002),
+  repoDelete: a("repo-delete", 60002),
+  gistFork: a("gist-fork", 60003),
+  repoForked: a("repo-forked", 60003),
+  gitPullRequest: a("git-pull-request", 60004),
+  gitPullRequestAbandoned: a("git-pull-request-abandoned", 60004),
+  recordKeys: a("record-keys", 60005),
+  keyboard: a("keyboard", 60005),
+  tag: a("tag", 60006),
+  tagAdd: a("tag-add", 60006),
+  tagRemove: a("tag-remove", 60006),
+  gitPullRequestLabel: a("git-pull-request-label", 60006),
+  person: a("person", 60007),
+  personFollow: a("person-follow", 60007),
+  personOutline: a("person-outline", 60007),
+  personFilled: a("person-filled", 60007),
+  gitBranch: a("git-branch", 60008),
+  gitBranchCreate: a("git-branch-create", 60008),
+  gitBranchDelete: a("git-branch-delete", 60008),
+  sourceControl: a("source-control", 60008),
+  mirror: a("mirror", 60009),
+  mirrorPublic: a("mirror-public", 60009),
+  star: a("star", 60010),
+  starAdd: a("star-add", 60010),
+  starDelete: a("star-delete", 60010),
+  starEmpty: a("star-empty", 60010),
+  comment: a("comment", 60011),
+  commentAdd: a("comment-add", 60011),
+  alert: a("alert", 60012),
+  warning: a("warning", 60012),
+  search: a("search", 60013),
+  searchSave: a("search-save", 60013),
+  logOut: a("log-out", 60014),
+  signOut: a("sign-out", 60014),
+  logIn: a("log-in", 60015),
+  signIn: a("sign-in", 60015),
+  eye: a("eye", 60016),
+  eyeUnwatch: a("eye-unwatch", 60016),
+  eyeWatch: a("eye-watch", 60016),
+  circleFilled: a("circle-filled", 60017),
+  primitiveDot: a("primitive-dot", 60017),
+  closeDirty: a("close-dirty", 60017),
+  debugBreakpoint: a("debug-breakpoint", 60017),
+  debugBreakpointDisabled: a("debug-breakpoint-disabled", 60017),
+  debugHint: a("debug-hint", 60017),
+  primitiveSquare: a("primitive-square", 60018),
+  edit: a("edit", 60019),
+  pencil: a("pencil", 60019),
+  info: a("info", 60020),
+  issueOpened: a("issue-opened", 60020),
+  gistPrivate: a("gist-private", 60021),
+  gitForkPrivate: a("git-fork-private", 60021),
+  lock: a("lock", 60021),
+  mirrorPrivate: a("mirror-private", 60021),
+  close: a("close", 60022),
+  removeClose: a("remove-close", 60022),
+  x: a("x", 60022),
+  repoSync: a("repo-sync", 60023),
+  sync: a("sync", 60023),
+  clone: a("clone", 60024),
+  desktopDownload: a("desktop-download", 60024),
+  beaker: a("beaker", 60025),
+  microscope: a("microscope", 60025),
+  vm: a("vm", 60026),
+  deviceDesktop: a("device-desktop", 60026),
+  file: a("file", 60027),
+  fileText: a("file-text", 60027),
+  more: a("more", 60028),
+  ellipsis: a("ellipsis", 60028),
+  kebabHorizontal: a("kebab-horizontal", 60028),
+  mailReply: a("mail-reply", 60029),
+  reply: a("reply", 60029),
+  organization: a("organization", 60030),
+  organizationFilled: a("organization-filled", 60030),
+  organizationOutline: a("organization-outline", 60030),
+  newFile: a("new-file", 60031),
+  fileAdd: a("file-add", 60031),
+  newFolder: a("new-folder", 60032),
+  fileDirectoryCreate: a("file-directory-create", 60032),
+  trash: a("trash", 60033),
+  trashcan: a("trashcan", 60033),
+  history: a("history", 60034),
+  clock: a("clock", 60034),
+  folder: a("folder", 60035),
+  fileDirectory: a("file-directory", 60035),
+  symbolFolder: a("symbol-folder", 60035),
+  logoGithub: a("logo-github", 60036),
+  markGithub: a("mark-github", 60036),
+  github: a("github", 60036),
+  terminal: a("terminal", 60037),
+  console: a("console", 60037),
+  repl: a("repl", 60037),
+  zap: a("zap", 60038),
+  symbolEvent: a("symbol-event", 60038),
+  error: a("error", 60039),
+  stop: a("stop", 60039),
+  variable: a("variable", 60040),
+  symbolVariable: a("symbol-variable", 60040),
+  array: a("array", 60042),
+  symbolArray: a("symbol-array", 60042),
+  symbolModule: a("symbol-module", 60043),
+  symbolPackage: a("symbol-package", 60043),
+  symbolNamespace: a("symbol-namespace", 60043),
+  symbolObject: a("symbol-object", 60043),
+  symbolMethod: a("symbol-method", 60044),
+  symbolFunction: a("symbol-function", 60044),
+  symbolConstructor: a("symbol-constructor", 60044),
+  symbolBoolean: a("symbol-boolean", 60047),
+  symbolNull: a("symbol-null", 60047),
+  symbolNumeric: a("symbol-numeric", 60048),
+  symbolNumber: a("symbol-number", 60048),
+  symbolStructure: a("symbol-structure", 60049),
+  symbolStruct: a("symbol-struct", 60049),
+  symbolParameter: a("symbol-parameter", 60050),
+  symbolTypeParameter: a("symbol-type-parameter", 60050),
+  symbolKey: a("symbol-key", 60051),
+  symbolText: a("symbol-text", 60051),
+  symbolReference: a("symbol-reference", 60052),
+  goToFile: a("go-to-file", 60052),
+  symbolEnum: a("symbol-enum", 60053),
+  symbolValue: a("symbol-value", 60053),
+  symbolRuler: a("symbol-ruler", 60054),
+  symbolUnit: a("symbol-unit", 60054),
+  activateBreakpoints: a("activate-breakpoints", 60055),
+  archive: a("archive", 60056),
+  arrowBoth: a("arrow-both", 60057),
+  arrowDown: a("arrow-down", 60058),
+  arrowLeft: a("arrow-left", 60059),
+  arrowRight: a("arrow-right", 60060),
+  arrowSmallDown: a("arrow-small-down", 60061),
+  arrowSmallLeft: a("arrow-small-left", 60062),
+  arrowSmallRight: a("arrow-small-right", 60063),
+  arrowSmallUp: a("arrow-small-up", 60064),
+  arrowUp: a("arrow-up", 60065),
+  bell: a("bell", 60066),
+  bold: a("bold", 60067),
+  book: a("book", 60068),
+  bookmark: a("bookmark", 60069),
+  debugBreakpointConditionalUnverified: a("debug-breakpoint-conditional-unverified", 60070),
+  debugBreakpointConditional: a("debug-breakpoint-conditional", 60071),
+  debugBreakpointConditionalDisabled: a("debug-breakpoint-conditional-disabled", 60071),
+  debugBreakpointDataUnverified: a("debug-breakpoint-data-unverified", 60072),
+  debugBreakpointData: a("debug-breakpoint-data", 60073),
+  debugBreakpointDataDisabled: a("debug-breakpoint-data-disabled", 60073),
+  debugBreakpointLogUnverified: a("debug-breakpoint-log-unverified", 60074),
+  debugBreakpointLog: a("debug-breakpoint-log", 60075),
+  debugBreakpointLogDisabled: a("debug-breakpoint-log-disabled", 60075),
+  briefcase: a("briefcase", 60076),
+  broadcast: a("broadcast", 60077),
+  browser: a("browser", 60078),
+  bug: a("bug", 60079),
+  calendar: a("calendar", 60080),
+  caseSensitive: a("case-sensitive", 60081),
+  check: a("check", 60082),
+  checklist: a("checklist", 60083),
+  chevronDown: a("chevron-down", 60084),
+  dropDownButton: a("drop-down-button", 60084),
+  chevronLeft: a("chevron-left", 60085),
+  chevronRight: a("chevron-right", 60086),
+  chevronUp: a("chevron-up", 60087),
+  chromeClose: a("chrome-close", 60088),
+  chromeMaximize: a("chrome-maximize", 60089),
+  chromeMinimize: a("chrome-minimize", 60090),
+  chromeRestore: a("chrome-restore", 60091),
+  circle: a("circle", 60092),
+  circleOutline: a("circle-outline", 60092),
+  debugBreakpointUnverified: a("debug-breakpoint-unverified", 60092),
+  circleSlash: a("circle-slash", 60093),
+  circuitBoard: a("circuit-board", 60094),
+  clearAll: a("clear-all", 60095),
+  clippy: a("clippy", 60096),
+  closeAll: a("close-all", 60097),
+  cloudDownload: a("cloud-download", 60098),
+  cloudUpload: a("cloud-upload", 60099),
+  code: a("code", 60100),
+  collapseAll: a("collapse-all", 60101),
+  colorMode: a("color-mode", 60102),
+  commentDiscussion: a("comment-discussion", 60103),
+  compareChanges: a("compare-changes", 60157),
+  creditCard: a("credit-card", 60105),
+  dash: a("dash", 60108),
+  dashboard: a("dashboard", 60109),
+  database: a("database", 60110),
+  debugContinue: a("debug-continue", 60111),
+  debugDisconnect: a("debug-disconnect", 60112),
+  debugPause: a("debug-pause", 60113),
+  debugRestart: a("debug-restart", 60114),
+  debugStart: a("debug-start", 60115),
+  debugStepInto: a("debug-step-into", 60116),
+  debugStepOut: a("debug-step-out", 60117),
+  debugStepOver: a("debug-step-over", 60118),
+  debugStop: a("debug-stop", 60119),
+  debug: a("debug", 60120),
+  deviceCameraVideo: a("device-camera-video", 60121),
+  deviceCamera: a("device-camera", 60122),
+  deviceMobile: a("device-mobile", 60123),
+  diffAdded: a("diff-added", 60124),
+  diffIgnored: a("diff-ignored", 60125),
+  diffModified: a("diff-modified", 60126),
+  diffRemoved: a("diff-removed", 60127),
+  diffRenamed: a("diff-renamed", 60128),
+  diff: a("diff", 60129),
+  discard: a("discard", 60130),
+  editorLayout: a("editor-layout", 60131),
+  emptyWindow: a("empty-window", 60132),
+  exclude: a("exclude", 60133),
+  extensions: a("extensions", 60134),
+  eyeClosed: a("eye-closed", 60135),
+  fileBinary: a("file-binary", 60136),
+  fileCode: a("file-code", 60137),
+  fileMedia: a("file-media", 60138),
+  filePdf: a("file-pdf", 60139),
+  fileSubmodule: a("file-submodule", 60140),
+  fileSymlinkDirectory: a("file-symlink-directory", 60141),
+  fileSymlinkFile: a("file-symlink-file", 60142),
+  fileZip: a("file-zip", 60143),
+  files: a("files", 60144),
+  filter: a("filter", 60145),
+  flame: a("flame", 60146),
+  foldDown: a("fold-down", 60147),
+  foldUp: a("fold-up", 60148),
+  fold: a("fold", 60149),
+  folderActive: a("folder-active", 60150),
+  folderOpened: a("folder-opened", 60151),
+  gear: a("gear", 60152),
+  gift: a("gift", 60153),
+  gistSecret: a("gist-secret", 60154),
+  gist: a("gist", 60155),
+  gitCommit: a("git-commit", 60156),
+  gitCompare: a("git-compare", 60157),
+  gitMerge: a("git-merge", 60158),
+  githubAction: a("github-action", 60159),
+  githubAlt: a("github-alt", 60160),
+  globe: a("globe", 60161),
+  grabber: a("grabber", 60162),
+  graph: a("graph", 60163),
+  gripper: a("gripper", 60164),
+  heart: a("heart", 60165),
+  home: a("home", 60166),
+  horizontalRule: a("horizontal-rule", 60167),
+  hubot: a("hubot", 60168),
+  inbox: a("inbox", 60169),
+  issueClosed: a("issue-closed", 60324),
+  issueReopened: a("issue-reopened", 60171),
+  issues: a("issues", 60172),
+  italic: a("italic", 60173),
+  jersey: a("jersey", 60174),
+  json: a("json", 60175),
+  bracket: a("bracket", 60175),
+  kebabVertical: a("kebab-vertical", 60176),
+  key: a("key", 60177),
+  law: a("law", 60178),
+  lightbulbAutofix: a("lightbulb-autofix", 60179),
+  linkExternal: a("link-external", 60180),
+  link: a("link", 60181),
+  listOrdered: a("list-ordered", 60182),
+  listUnordered: a("list-unordered", 60183),
+  liveShare: a("live-share", 60184),
+  loading: a("loading", 60185),
+  location: a("location", 60186),
+  mailRead: a("mail-read", 60187),
+  mail: a("mail", 60188),
+  markdown: a("markdown", 60189),
+  megaphone: a("megaphone", 60190),
+  mention: a("mention", 60191),
+  milestone: a("milestone", 60192),
+  gitPullRequestMilestone: a("git-pull-request-milestone", 60192),
+  mortarBoard: a("mortar-board", 60193),
+  move: a("move", 60194),
+  multipleWindows: a("multiple-windows", 60195),
+  mute: a("mute", 60196),
+  noNewline: a("no-newline", 60197),
+  note: a("note", 60198),
+  octoface: a("octoface", 60199),
+  openPreview: a("open-preview", 60200),
+  package: a("package", 60201),
+  paintcan: a("paintcan", 60202),
+  pin: a("pin", 60203),
+  play: a("play", 60204),
+  run: a("run", 60204),
+  plug: a("plug", 60205),
+  preserveCase: a("preserve-case", 60206),
+  preview: a("preview", 60207),
+  project: a("project", 60208),
+  pulse: a("pulse", 60209),
+  question: a("question", 60210),
+  quote: a("quote", 60211),
+  radioTower: a("radio-tower", 60212),
+  reactions: a("reactions", 60213),
+  references: a("references", 60214),
+  refresh: a("refresh", 60215),
+  regex: a("regex", 60216),
+  remoteExplorer: a("remote-explorer", 60217),
+  remote: a("remote", 60218),
+  remove: a("remove", 60219),
+  replaceAll: a("replace-all", 60220),
+  replace: a("replace", 60221),
+  repoClone: a("repo-clone", 60222),
+  repoForcePush: a("repo-force-push", 60223),
+  repoPull: a("repo-pull", 60224),
+  repoPush: a("repo-push", 60225),
+  report: a("report", 60226),
+  requestChanges: a("request-changes", 60227),
+  rocket: a("rocket", 60228),
+  rootFolderOpened: a("root-folder-opened", 60229),
+  rootFolder: a("root-folder", 60230),
+  rss: a("rss", 60231),
+  ruby: a("ruby", 60232),
+  saveAll: a("save-all", 60233),
+  saveAs: a("save-as", 60234),
+  save: a("save", 60235),
+  screenFull: a("screen-full", 60236),
+  screenNormal: a("screen-normal", 60237),
+  searchStop: a("search-stop", 60238),
+  server: a("server", 60240),
+  settingsGear: a("settings-gear", 60241),
+  settings: a("settings", 60242),
+  shield: a("shield", 60243),
+  smiley: a("smiley", 60244),
+  sortPrecedence: a("sort-precedence", 60245),
+  splitHorizontal: a("split-horizontal", 60246),
+  splitVertical: a("split-vertical", 60247),
+  squirrel: a("squirrel", 60248),
+  starFull: a("star-full", 60249),
+  starHalf: a("star-half", 60250),
+  symbolClass: a("symbol-class", 60251),
+  symbolColor: a("symbol-color", 60252),
+  symbolCustomColor: a("symbol-customcolor", 60252),
+  symbolConstant: a("symbol-constant", 60253),
+  symbolEnumMember: a("symbol-enum-member", 60254),
+  symbolField: a("symbol-field", 60255),
+  symbolFile: a("symbol-file", 60256),
+  symbolInterface: a("symbol-interface", 60257),
+  symbolKeyword: a("symbol-keyword", 60258),
+  symbolMisc: a("symbol-misc", 60259),
+  symbolOperator: a("symbol-operator", 60260),
+  symbolProperty: a("symbol-property", 60261),
+  wrench: a("wrench", 60261),
+  wrenchSubaction: a("wrench-subaction", 60261),
+  symbolSnippet: a("symbol-snippet", 60262),
+  tasklist: a("tasklist", 60263),
+  telescope: a("telescope", 60264),
+  textSize: a("text-size", 60265),
+  threeBars: a("three-bars", 60266),
+  thumbsdown: a("thumbsdown", 60267),
+  thumbsup: a("thumbsup", 60268),
+  tools: a("tools", 60269),
+  triangleDown: a("triangle-down", 60270),
+  triangleLeft: a("triangle-left", 60271),
+  triangleRight: a("triangle-right", 60272),
+  triangleUp: a("triangle-up", 60273),
+  twitter: a("twitter", 60274),
+  unfold: a("unfold", 60275),
+  unlock: a("unlock", 60276),
+  unmute: a("unmute", 60277),
+  unverified: a("unverified", 60278),
+  verified: a("verified", 60279),
+  versions: a("versions", 60280),
+  vmActive: a("vm-active", 60281),
+  vmOutline: a("vm-outline", 60282),
+  vmRunning: a("vm-running", 60283),
+  watch: a("watch", 60284),
+  whitespace: a("whitespace", 60285),
+  wholeWord: a("whole-word", 60286),
+  window: a("window", 60287),
+  wordWrap: a("word-wrap", 60288),
+  zoomIn: a("zoom-in", 60289),
+  zoomOut: a("zoom-out", 60290),
+  listFilter: a("list-filter", 60291),
+  listFlat: a("list-flat", 60292),
+  listSelection: a("list-selection", 60293),
+  selection: a("selection", 60293),
+  listTree: a("list-tree", 60294),
+  debugBreakpointFunctionUnverified: a("debug-breakpoint-function-unverified", 60295),
+  debugBreakpointFunction: a("debug-breakpoint-function", 60296),
+  debugBreakpointFunctionDisabled: a("debug-breakpoint-function-disabled", 60296),
+  debugStackframeActive: a("debug-stackframe-active", 60297),
+  circleSmallFilled: a("circle-small-filled", 60298),
+  debugStackframeDot: a("debug-stackframe-dot", 60298),
+  debugStackframe: a("debug-stackframe", 60299),
+  debugStackframeFocused: a("debug-stackframe-focused", 60299),
+  debugBreakpointUnsupported: a("debug-breakpoint-unsupported", 60300),
+  symbolString: a("symbol-string", 60301),
+  debugReverseContinue: a("debug-reverse-continue", 60302),
+  debugStepBack: a("debug-step-back", 60303),
+  debugRestartFrame: a("debug-restart-frame", 60304),
+  callIncoming: a("call-incoming", 60306),
+  callOutgoing: a("call-outgoing", 60307),
+  menu: a("menu", 60308),
+  expandAll: a("expand-all", 60309),
+  feedback: a("feedback", 60310),
+  gitPullRequestReviewer: a("git-pull-request-reviewer", 60310),
+  groupByRefType: a("group-by-ref-type", 60311),
+  ungroupByRefType: a("ungroup-by-ref-type", 60312),
+  account: a("account", 60313),
+  gitPullRequestAssignee: a("git-pull-request-assignee", 60313),
+  bellDot: a("bell-dot", 60314),
+  debugConsole: a("debug-console", 60315),
+  library: a("library", 60316),
+  output: a("output", 60317),
+  runAll: a("run-all", 60318),
+  syncIgnored: a("sync-ignored", 60319),
+  pinned: a("pinned", 60320),
+  githubInverted: a("github-inverted", 60321),
+  debugAlt: a("debug-alt", 60305),
+  serverProcess: a("server-process", 60322),
+  serverEnvironment: a("server-environment", 60323),
+  pass: a("pass", 60324),
+  stopCircle: a("stop-circle", 60325),
+  playCircle: a("play-circle", 60326),
+  record: a("record", 60327),
+  debugAltSmall: a("debug-alt-small", 60328),
+  vmConnect: a("vm-connect", 60329),
+  cloud: a("cloud", 60330),
+  merge: a("merge", 60331),
+  exportIcon: a("export", 60332),
+  graphLeft: a("graph-left", 60333),
+  magnet: a("magnet", 60334),
+  notebook: a("notebook", 60335),
+  redo: a("redo", 60336),
+  checkAll: a("check-all", 60337),
+  pinnedDirty: a("pinned-dirty", 60338),
+  passFilled: a("pass-filled", 60339),
+  circleLargeFilled: a("circle-large-filled", 60340),
+  circleLarge: a("circle-large", 60341),
+  circleLargeOutline: a("circle-large-outline", 60341),
+  combine: a("combine", 60342),
+  gather: a("gather", 60342),
+  table: a("table", 60343),
+  variableGroup: a("variable-group", 60344),
+  typeHierarchy: a("type-hierarchy", 60345),
+  typeHierarchySub: a("type-hierarchy-sub", 60346),
+  typeHierarchySuper: a("type-hierarchy-super", 60347),
+  gitPullRequestCreate: a("git-pull-request-create", 60348),
+  runAbove: a("run-above", 60349),
+  runBelow: a("run-below", 60350),
+  notebookTemplate: a("notebook-template", 60351),
+  debugRerun: a("debug-rerun", 60352),
+  workspaceTrusted: a("workspace-trusted", 60353),
+  workspaceUntrusted: a("workspace-untrusted", 60354),
+  workspaceUnspecified: a("workspace-unspecified", 60355),
+  terminalCmd: a("terminal-cmd", 60356),
+  terminalDebian: a("terminal-debian", 60357),
+  terminalLinux: a("terminal-linux", 60358),
+  terminalPowershell: a("terminal-powershell", 60359),
+  terminalTmux: a("terminal-tmux", 60360),
+  terminalUbuntu: a("terminal-ubuntu", 60361),
+  terminalBash: a("terminal-bash", 60362),
+  arrowSwap: a("arrow-swap", 60363),
+  copy: a("copy", 60364),
+  personAdd: a("person-add", 60365),
+  filterFilled: a("filter-filled", 60366),
+  wand: a("wand", 60367),
+  debugLineByLine: a("debug-line-by-line", 60368),
+  inspect: a("inspect", 60369),
+  layers: a("layers", 60370),
+  layersDot: a("layers-dot", 60371),
+  layersActive: a("layers-active", 60372),
+  compass: a("compass", 60373),
+  compassDot: a("compass-dot", 60374),
+  compassActive: a("compass-active", 60375),
+  azure: a("azure", 60376),
+  issueDraft: a("issue-draft", 60377),
+  gitPullRequestClosed: a("git-pull-request-closed", 60378),
+  gitPullRequestDraft: a("git-pull-request-draft", 60379),
+  debugAll: a("debug-all", 60380),
+  debugCoverage: a("debug-coverage", 60381),
+  runErrors: a("run-errors", 60382),
+  folderLibrary: a("folder-library", 60383),
+  debugContinueSmall: a("debug-continue-small", 60384),
+  beakerStop: a("beaker-stop", 60385),
+  graphLine: a("graph-line", 60386),
+  graphScatter: a("graph-scatter", 60387),
+  pieChart: a("pie-chart", 60388),
+  bracketDot: a("bracket-dot", 60389),
+  bracketError: a("bracket-error", 60390),
+  lockSmall: a("lock-small", 60391),
+  azureDevops: a("azure-devops", 60392),
+  verifiedFilled: a("verified-filled", 60393),
+  newLine: a("newline", 60394),
+  layout: a("layout", 60395),
+  layoutActivitybarLeft: a("layout-activitybar-left", 60396),
+  layoutActivitybarRight: a("layout-activitybar-right", 60397),
+  layoutPanelLeft: a("layout-panel-left", 60398),
+  layoutPanelCenter: a("layout-panel-center", 60399),
+  layoutPanelJustify: a("layout-panel-justify", 60400),
+  layoutPanelRight: a("layout-panel-right", 60401),
+  layoutPanel: a("layout-panel", 60402),
+  layoutSidebarLeft: a("layout-sidebar-left", 60403),
+  layoutSidebarRight: a("layout-sidebar-right", 60404),
+  layoutStatusbar: a("layout-statusbar", 60405),
+  layoutMenubar: a("layout-menubar", 60406),
+  layoutCentered: a("layout-centered", 60407),
+  layoutSidebarRightOff: a("layout-sidebar-right-off", 60416),
+  layoutPanelOff: a("layout-panel-off", 60417),
+  layoutSidebarLeftOff: a("layout-sidebar-left-off", 60418),
+  target: a("target", 60408),
+  indent: a("indent", 60409),
+  recordSmall: a("record-small", 60410),
+  errorSmall: a("error-small", 60411),
+  arrowCircleDown: a("arrow-circle-down", 60412),
+  arrowCircleLeft: a("arrow-circle-left", 60413),
+  arrowCircleRight: a("arrow-circle-right", 60414),
+  arrowCircleUp: a("arrow-circle-up", 60415),
+  heartFilled: a("heart-filled", 60420),
+  map: a("map", 60421),
+  mapFilled: a("map-filled", 60422),
+  circleSmall: a("circle-small", 60423),
+  bellSlash: a("bell-slash", 60424),
+  bellSlashDot: a("bell-slash-dot", 60425),
+  commentUnresolved: a("comment-unresolved", 60426),
+  gitPullRequestGoToChanges: a("git-pull-request-go-to-changes", 60427),
+  gitPullRequestNewChanges: a("git-pull-request-new-changes", 60428),
+  searchFuzzy: a("search-fuzzy", 60429),
+  commentDraft: a("comment-draft", 60430),
+  send: a("send", 60431),
+  sparkle: a("sparkle", 60432),
+  insert: a("insert", 60433),
+  mic: a("mic", 60434),
+  thumbsDownFilled: a("thumbsdown-filled", 60435),
+  thumbsUpFilled: a("thumbsup-filled", 60436),
+  coffee: a("coffee", 60437),
+  snake: a("snake", 60438),
+  game: a("game", 60439),
+  vr: a("vr", 60440),
+  chip: a("chip", 60441),
+  piano: a("piano", 60442),
+  music: a("music", 60443),
+  micFilled: a("mic-filled", 60444),
+  gitFetch: a("git-fetch", 60445),
+  copilot: a("copilot", 60446),
+  lightbulbSparkle: a("lightbulb-sparkle", 60447),
+  lightbulbSparkleAutofix: a("lightbulb-sparkle-autofix", 60447),
+  robot: a("robot", 60448),
+  sparkleFilled: a("sparkle-filled", 60449),
+  diffSingle: a("diff-single", 60450),
+  diffMultiple: a("diff-multiple", 60451),
   // derived icons, that could become separate icons
-  dialogError: l("dialog-error", "error"),
-  dialogWarning: l("dialog-warning", "warning"),
-  dialogInfo: l("dialog-info", "info"),
-  dialogClose: l("dialog-close", "close"),
-  treeItemExpanded: l("tree-item-expanded", "chevron-down"),
+  dialogError: a("dialog-error", "error"),
+  dialogWarning: a("dialog-warning", "warning"),
+  dialogInfo: a("dialog-info", "info"),
+  dialogClose: a("dialog-close", "close"),
+  treeItemExpanded: a("tree-item-expanded", "chevron-down"),
   // collapsed is done with rotation
-  treeFilterOnTypeOn: l("tree-filter-on-type-on", "list-filter"),
-  treeFilterOnTypeOff: l("tree-filter-on-type-off", "list-selection"),
-  treeFilterClear: l("tree-filter-clear", "close"),
-  treeItemLoading: l("tree-item-loading", "loading"),
-  menuSelection: l("menu-selection", "check"),
-  menuSubmenu: l("menu-submenu", "chevron-right"),
-  menuBarMore: l("menubar-more", "more"),
-  scrollbarButtonLeft: l("scrollbar-button-left", "triangle-left"),
-  scrollbarButtonRight: l("scrollbar-button-right", "triangle-right"),
-  scrollbarButtonUp: l("scrollbar-button-up", "triangle-up"),
-  scrollbarButtonDown: l("scrollbar-button-down", "triangle-down"),
-  toolBarMore: l("toolbar-more", "more"),
-  quickInputBack: l("quick-input-back", "arrow-left")
-};
-var Bt = globalThis && globalThis.__awaiter || function(e, t, n, r) {
-  function s(i) {
-    return i instanceof n ? i : new n(function(a) {
-      a(i);
-    });
-  }
-  return new (n || (n = Promise))(function(i, a) {
-    function o(h) {
-      try {
-        u(r.next(h));
-      } catch (f) {
-        a(f);
-      }
-    }
-    function c(h) {
-      try {
-        u(r.throw(h));
-      } catch (f) {
-        a(f);
-      }
-    }
-    function u(h) {
-      h.done ? i(h.value) : s(h.value).then(o, c);
-    }
-    u((r = r.apply(e, t || [])).next());
-  });
+  treeFilterOnTypeOn: a("tree-filter-on-type-on", "list-filter"),
+  treeFilterOnTypeOff: a("tree-filter-on-type-off", "list-selection"),
+  treeFilterClear: a("tree-filter-clear", "close"),
+  treeItemLoading: a("tree-item-loading", "loading"),
+  menuSelection: a("menu-selection", "check"),
+  menuSubmenu: a("menu-submenu", "chevron-right"),
+  menuBarMore: a("menubar-more", "more"),
+  scrollbarButtonLeft: a("scrollbar-button-left", "triangle-left"),
+  scrollbarButtonRight: a("scrollbar-button-right", "triangle-right"),
+  scrollbarButtonUp: a("scrollbar-button-up", "triangle-up"),
+  scrollbarButtonDown: a("scrollbar-button-down", "triangle-down"),
+  toolBarMore: a("toolbar-more", "more"),
+  quickInputBack: a("quick-input-back", "arrow-left")
 };
 class bi {
   constructor() {
@@ -4566,14 +4572,12 @@ class bi {
       !i || i !== s || (this._factories.delete(t), i.dispose());
     });
   }
-  getOrCreate(t) {
-    return Bt(this, void 0, void 0, function* () {
-      const n = this.get(t);
-      if (n)
-        return n;
-      const r = this._factories.get(t);
-      return !r || r.isResolved ? null : (yield r.resolve(), this.get(t));
-    });
+  async getOrCreate(t) {
+    const n = this.get(t);
+    if (n)
+      return n;
+    const r = this._factories.get(t);
+    return !r || r.isResolved ? null : (await r.resolve(), this.get(t));
   }
   isResolved(t) {
     if (this.get(t))
@@ -4607,16 +4611,12 @@ class _i extends je {
   dispose() {
     this._isDisposed = !0, super.dispose();
   }
-  resolve() {
-    return Bt(this, void 0, void 0, function* () {
-      return this._resolvePromise || (this._resolvePromise = this._create()), this._resolvePromise;
-    });
+  async resolve() {
+    return this._resolvePromise || (this._resolvePromise = this._create()), this._resolvePromise;
   }
-  _create() {
-    return Bt(this, void 0, void 0, function* () {
-      const t = yield this._factory.tokenizationSupport;
-      this._isResolved = !0, t && !this._isDisposed && this._register(this._registry.register(this._languageId, t));
-    });
+  async _create() {
+    const t = await this._factory.tokenizationSupport;
+    this._isResolved = !0, t && !this._isDisposed && this._register(this._registry.register(this._languageId, t));
   }
 }
 class xi {
@@ -4627,13 +4627,13 @@ class xi {
     return "(" + this.offset + ", " + this.type + ")";
   }
 }
-var hn;
+var cn;
 (function(e) {
   const t = /* @__PURE__ */ new Map();
   t.set(0, y.symbolMethod), t.set(1, y.symbolFunction), t.set(2, y.symbolConstructor), t.set(3, y.symbolField), t.set(4, y.symbolVariable), t.set(5, y.symbolClass), t.set(6, y.symbolStruct), t.set(7, y.symbolInterface), t.set(8, y.symbolModule), t.set(9, y.symbolProperty), t.set(10, y.symbolEvent), t.set(11, y.symbolOperator), t.set(12, y.symbolUnit), t.set(13, y.symbolValue), t.set(15, y.symbolEnum), t.set(14, y.symbolConstant), t.set(15, y.symbolEnum), t.set(16, y.symbolEnumMember), t.set(17, y.symbolKeyword), t.set(27, y.symbolSnippet), t.set(18, y.symbolText), t.set(19, y.symbolColor), t.set(20, y.symbolFile), t.set(21, y.symbolReference), t.set(22, y.symbolCustomColor), t.set(23, y.symbolFolder), t.set(24, y.symbolTypeParameter), t.set(25, y.account), t.set(26, y.issues);
   function n(i) {
-    let a = t.get(i);
-    return a || (console.info("No codicon found for CompletionItemKind " + i), a = y.symbolProperty), a;
+    let l = t.get(i);
+    return l || (console.info("No codicon found for CompletionItemKind " + i), l = y.symbolProperty), l;
   }
   e.toIcon = n;
   const r = /* @__PURE__ */ new Map();
@@ -4758,26 +4758,26 @@ var hn;
     26
     /* CompletionItemKind.Issue */
   );
-  function s(i, a) {
+  function s(i, l) {
     let o = r.get(i);
-    return typeof o > "u" && !a && (o = 9), o;
+    return typeof o > "u" && !l && (o = 9), o;
   }
   e.fromString = s;
+})(cn || (cn = {}));
+var hn;
+(function(e) {
+  e[e.Automatic = 0] = "Automatic", e[e.Explicit = 1] = "Explicit";
 })(hn || (hn = {}));
 var fn;
 (function(e) {
-  e[e.Automatic = 0] = "Automatic", e[e.Explicit = 1] = "Explicit";
+  e[e.Invoke = 1] = "Invoke", e[e.TriggerCharacter = 2] = "TriggerCharacter", e[e.ContentChange = 3] = "ContentChange";
 })(fn || (fn = {}));
 var dn;
 (function(e) {
-  e[e.Invoke = 1] = "Invoke", e[e.TriggerCharacter = 2] = "TriggerCharacter", e[e.ContentChange = 3] = "ContentChange";
-})(dn || (dn = {}));
-var mn;
-(function(e) {
   e[e.Text = 0] = "Text", e[e.Read = 1] = "Read", e[e.Write = 2] = "Write";
-})(mn || (mn = {}));
+})(dn || (dn = {}));
 z("Array", "array"), z("Boolean", "boolean"), z("Class", "class"), z("Constant", "constant"), z("Constructor", "constructor"), z("Enum", "enumeration"), z("EnumMember", "enumeration member"), z("Event", "event"), z("Field", "field"), z("File", "file"), z("Function", "function"), z("Interface", "interface"), z("Key", "key"), z("Method", "method"), z("Module", "module"), z("Namespace", "namespace"), z("Null", "null"), z("Number", "number"), z("Object", "object"), z("Operator", "operator"), z("Package", "package"), z("Property", "property"), z("String", "string"), z("Struct", "struct"), z("TypeParameter", "type parameter"), z("Variable", "variable");
-var gn;
+var mn;
 (function(e) {
   const t = /* @__PURE__ */ new Map();
   t.set(0, y.symbolFile), t.set(1, y.symbolModule), t.set(2, y.symbolNamespace), t.set(3, y.symbolPackage), t.set(4, y.symbolClass), t.set(5, y.symbolMethod), t.set(6, y.symbolProperty), t.set(7, y.symbolField), t.set(8, y.symbolConstructor), t.set(9, y.symbolEnum), t.set(10, y.symbolInterface), t.set(11, y.symbolFunction), t.set(12, y.symbolVariable), t.set(13, y.symbolConstant), t.set(14, y.symbolString), t.set(15, y.symbolNumber), t.set(16, y.symbolBoolean), t.set(17, y.symbolArray), t.set(18, y.symbolObject), t.set(19, y.symbolKey), t.set(20, y.symbolNull), t.set(21, y.symbolEnumMember), t.set(22, y.symbolStruct), t.set(23, y.symbolEvent), t.set(24, y.symbolOperator), t.set(25, y.symbolTypeParameter);
@@ -4786,147 +4786,151 @@ var gn;
     return s || (console.info("No codicon found for SymbolKind " + r), s = y.symbolProperty), s;
   }
   e.toIcon = n;
-})(gn || (gn = {}));
-var bn;
+})(mn || (mn = {}));
+var gn;
 (function(e) {
   function t(n) {
     return !n || typeof n != "object" ? !1 : typeof n.id == "string" && typeof n.title == "string";
   }
   e.is = t;
-})(bn || (bn = {}));
-var _n;
+})(gn || (gn = {}));
+var bn;
 (function(e) {
   e[e.Type = 1] = "Type", e[e.Parameter = 2] = "Parameter";
-})(_n || (_n = {}));
+})(bn || (bn = {}));
 new bi();
-var xn;
+var _n;
 (function(e) {
   e[e.Unknown = 0] = "Unknown", e[e.Disabled = 1] = "Disabled", e[e.Enabled = 2] = "Enabled";
+})(_n || (_n = {}));
+var xn;
+(function(e) {
+  e[e.Invoke = 1] = "Invoke", e[e.Auto = 2] = "Auto";
 })(xn || (xn = {}));
 var pn;
 (function(e) {
-  e[e.Invoke = 1] = "Invoke", e[e.Auto = 2] = "Auto";
+  e[e.None = 0] = "None", e[e.KeepWhitespace = 1] = "KeepWhitespace", e[e.InsertAsSnippet = 4] = "InsertAsSnippet";
 })(pn || (pn = {}));
+var Ln;
+(function(e) {
+  e[e.Method = 0] = "Method", e[e.Function = 1] = "Function", e[e.Constructor = 2] = "Constructor", e[e.Field = 3] = "Field", e[e.Variable = 4] = "Variable", e[e.Class = 5] = "Class", e[e.Struct = 6] = "Struct", e[e.Interface = 7] = "Interface", e[e.Module = 8] = "Module", e[e.Property = 9] = "Property", e[e.Event = 10] = "Event", e[e.Operator = 11] = "Operator", e[e.Unit = 12] = "Unit", e[e.Value = 13] = "Value", e[e.Constant = 14] = "Constant", e[e.Enum = 15] = "Enum", e[e.EnumMember = 16] = "EnumMember", e[e.Keyword = 17] = "Keyword", e[e.Text = 18] = "Text", e[e.Color = 19] = "Color", e[e.File = 20] = "File", e[e.Reference = 21] = "Reference", e[e.Customcolor = 22] = "Customcolor", e[e.Folder = 23] = "Folder", e[e.TypeParameter = 24] = "TypeParameter", e[e.User = 25] = "User", e[e.Issue = 26] = "Issue", e[e.Snippet = 27] = "Snippet";
+})(Ln || (Ln = {}));
 var vn;
 (function(e) {
-  e[e.None = 0] = "None", e[e.KeepWhitespace = 1] = "KeepWhitespace", e[e.InsertAsSnippet = 4] = "InsertAsSnippet";
+  e[e.Deprecated = 1] = "Deprecated";
 })(vn || (vn = {}));
 var wn;
 (function(e) {
-  e[e.Method = 0] = "Method", e[e.Function = 1] = "Function", e[e.Constructor = 2] = "Constructor", e[e.Field = 3] = "Field", e[e.Variable = 4] = "Variable", e[e.Class = 5] = "Class", e[e.Struct = 6] = "Struct", e[e.Interface = 7] = "Interface", e[e.Module = 8] = "Module", e[e.Property = 9] = "Property", e[e.Event = 10] = "Event", e[e.Operator = 11] = "Operator", e[e.Unit = 12] = "Unit", e[e.Value = 13] = "Value", e[e.Constant = 14] = "Constant", e[e.Enum = 15] = "Enum", e[e.EnumMember = 16] = "EnumMember", e[e.Keyword = 17] = "Keyword", e[e.Text = 18] = "Text", e[e.Color = 19] = "Color", e[e.File = 20] = "File", e[e.Reference = 21] = "Reference", e[e.Customcolor = 22] = "Customcolor", e[e.Folder = 23] = "Folder", e[e.TypeParameter = 24] = "TypeParameter", e[e.User = 25] = "User", e[e.Issue = 26] = "Issue", e[e.Snippet = 27] = "Snippet";
+  e[e.Invoke = 0] = "Invoke", e[e.TriggerCharacter = 1] = "TriggerCharacter", e[e.TriggerForIncompleteCompletions = 2] = "TriggerForIncompleteCompletions";
 })(wn || (wn = {}));
-var Ln;
-(function(e) {
-  e[e.Deprecated = 1] = "Deprecated";
-})(Ln || (Ln = {}));
 var Nn;
 (function(e) {
-  e[e.Invoke = 0] = "Invoke", e[e.TriggerCharacter = 1] = "TriggerCharacter", e[e.TriggerForIncompleteCompletions = 2] = "TriggerForIncompleteCompletions";
+  e[e.EXACT = 0] = "EXACT", e[e.ABOVE = 1] = "ABOVE", e[e.BELOW = 2] = "BELOW";
 })(Nn || (Nn = {}));
 var Sn;
 (function(e) {
-  e[e.EXACT = 0] = "EXACT", e[e.ABOVE = 1] = "ABOVE", e[e.BELOW = 2] = "BELOW";
+  e[e.NotSet = 0] = "NotSet", e[e.ContentFlush = 1] = "ContentFlush", e[e.RecoverFromMarkers = 2] = "RecoverFromMarkers", e[e.Explicit = 3] = "Explicit", e[e.Paste = 4] = "Paste", e[e.Undo = 5] = "Undo", e[e.Redo = 6] = "Redo";
 })(Sn || (Sn = {}));
 var Cn;
 (function(e) {
-  e[e.NotSet = 0] = "NotSet", e[e.ContentFlush = 1] = "ContentFlush", e[e.RecoverFromMarkers = 2] = "RecoverFromMarkers", e[e.Explicit = 3] = "Explicit", e[e.Paste = 4] = "Paste", e[e.Undo = 5] = "Undo", e[e.Redo = 6] = "Redo";
+  e[e.LF = 1] = "LF", e[e.CRLF = 2] = "CRLF";
 })(Cn || (Cn = {}));
 var An;
 (function(e) {
-  e[e.LF = 1] = "LF", e[e.CRLF = 2] = "CRLF";
+  e[e.Text = 0] = "Text", e[e.Read = 1] = "Read", e[e.Write = 2] = "Write";
 })(An || (An = {}));
 var Rn;
 (function(e) {
-  e[e.Text = 0] = "Text", e[e.Read = 1] = "Read", e[e.Write = 2] = "Write";
+  e[e.None = 0] = "None", e[e.Keep = 1] = "Keep", e[e.Brackets = 2] = "Brackets", e[e.Advanced = 3] = "Advanced", e[e.Full = 4] = "Full";
 })(Rn || (Rn = {}));
 var yn;
 (function(e) {
-  e[e.None = 0] = "None", e[e.Keep = 1] = "Keep", e[e.Brackets = 2] = "Brackets", e[e.Advanced = 3] = "Advanced", e[e.Full = 4] = "Full";
+  e[e.acceptSuggestionOnCommitCharacter = 0] = "acceptSuggestionOnCommitCharacter", e[e.acceptSuggestionOnEnter = 1] = "acceptSuggestionOnEnter", e[e.accessibilitySupport = 2] = "accessibilitySupport", e[e.accessibilityPageSize = 3] = "accessibilityPageSize", e[e.ariaLabel = 4] = "ariaLabel", e[e.ariaRequired = 5] = "ariaRequired", e[e.autoClosingBrackets = 6] = "autoClosingBrackets", e[e.autoClosingComments = 7] = "autoClosingComments", e[e.screenReaderAnnounceInlineSuggestion = 8] = "screenReaderAnnounceInlineSuggestion", e[e.autoClosingDelete = 9] = "autoClosingDelete", e[e.autoClosingOvertype = 10] = "autoClosingOvertype", e[e.autoClosingQuotes = 11] = "autoClosingQuotes", e[e.autoIndent = 12] = "autoIndent", e[e.automaticLayout = 13] = "automaticLayout", e[e.autoSurround = 14] = "autoSurround", e[e.bracketPairColorization = 15] = "bracketPairColorization", e[e.guides = 16] = "guides", e[e.codeLens = 17] = "codeLens", e[e.codeLensFontFamily = 18] = "codeLensFontFamily", e[e.codeLensFontSize = 19] = "codeLensFontSize", e[e.colorDecorators = 20] = "colorDecorators", e[e.colorDecoratorsLimit = 21] = "colorDecoratorsLimit", e[e.columnSelection = 22] = "columnSelection", e[e.comments = 23] = "comments", e[e.contextmenu = 24] = "contextmenu", e[e.copyWithSyntaxHighlighting = 25] = "copyWithSyntaxHighlighting", e[e.cursorBlinking = 26] = "cursorBlinking", e[e.cursorSmoothCaretAnimation = 27] = "cursorSmoothCaretAnimation", e[e.cursorStyle = 28] = "cursorStyle", e[e.cursorSurroundingLines = 29] = "cursorSurroundingLines", e[e.cursorSurroundingLinesStyle = 30] = "cursorSurroundingLinesStyle", e[e.cursorWidth = 31] = "cursorWidth", e[e.disableLayerHinting = 32] = "disableLayerHinting", e[e.disableMonospaceOptimizations = 33] = "disableMonospaceOptimizations", e[e.domReadOnly = 34] = "domReadOnly", e[e.dragAndDrop = 35] = "dragAndDrop", e[e.dropIntoEditor = 36] = "dropIntoEditor", e[e.emptySelectionClipboard = 37] = "emptySelectionClipboard", e[e.experimentalWhitespaceRendering = 38] = "experimentalWhitespaceRendering", e[e.extraEditorClassName = 39] = "extraEditorClassName", e[e.fastScrollSensitivity = 40] = "fastScrollSensitivity", e[e.find = 41] = "find", e[e.fixedOverflowWidgets = 42] = "fixedOverflowWidgets", e[e.folding = 43] = "folding", e[e.foldingStrategy = 44] = "foldingStrategy", e[e.foldingHighlight = 45] = "foldingHighlight", e[e.foldingImportsByDefault = 46] = "foldingImportsByDefault", e[e.foldingMaximumRegions = 47] = "foldingMaximumRegions", e[e.unfoldOnClickAfterEndOfLine = 48] = "unfoldOnClickAfterEndOfLine", e[e.fontFamily = 49] = "fontFamily", e[e.fontInfo = 50] = "fontInfo", e[e.fontLigatures = 51] = "fontLigatures", e[e.fontSize = 52] = "fontSize", e[e.fontWeight = 53] = "fontWeight", e[e.fontVariations = 54] = "fontVariations", e[e.formatOnPaste = 55] = "formatOnPaste", e[e.formatOnType = 56] = "formatOnType", e[e.glyphMargin = 57] = "glyphMargin", e[e.gotoLocation = 58] = "gotoLocation", e[e.hideCursorInOverviewRuler = 59] = "hideCursorInOverviewRuler", e[e.hover = 60] = "hover", e[e.inDiffEditor = 61] = "inDiffEditor", e[e.inlineSuggest = 62] = "inlineSuggest", e[e.letterSpacing = 63] = "letterSpacing", e[e.lightbulb = 64] = "lightbulb", e[e.lineDecorationsWidth = 65] = "lineDecorationsWidth", e[e.lineHeight = 66] = "lineHeight", e[e.lineNumbers = 67] = "lineNumbers", e[e.lineNumbersMinChars = 68] = "lineNumbersMinChars", e[e.linkedEditing = 69] = "linkedEditing", e[e.links = 70] = "links", e[e.matchBrackets = 71] = "matchBrackets", e[e.minimap = 72] = "minimap", e[e.mouseStyle = 73] = "mouseStyle", e[e.mouseWheelScrollSensitivity = 74] = "mouseWheelScrollSensitivity", e[e.mouseWheelZoom = 75] = "mouseWheelZoom", e[e.multiCursorMergeOverlapping = 76] = "multiCursorMergeOverlapping", e[e.multiCursorModifier = 77] = "multiCursorModifier", e[e.multiCursorPaste = 78] = "multiCursorPaste", e[e.multiCursorLimit = 79] = "multiCursorLimit", e[e.occurrencesHighlight = 80] = "occurrencesHighlight", e[e.overviewRulerBorder = 81] = "overviewRulerBorder", e[e.overviewRulerLanes = 82] = "overviewRulerLanes", e[e.padding = 83] = "padding", e[e.pasteAs = 84] = "pasteAs", e[e.parameterHints = 85] = "parameterHints", e[e.peekWidgetDefaultFocus = 86] = "peekWidgetDefaultFocus", e[e.definitionLinkOpensInPeek = 87] = "definitionLinkOpensInPeek", e[e.quickSuggestions = 88] = "quickSuggestions", e[e.quickSuggestionsDelay = 89] = "quickSuggestionsDelay", e[e.readOnly = 90] = "readOnly", e[e.readOnlyMessage = 91] = "readOnlyMessage", e[e.renameOnType = 92] = "renameOnType", e[e.renderControlCharacters = 93] = "renderControlCharacters", e[e.renderFinalNewline = 94] = "renderFinalNewline", e[e.renderLineHighlight = 95] = "renderLineHighlight", e[e.renderLineHighlightOnlyWhenFocus = 96] = "renderLineHighlightOnlyWhenFocus", e[e.renderValidationDecorations = 97] = "renderValidationDecorations", e[e.renderWhitespace = 98] = "renderWhitespace", e[e.revealHorizontalRightPadding = 99] = "revealHorizontalRightPadding", e[e.roundedSelection = 100] = "roundedSelection", e[e.rulers = 101] = "rulers", e[e.scrollbar = 102] = "scrollbar", e[e.scrollBeyondLastColumn = 103] = "scrollBeyondLastColumn", e[e.scrollBeyondLastLine = 104] = "scrollBeyondLastLine", e[e.scrollPredominantAxis = 105] = "scrollPredominantAxis", e[e.selectionClipboard = 106] = "selectionClipboard", e[e.selectionHighlight = 107] = "selectionHighlight", e[e.selectOnLineNumbers = 108] = "selectOnLineNumbers", e[e.showFoldingControls = 109] = "showFoldingControls", e[e.showUnused = 110] = "showUnused", e[e.snippetSuggestions = 111] = "snippetSuggestions", e[e.smartSelect = 112] = "smartSelect", e[e.smoothScrolling = 113] = "smoothScrolling", e[e.stickyScroll = 114] = "stickyScroll", e[e.stickyTabStops = 115] = "stickyTabStops", e[e.stopRenderingLineAfter = 116] = "stopRenderingLineAfter", e[e.suggest = 117] = "suggest", e[e.suggestFontSize = 118] = "suggestFontSize", e[e.suggestLineHeight = 119] = "suggestLineHeight", e[e.suggestOnTriggerCharacters = 120] = "suggestOnTriggerCharacters", e[e.suggestSelection = 121] = "suggestSelection", e[e.tabCompletion = 122] = "tabCompletion", e[e.tabIndex = 123] = "tabIndex", e[e.unicodeHighlighting = 124] = "unicodeHighlighting", e[e.unusualLineTerminators = 125] = "unusualLineTerminators", e[e.useShadowDOM = 126] = "useShadowDOM", e[e.useTabStops = 127] = "useTabStops", e[e.wordBreak = 128] = "wordBreak", e[e.wordSeparators = 129] = "wordSeparators", e[e.wordWrap = 130] = "wordWrap", e[e.wordWrapBreakAfterCharacters = 131] = "wordWrapBreakAfterCharacters", e[e.wordWrapBreakBeforeCharacters = 132] = "wordWrapBreakBeforeCharacters", e[e.wordWrapColumn = 133] = "wordWrapColumn", e[e.wordWrapOverride1 = 134] = "wordWrapOverride1", e[e.wordWrapOverride2 = 135] = "wordWrapOverride2", e[e.wrappingIndent = 136] = "wrappingIndent", e[e.wrappingStrategy = 137] = "wrappingStrategy", e[e.showDeprecated = 138] = "showDeprecated", e[e.inlayHints = 139] = "inlayHints", e[e.editorClassName = 140] = "editorClassName", e[e.pixelRatio = 141] = "pixelRatio", e[e.tabFocusMode = 142] = "tabFocusMode", e[e.layoutInfo = 143] = "layoutInfo", e[e.wrappingInfo = 144] = "wrappingInfo", e[e.defaultColorDecorators = 145] = "defaultColorDecorators", e[e.colorDecoratorsActivatedOn = 146] = "colorDecoratorsActivatedOn", e[e.inlineCompletionsAccessibilityVerbose = 147] = "inlineCompletionsAccessibilityVerbose";
 })(yn || (yn = {}));
 var Mn;
 (function(e) {
-  e[e.acceptSuggestionOnCommitCharacter = 0] = "acceptSuggestionOnCommitCharacter", e[e.acceptSuggestionOnEnter = 1] = "acceptSuggestionOnEnter", e[e.accessibilitySupport = 2] = "accessibilitySupport", e[e.accessibilityPageSize = 3] = "accessibilityPageSize", e[e.ariaLabel = 4] = "ariaLabel", e[e.ariaRequired = 5] = "ariaRequired", e[e.autoClosingBrackets = 6] = "autoClosingBrackets", e[e.autoClosingComments = 7] = "autoClosingComments", e[e.screenReaderAnnounceInlineSuggestion = 8] = "screenReaderAnnounceInlineSuggestion", e[e.autoClosingDelete = 9] = "autoClosingDelete", e[e.autoClosingOvertype = 10] = "autoClosingOvertype", e[e.autoClosingQuotes = 11] = "autoClosingQuotes", e[e.autoIndent = 12] = "autoIndent", e[e.automaticLayout = 13] = "automaticLayout", e[e.autoSurround = 14] = "autoSurround", e[e.bracketPairColorization = 15] = "bracketPairColorization", e[e.guides = 16] = "guides", e[e.codeLens = 17] = "codeLens", e[e.codeLensFontFamily = 18] = "codeLensFontFamily", e[e.codeLensFontSize = 19] = "codeLensFontSize", e[e.colorDecorators = 20] = "colorDecorators", e[e.colorDecoratorsLimit = 21] = "colorDecoratorsLimit", e[e.columnSelection = 22] = "columnSelection", e[e.comments = 23] = "comments", e[e.contextmenu = 24] = "contextmenu", e[e.copyWithSyntaxHighlighting = 25] = "copyWithSyntaxHighlighting", e[e.cursorBlinking = 26] = "cursorBlinking", e[e.cursorSmoothCaretAnimation = 27] = "cursorSmoothCaretAnimation", e[e.cursorStyle = 28] = "cursorStyle", e[e.cursorSurroundingLines = 29] = "cursorSurroundingLines", e[e.cursorSurroundingLinesStyle = 30] = "cursorSurroundingLinesStyle", e[e.cursorWidth = 31] = "cursorWidth", e[e.disableLayerHinting = 32] = "disableLayerHinting", e[e.disableMonospaceOptimizations = 33] = "disableMonospaceOptimizations", e[e.domReadOnly = 34] = "domReadOnly", e[e.dragAndDrop = 35] = "dragAndDrop", e[e.dropIntoEditor = 36] = "dropIntoEditor", e[e.emptySelectionClipboard = 37] = "emptySelectionClipboard", e[e.experimentalWhitespaceRendering = 38] = "experimentalWhitespaceRendering", e[e.extraEditorClassName = 39] = "extraEditorClassName", e[e.fastScrollSensitivity = 40] = "fastScrollSensitivity", e[e.find = 41] = "find", e[e.fixedOverflowWidgets = 42] = "fixedOverflowWidgets", e[e.folding = 43] = "folding", e[e.foldingStrategy = 44] = "foldingStrategy", e[e.foldingHighlight = 45] = "foldingHighlight", e[e.foldingImportsByDefault = 46] = "foldingImportsByDefault", e[e.foldingMaximumRegions = 47] = "foldingMaximumRegions", e[e.unfoldOnClickAfterEndOfLine = 48] = "unfoldOnClickAfterEndOfLine", e[e.fontFamily = 49] = "fontFamily", e[e.fontInfo = 50] = "fontInfo", e[e.fontLigatures = 51] = "fontLigatures", e[e.fontSize = 52] = "fontSize", e[e.fontWeight = 53] = "fontWeight", e[e.fontVariations = 54] = "fontVariations", e[e.formatOnPaste = 55] = "formatOnPaste", e[e.formatOnType = 56] = "formatOnType", e[e.glyphMargin = 57] = "glyphMargin", e[e.gotoLocation = 58] = "gotoLocation", e[e.hideCursorInOverviewRuler = 59] = "hideCursorInOverviewRuler", e[e.hover = 60] = "hover", e[e.inDiffEditor = 61] = "inDiffEditor", e[e.inlineSuggest = 62] = "inlineSuggest", e[e.letterSpacing = 63] = "letterSpacing", e[e.lightbulb = 64] = "lightbulb", e[e.lineDecorationsWidth = 65] = "lineDecorationsWidth", e[e.lineHeight = 66] = "lineHeight", e[e.lineNumbers = 67] = "lineNumbers", e[e.lineNumbersMinChars = 68] = "lineNumbersMinChars", e[e.linkedEditing = 69] = "linkedEditing", e[e.links = 70] = "links", e[e.matchBrackets = 71] = "matchBrackets", e[e.minimap = 72] = "minimap", e[e.mouseStyle = 73] = "mouseStyle", e[e.mouseWheelScrollSensitivity = 74] = "mouseWheelScrollSensitivity", e[e.mouseWheelZoom = 75] = "mouseWheelZoom", e[e.multiCursorMergeOverlapping = 76] = "multiCursorMergeOverlapping", e[e.multiCursorModifier = 77] = "multiCursorModifier", e[e.multiCursorPaste = 78] = "multiCursorPaste", e[e.multiCursorLimit = 79] = "multiCursorLimit", e[e.occurrencesHighlight = 80] = "occurrencesHighlight", e[e.overviewRulerBorder = 81] = "overviewRulerBorder", e[e.overviewRulerLanes = 82] = "overviewRulerLanes", e[e.padding = 83] = "padding", e[e.pasteAs = 84] = "pasteAs", e[e.parameterHints = 85] = "parameterHints", e[e.peekWidgetDefaultFocus = 86] = "peekWidgetDefaultFocus", e[e.definitionLinkOpensInPeek = 87] = "definitionLinkOpensInPeek", e[e.quickSuggestions = 88] = "quickSuggestions", e[e.quickSuggestionsDelay = 89] = "quickSuggestionsDelay", e[e.readOnly = 90] = "readOnly", e[e.readOnlyMessage = 91] = "readOnlyMessage", e[e.renameOnType = 92] = "renameOnType", e[e.renderControlCharacters = 93] = "renderControlCharacters", e[e.renderFinalNewline = 94] = "renderFinalNewline", e[e.renderLineHighlight = 95] = "renderLineHighlight", e[e.renderLineHighlightOnlyWhenFocus = 96] = "renderLineHighlightOnlyWhenFocus", e[e.renderValidationDecorations = 97] = "renderValidationDecorations", e[e.renderWhitespace = 98] = "renderWhitespace", e[e.revealHorizontalRightPadding = 99] = "revealHorizontalRightPadding", e[e.roundedSelection = 100] = "roundedSelection", e[e.rulers = 101] = "rulers", e[e.scrollbar = 102] = "scrollbar", e[e.scrollBeyondLastColumn = 103] = "scrollBeyondLastColumn", e[e.scrollBeyondLastLine = 104] = "scrollBeyondLastLine", e[e.scrollPredominantAxis = 105] = "scrollPredominantAxis", e[e.selectionClipboard = 106] = "selectionClipboard", e[e.selectionHighlight = 107] = "selectionHighlight", e[e.selectOnLineNumbers = 108] = "selectOnLineNumbers", e[e.showFoldingControls = 109] = "showFoldingControls", e[e.showUnused = 110] = "showUnused", e[e.snippetSuggestions = 111] = "snippetSuggestions", e[e.smartSelect = 112] = "smartSelect", e[e.smoothScrolling = 113] = "smoothScrolling", e[e.stickyScroll = 114] = "stickyScroll", e[e.stickyTabStops = 115] = "stickyTabStops", e[e.stopRenderingLineAfter = 116] = "stopRenderingLineAfter", e[e.suggest = 117] = "suggest", e[e.suggestFontSize = 118] = "suggestFontSize", e[e.suggestLineHeight = 119] = "suggestLineHeight", e[e.suggestOnTriggerCharacters = 120] = "suggestOnTriggerCharacters", e[e.suggestSelection = 121] = "suggestSelection", e[e.tabCompletion = 122] = "tabCompletion", e[e.tabIndex = 123] = "tabIndex", e[e.unicodeHighlighting = 124] = "unicodeHighlighting", e[e.unusualLineTerminators = 125] = "unusualLineTerminators", e[e.useShadowDOM = 126] = "useShadowDOM", e[e.useTabStops = 127] = "useTabStops", e[e.wordBreak = 128] = "wordBreak", e[e.wordSeparators = 129] = "wordSeparators", e[e.wordWrap = 130] = "wordWrap", e[e.wordWrapBreakAfterCharacters = 131] = "wordWrapBreakAfterCharacters", e[e.wordWrapBreakBeforeCharacters = 132] = "wordWrapBreakBeforeCharacters", e[e.wordWrapColumn = 133] = "wordWrapColumn", e[e.wordWrapOverride1 = 134] = "wordWrapOverride1", e[e.wordWrapOverride2 = 135] = "wordWrapOverride2", e[e.wrappingIndent = 136] = "wrappingIndent", e[e.wrappingStrategy = 137] = "wrappingStrategy", e[e.showDeprecated = 138] = "showDeprecated", e[e.inlayHints = 139] = "inlayHints", e[e.editorClassName = 140] = "editorClassName", e[e.pixelRatio = 141] = "pixelRatio", e[e.tabFocusMode = 142] = "tabFocusMode", e[e.layoutInfo = 143] = "layoutInfo", e[e.wrappingInfo = 144] = "wrappingInfo", e[e.defaultColorDecorators = 145] = "defaultColorDecorators", e[e.colorDecoratorsActivatedOn = 146] = "colorDecoratorsActivatedOn", e[e.inlineCompletionsAccessibilityVerbose = 147] = "inlineCompletionsAccessibilityVerbose";
+  e[e.TextDefined = 0] = "TextDefined", e[e.LF = 1] = "LF", e[e.CRLF = 2] = "CRLF";
 })(Mn || (Mn = {}));
 var En;
 (function(e) {
-  e[e.TextDefined = 0] = "TextDefined", e[e.LF = 1] = "LF", e[e.CRLF = 2] = "CRLF";
+  e[e.LF = 0] = "LF", e[e.CRLF = 1] = "CRLF";
 })(En || (En = {}));
 var kn;
 (function(e) {
-  e[e.LF = 0] = "LF", e[e.CRLF = 1] = "CRLF";
+  e[e.Left = 1] = "Left", e[e.Right = 2] = "Right";
 })(kn || (kn = {}));
 var Pn;
 (function(e) {
-  e[e.Left = 1] = "Left", e[e.Right = 2] = "Right";
+  e[e.None = 0] = "None", e[e.Indent = 1] = "Indent", e[e.IndentOutdent = 2] = "IndentOutdent", e[e.Outdent = 3] = "Outdent";
 })(Pn || (Pn = {}));
 var Fn;
 (function(e) {
-  e[e.None = 0] = "None", e[e.Indent = 1] = "Indent", e[e.IndentOutdent = 2] = "IndentOutdent", e[e.Outdent = 3] = "Outdent";
+  e[e.Both = 0] = "Both", e[e.Right = 1] = "Right", e[e.Left = 2] = "Left", e[e.None = 3] = "None";
 })(Fn || (Fn = {}));
 var Dn;
 (function(e) {
-  e[e.Both = 0] = "Both", e[e.Right = 1] = "Right", e[e.Left = 2] = "Left", e[e.None = 3] = "None";
+  e[e.Type = 1] = "Type", e[e.Parameter = 2] = "Parameter";
 })(Dn || (Dn = {}));
 var Tn;
 (function(e) {
-  e[e.Type = 1] = "Type", e[e.Parameter = 2] = "Parameter";
-})(Tn || (Tn = {}));
-var Vn;
-(function(e) {
   e[e.Automatic = 0] = "Automatic", e[e.Explicit = 1] = "Explicit";
-})(Vn || (Vn = {}));
-var qt;
+})(Tn || (Tn = {}));
+var Bt;
 (function(e) {
   e[e.DependsOnKbLayout = -1] = "DependsOnKbLayout", e[e.Unknown = 0] = "Unknown", e[e.Backspace = 1] = "Backspace", e[e.Tab = 2] = "Tab", e[e.Enter = 3] = "Enter", e[e.Shift = 4] = "Shift", e[e.Ctrl = 5] = "Ctrl", e[e.Alt = 6] = "Alt", e[e.PauseBreak = 7] = "PauseBreak", e[e.CapsLock = 8] = "CapsLock", e[e.Escape = 9] = "Escape", e[e.Space = 10] = "Space", e[e.PageUp = 11] = "PageUp", e[e.PageDown = 12] = "PageDown", e[e.End = 13] = "End", e[e.Home = 14] = "Home", e[e.LeftArrow = 15] = "LeftArrow", e[e.UpArrow = 16] = "UpArrow", e[e.RightArrow = 17] = "RightArrow", e[e.DownArrow = 18] = "DownArrow", e[e.Insert = 19] = "Insert", e[e.Delete = 20] = "Delete", e[e.Digit0 = 21] = "Digit0", e[e.Digit1 = 22] = "Digit1", e[e.Digit2 = 23] = "Digit2", e[e.Digit3 = 24] = "Digit3", e[e.Digit4 = 25] = "Digit4", e[e.Digit5 = 26] = "Digit5", e[e.Digit6 = 27] = "Digit6", e[e.Digit7 = 28] = "Digit7", e[e.Digit8 = 29] = "Digit8", e[e.Digit9 = 30] = "Digit9", e[e.KeyA = 31] = "KeyA", e[e.KeyB = 32] = "KeyB", e[e.KeyC = 33] = "KeyC", e[e.KeyD = 34] = "KeyD", e[e.KeyE = 35] = "KeyE", e[e.KeyF = 36] = "KeyF", e[e.KeyG = 37] = "KeyG", e[e.KeyH = 38] = "KeyH", e[e.KeyI = 39] = "KeyI", e[e.KeyJ = 40] = "KeyJ", e[e.KeyK = 41] = "KeyK", e[e.KeyL = 42] = "KeyL", e[e.KeyM = 43] = "KeyM", e[e.KeyN = 44] = "KeyN", e[e.KeyO = 45] = "KeyO", e[e.KeyP = 46] = "KeyP", e[e.KeyQ = 47] = "KeyQ", e[e.KeyR = 48] = "KeyR", e[e.KeyS = 49] = "KeyS", e[e.KeyT = 50] = "KeyT", e[e.KeyU = 51] = "KeyU", e[e.KeyV = 52] = "KeyV", e[e.KeyW = 53] = "KeyW", e[e.KeyX = 54] = "KeyX", e[e.KeyY = 55] = "KeyY", e[e.KeyZ = 56] = "KeyZ", e[e.Meta = 57] = "Meta", e[e.ContextMenu = 58] = "ContextMenu", e[e.F1 = 59] = "F1", e[e.F2 = 60] = "F2", e[e.F3 = 61] = "F3", e[e.F4 = 62] = "F4", e[e.F5 = 63] = "F5", e[e.F6 = 64] = "F6", e[e.F7 = 65] = "F7", e[e.F8 = 66] = "F8", e[e.F9 = 67] = "F9", e[e.F10 = 68] = "F10", e[e.F11 = 69] = "F11", e[e.F12 = 70] = "F12", e[e.F13 = 71] = "F13", e[e.F14 = 72] = "F14", e[e.F15 = 73] = "F15", e[e.F16 = 74] = "F16", e[e.F17 = 75] = "F17", e[e.F18 = 76] = "F18", e[e.F19 = 77] = "F19", e[e.F20 = 78] = "F20", e[e.F21 = 79] = "F21", e[e.F22 = 80] = "F22", e[e.F23 = 81] = "F23", e[e.F24 = 82] = "F24", e[e.NumLock = 83] = "NumLock", e[e.ScrollLock = 84] = "ScrollLock", e[e.Semicolon = 85] = "Semicolon", e[e.Equal = 86] = "Equal", e[e.Comma = 87] = "Comma", e[e.Minus = 88] = "Minus", e[e.Period = 89] = "Period", e[e.Slash = 90] = "Slash", e[e.Backquote = 91] = "Backquote", e[e.BracketLeft = 92] = "BracketLeft", e[e.Backslash = 93] = "Backslash", e[e.BracketRight = 94] = "BracketRight", e[e.Quote = 95] = "Quote", e[e.OEM_8 = 96] = "OEM_8", e[e.IntlBackslash = 97] = "IntlBackslash", e[e.Numpad0 = 98] = "Numpad0", e[e.Numpad1 = 99] = "Numpad1", e[e.Numpad2 = 100] = "Numpad2", e[e.Numpad3 = 101] = "Numpad3", e[e.Numpad4 = 102] = "Numpad4", e[e.Numpad5 = 103] = "Numpad5", e[e.Numpad6 = 104] = "Numpad6", e[e.Numpad7 = 105] = "Numpad7", e[e.Numpad8 = 106] = "Numpad8", e[e.Numpad9 = 107] = "Numpad9", e[e.NumpadMultiply = 108] = "NumpadMultiply", e[e.NumpadAdd = 109] = "NumpadAdd", e[e.NUMPAD_SEPARATOR = 110] = "NUMPAD_SEPARATOR", e[e.NumpadSubtract = 111] = "NumpadSubtract", e[e.NumpadDecimal = 112] = "NumpadDecimal", e[e.NumpadDivide = 113] = "NumpadDivide", e[e.KEY_IN_COMPOSITION = 114] = "KEY_IN_COMPOSITION", e[e.ABNT_C1 = 115] = "ABNT_C1", e[e.ABNT_C2 = 116] = "ABNT_C2", e[e.AudioVolumeMute = 117] = "AudioVolumeMute", e[e.AudioVolumeUp = 118] = "AudioVolumeUp", e[e.AudioVolumeDown = 119] = "AudioVolumeDown", e[e.BrowserSearch = 120] = "BrowserSearch", e[e.BrowserHome = 121] = "BrowserHome", e[e.BrowserBack = 122] = "BrowserBack", e[e.BrowserForward = 123] = "BrowserForward", e[e.MediaTrackNext = 124] = "MediaTrackNext", e[e.MediaTrackPrevious = 125] = "MediaTrackPrevious", e[e.MediaStop = 126] = "MediaStop", e[e.MediaPlayPause = 127] = "MediaPlayPause", e[e.LaunchMediaPlayer = 128] = "LaunchMediaPlayer", e[e.LaunchMail = 129] = "LaunchMail", e[e.LaunchApp2 = 130] = "LaunchApp2", e[e.Clear = 131] = "Clear", e[e.MAX_VALUE = 132] = "MAX_VALUE";
+})(Bt || (Bt = {}));
+var qt;
+(function(e) {
+  e[e.Hint = 1] = "Hint", e[e.Info = 2] = "Info", e[e.Warning = 4] = "Warning", e[e.Error = 8] = "Error";
 })(qt || (qt = {}));
 var It;
 (function(e) {
-  e[e.Hint = 1] = "Hint", e[e.Info = 2] = "Info", e[e.Warning = 4] = "Warning", e[e.Error = 8] = "Error";
-})(It || (It = {}));
-var Ut;
-(function(e) {
   e[e.Unnecessary = 1] = "Unnecessary", e[e.Deprecated = 2] = "Deprecated";
-})(Ut || (Ut = {}));
-var Bn;
+})(It || (It = {}));
+var Vn;
 (function(e) {
   e[e.Inline = 1] = "Inline", e[e.Gutter = 2] = "Gutter";
+})(Vn || (Vn = {}));
+var Bn;
+(function(e) {
+  e[e.UNKNOWN = 0] = "UNKNOWN", e[e.TEXTAREA = 1] = "TEXTAREA", e[e.GUTTER_GLYPH_MARGIN = 2] = "GUTTER_GLYPH_MARGIN", e[e.GUTTER_LINE_NUMBERS = 3] = "GUTTER_LINE_NUMBERS", e[e.GUTTER_LINE_DECORATIONS = 4] = "GUTTER_LINE_DECORATIONS", e[e.GUTTER_VIEW_ZONE = 5] = "GUTTER_VIEW_ZONE", e[e.CONTENT_TEXT = 6] = "CONTENT_TEXT", e[e.CONTENT_EMPTY = 7] = "CONTENT_EMPTY", e[e.CONTENT_VIEW_ZONE = 8] = "CONTENT_VIEW_ZONE", e[e.CONTENT_WIDGET = 9] = "CONTENT_WIDGET", e[e.OVERVIEW_RULER = 10] = "OVERVIEW_RULER", e[e.SCROLLBAR = 11] = "SCROLLBAR", e[e.OVERLAY_WIDGET = 12] = "OVERLAY_WIDGET", e[e.OUTSIDE_EDITOR = 13] = "OUTSIDE_EDITOR";
 })(Bn || (Bn = {}));
 var qn;
 (function(e) {
-  e[e.UNKNOWN = 0] = "UNKNOWN", e[e.TEXTAREA = 1] = "TEXTAREA", e[e.GUTTER_GLYPH_MARGIN = 2] = "GUTTER_GLYPH_MARGIN", e[e.GUTTER_LINE_NUMBERS = 3] = "GUTTER_LINE_NUMBERS", e[e.GUTTER_LINE_DECORATIONS = 4] = "GUTTER_LINE_DECORATIONS", e[e.GUTTER_VIEW_ZONE = 5] = "GUTTER_VIEW_ZONE", e[e.CONTENT_TEXT = 6] = "CONTENT_TEXT", e[e.CONTENT_EMPTY = 7] = "CONTENT_EMPTY", e[e.CONTENT_VIEW_ZONE = 8] = "CONTENT_VIEW_ZONE", e[e.CONTENT_WIDGET = 9] = "CONTENT_WIDGET", e[e.OVERVIEW_RULER = 10] = "OVERVIEW_RULER", e[e.SCROLLBAR = 11] = "SCROLLBAR", e[e.OVERLAY_WIDGET = 12] = "OVERLAY_WIDGET", e[e.OUTSIDE_EDITOR = 13] = "OUTSIDE_EDITOR";
+  e[e.TOP_RIGHT_CORNER = 0] = "TOP_RIGHT_CORNER", e[e.BOTTOM_RIGHT_CORNER = 1] = "BOTTOM_RIGHT_CORNER", e[e.TOP_CENTER = 2] = "TOP_CENTER";
 })(qn || (qn = {}));
 var In;
 (function(e) {
-  e[e.TOP_RIGHT_CORNER = 0] = "TOP_RIGHT_CORNER", e[e.BOTTOM_RIGHT_CORNER = 1] = "BOTTOM_RIGHT_CORNER", e[e.TOP_CENTER = 2] = "TOP_CENTER";
+  e[e.Left = 1] = "Left", e[e.Center = 2] = "Center", e[e.Right = 4] = "Right", e[e.Full = 7] = "Full";
 })(In || (In = {}));
 var Un;
 (function(e) {
-  e[e.Left = 1] = "Left", e[e.Center = 2] = "Center", e[e.Right = 4] = "Right", e[e.Full = 7] = "Full";
+  e[e.Left = 0] = "Left", e[e.Right = 1] = "Right", e[e.None = 2] = "None", e[e.LeftOfInjectedText = 3] = "LeftOfInjectedText", e[e.RightOfInjectedText = 4] = "RightOfInjectedText";
 })(Un || (Un = {}));
 var Hn;
 (function(e) {
-  e[e.Left = 0] = "Left", e[e.Right = 1] = "Right", e[e.None = 2] = "None", e[e.LeftOfInjectedText = 3] = "LeftOfInjectedText", e[e.RightOfInjectedText = 4] = "RightOfInjectedText";
+  e[e.Off = 0] = "Off", e[e.On = 1] = "On", e[e.Relative = 2] = "Relative", e[e.Interval = 3] = "Interval", e[e.Custom = 4] = "Custom";
 })(Hn || (Hn = {}));
 var Wn;
 (function(e) {
-  e[e.Off = 0] = "Off", e[e.On = 1] = "On", e[e.Relative = 2] = "Relative", e[e.Interval = 3] = "Interval", e[e.Custom = 4] = "Custom";
+  e[e.None = 0] = "None", e[e.Text = 1] = "Text", e[e.Blocks = 2] = "Blocks";
 })(Wn || (Wn = {}));
 var zn;
 (function(e) {
-  e[e.None = 0] = "None", e[e.Text = 1] = "Text", e[e.Blocks = 2] = "Blocks";
+  e[e.Smooth = 0] = "Smooth", e[e.Immediate = 1] = "Immediate";
 })(zn || (zn = {}));
 var $n;
 (function(e) {
-  e[e.Smooth = 0] = "Smooth", e[e.Immediate = 1] = "Immediate";
-})($n || ($n = {}));
-var On;
-(function(e) {
   e[e.Auto = 1] = "Auto", e[e.Hidden = 2] = "Hidden", e[e.Visible = 3] = "Visible";
-})(On || (On = {}));
-var Ht;
+})($n || ($n = {}));
+var Ut;
 (function(e) {
   e[e.LTR = 0] = "LTR", e[e.RTL = 1] = "RTL";
-})(Ht || (Ht = {}));
+})(Ut || (Ut = {}));
+var On;
+(function(e) {
+  e.Off = "off", e.OnCode = "onCode", e.On = "on";
+})(On || (On = {}));
 var Gn;
 (function(e) {
   e[e.Invoke = 1] = "Invoke", e[e.TriggerCharacter = 2] = "TriggerCharacter", e[e.ContentChange = 3] = "ContentChange";
@@ -4955,15 +4959,15 @@ var Zn;
 (function(e) {
   e[e.None = 0] = "None", e[e.Same = 1] = "Same", e[e.Indent = 2] = "Indent", e[e.DeepIndent = 3] = "DeepIndent";
 })(Zn || (Zn = {}));
-class Ke {
+class Ze {
   static chord(t, n) {
     return gi(t, n);
   }
 }
-Ke.CtrlCmd = 2048;
-Ke.Shift = 1024;
-Ke.Alt = 512;
-Ke.WinCtrl = 256;
+Ze.CtrlCmd = 2048;
+Ze.Shift = 1024;
+Ze.Alt = 512;
+Ze.WinCtrl = 256;
 function pi() {
   return {
     editor: void 0,
@@ -4972,15 +4976,15 @@ function pi() {
     // undefined override expected here
     CancellationTokenSource: hi,
     Emitter: ie,
-    KeyCode: qt,
-    KeyMod: Ke,
-    Position: J,
-    Range: D,
+    KeyCode: Bt,
+    KeyMod: Ze,
+    Position: Y,
+    Range: T,
     Selection: ne,
-    SelectionDirection: Ht,
-    MarkerSeverity: It,
-    MarkerTag: Ut,
-    Uri: Ce,
+    SelectionDirection: Ut,
+    MarkerSeverity: qt,
+    MarkerTag: It,
+    Uri: Se,
     Token: xi
   };
 }
@@ -5000,34 +5004,34 @@ var nr;
 (function(e) {
   e[e.Both = 0] = "Both", e[e.Right = 1] = "Right", e[e.Left = 2] = "Left", e[e.None = 3] = "None";
 })(nr || (nr = {}));
-function vi(e, t, n, r, s) {
+function Li(e, t, n, r, s) {
   if (r === 0)
     return !0;
   const i = t.charCodeAt(r - 1);
   if (e.get(i) !== 0 || i === 13 || i === 10)
     return !0;
   if (s > 0) {
-    const a = t.charCodeAt(r);
-    if (e.get(a) !== 0)
+    const l = t.charCodeAt(r);
+    if (e.get(l) !== 0)
       return !0;
   }
   return !1;
 }
-function wi(e, t, n, r, s) {
+function vi(e, t, n, r, s) {
   if (r + s === n)
     return !0;
   const i = t.charCodeAt(r + s);
   if (e.get(i) !== 0 || i === 13 || i === 10)
     return !0;
   if (s > 0) {
-    const a = t.charCodeAt(r + s - 1);
-    if (e.get(a) !== 0)
+    const l = t.charCodeAt(r + s - 1);
+    if (e.get(l) !== 0)
       return !0;
   }
   return !1;
 }
-function Li(e, t, n, r, s) {
-  return vi(e, t, n, r, s) && wi(e, t, n, r, s);
+function wi(e, t, n, r, s) {
+  return Li(e, t, n, r, s) && vi(e, t, n, r, s);
 }
 class Ni {
   constructor(t, n) {
@@ -5045,12 +5049,12 @@ class Ni {
       const s = r.index, i = r[0].length;
       if (s === this._prevMatchStartIndex && i === this._prevMatchLength) {
         if (i === 0) {
-          _s(t, n, this._searchRegex.lastIndex) > 65535 ? this._searchRegex.lastIndex += 2 : this._searchRegex.lastIndex += 1;
+          xs(t, n, this._searchRegex.lastIndex) > 65535 ? this._searchRegex.lastIndex += 2 : this._searchRegex.lastIndex += 1;
           continue;
         }
         return null;
       }
-      if (this._prevMatchStartIndex = s, this._prevMatchLength = i, !this._wordSeparators || Li(this._wordSeparators, t, n, s, i))
+      if (this._prevMatchStartIndex = s, this._prevMatchLength = i, !this._wordSeparators || wi(this._wordSeparators, t, n, s, i))
         return r;
     } while (r);
     return null;
@@ -5059,13 +5063,13 @@ class Ni {
 function Si(e, t = "Unreachable") {
   throw new Error(t);
 }
-function gt(e) {
+function mt(e) {
   if (!e()) {
     debugger;
-    e(), pr(new xe("Assertion Failed"));
+    e(), Lr(new be("Assertion Failed"));
   }
 }
-function Dr(e, t) {
+function Tr(e, t) {
   let n = 0;
   for (; n < e.length - 1; ) {
     const r = e[n], s = e[n + 1];
@@ -5077,38 +5081,36 @@ function Dr(e, t) {
 }
 class Ci {
   static computeUnicodeHighlights(t, n, r) {
-    const s = r ? r.startLineNumber : 1, i = r ? r.endLineNumber : t.getLineCount(), a = new rr(n), o = a.getCandidateCodePoints();
-    let c;
-    o === "allNonBasicAscii" ? c = new RegExp("[^\\t\\n\\r\\x20-\\x7E]", "g") : c = new RegExp(`${Ai(Array.from(o))}`, "g");
-    const u = new Ni(null, c), h = [];
+    const s = r ? r.startLineNumber : 1, i = r ? r.endLineNumber : t.getLineCount(), l = new rr(n), o = l.getCandidateCodePoints();
+    let u;
+    o === "allNonBasicAscii" ? u = new RegExp("[^\\t\\n\\r\\x20-\\x7E]", "g") : u = new RegExp(`${Ai(Array.from(o))}`, "g");
+    const c = new Ni(null, u), h = [];
     let f = !1, m, d = 0, g = 0, b = 0;
     e:
-      for (let w = s, L = i; w <= L; w++) {
-        const _ = t.getLineContent(w), x = _.length;
-        u.reset(0);
+      for (let v = s, w = i; v <= w; v++) {
+        const _ = t.getLineContent(v), x = _.length;
+        c.reset(0);
         do
-          if (m = u.next(_), m) {
+          if (m = c.next(_), m) {
             let S = m.index, N = m.index + m[0].length;
             if (S > 0) {
-              const I = _.charCodeAt(S - 1);
-              Et(I) && S--;
+              const U = _.charCodeAt(S - 1);
+              Et(U) && S--;
             }
             if (N + 1 < x) {
-              const I = _.charCodeAt(N - 1);
-              Et(I) && N++;
+              const U = _.charCodeAt(N - 1);
+              Et(U) && N++;
             }
             const R = _.substring(S, N);
-            let M = Qt(S + 1, kr, _, 0);
+            let M = jt(S + 1, kr, _, 0);
             M && M.endColumn <= S + 1 && (M = null);
-            const E = a.shouldHighlightNonBasicASCII(R, M ? M.word : null);
-            if (E !== 0) {
-              E === 3 ? d++ : E === 2 ? g++ : E === 1 ? b++ : Si();
-              const I = 1e3;
-              if (h.length >= I) {
+            const k = l.shouldHighlightNonBasicASCII(R, M ? M.word : null);
+            if (k !== 0) {
+              if (k === 3 ? d++ : k === 2 ? g++ : k === 1 ? b++ : Si(), h.length >= 1e3) {
                 f = !0;
                 break e;
               }
-              h.push(new D(w, S + 1, w, N + 1));
+              h.push(new T(v, S + 1, v, N + 1));
             }
           }
         while (m);
@@ -5132,8 +5134,8 @@ class Ci {
           /* UnicodeHighlighterReasonKind.Invisible */
         };
       case 3: {
-        const i = t.codePointAt(0), a = r.ambiguousCharacters.getPrimaryConfusable(i), o = Re.getLocales().filter((c) => !Re.getInstance(/* @__PURE__ */ new Set([...n.allowedLocales, c])).isAmbiguous(i));
-        return { kind: 0, confusableWith: String.fromCodePoint(a), notAmbiguousInLocales: o };
+        const i = t.codePointAt(0), l = r.ambiguousCharacters.getPrimaryConfusable(i), o = Re.getLocales().filter((u) => !Re.getInstance(/* @__PURE__ */ new Set([...n.allowedLocales, u])).isAmbiguous(i));
+        return { kind: 0, confusableWith: String.fromCodePoint(l), notAmbiguousInLocales: o };
       }
       case 1:
         return {
@@ -5144,7 +5146,7 @@ class Ci {
   }
 }
 function Ai(e, t) {
-  return `[${hs(e.map((r) => String.fromCodePoint(r)).join(""))}]`;
+  return `[${fs(e.map((r) => String.fromCodePoint(r)).join(""))}]`;
 }
 class rr {
   constructor(t) {
@@ -5155,7 +5157,7 @@ class rr {
       return "allNonBasicAscii";
     const t = /* @__PURE__ */ new Set();
     if (this.options.invisibleCharacters)
-      for (const n of pe.codePoints)
+      for (const n of _e.codePoints)
         sr(String.fromCodePoint(n)) || t.add(n);
     if (this.options.ambiguousCharacters)
       for (const n of this.ambiguousCharacters.getConfusableCodePoints())
@@ -5172,14 +5174,14 @@ class rr {
       return 1;
     let s = !1, i = !1;
     if (n)
-      for (const a of n) {
-        const o = a.codePointAt(0), c = ps(a);
-        s = s || c, !c && !this.ambiguousCharacters.isAmbiguous(o) && !pe.isInvisibleCharacter(o) && (i = !0);
+      for (const l of n) {
+        const o = l.codePointAt(0), u = Ls(l);
+        s = s || u, !u && !this.ambiguousCharacters.isAmbiguous(o) && !_e.isInvisibleCharacter(o) && (i = !0);
       }
     return (
       /* Don't allow mixing weird looking characters with ASCII */
       !s && /* Is there an obviously weird looking character? */
-      i ? 0 : this.options.invisibleCharacters && !sr(t) && pe.isInvisibleCharacter(r) ? 2 : this.options.ambiguousCharacters && this.ambiguousCharacters.isAmbiguous(r) ? 3 : 0
+      i ? 0 : this.options.invisibleCharacters && !sr(t) && _e.isInvisibleCharacter(r) ? 2 : this.options.ambiguousCharacters && this.ambiguousCharacters.isAmbiguous(r) ? 3 : 0
     );
   }
 }
@@ -5187,7 +5189,7 @@ function sr(e) {
   return e === " " || e === `
 ` || e === "	";
 }
-class ut {
+class ot {
   constructor(t, n, r) {
     this.changes = t, this.moves = n, this.hitTimeout = r;
   }
@@ -5197,7 +5199,7 @@ class Ri {
     this.lineRangeMapping = t, this.changes = n;
   }
 }
-class T {
+class D {
   static addRange(t, n) {
     let r = 0;
     for (; r < n.length && n[r].endExclusive < t.start; )
@@ -5208,32 +5210,35 @@ class T {
     if (r === s)
       n.splice(r, 0, t);
     else {
-      const i = Math.min(t.start, n[r].start), a = Math.max(t.endExclusive, n[s - 1].endExclusive);
-      n.splice(r, s - r, new T(i, a));
+      const i = Math.min(t.start, n[r].start), l = Math.max(t.endExclusive, n[s - 1].endExclusive);
+      n.splice(r, s - r, new D(i, l));
     }
   }
   static tryCreate(t, n) {
     if (!(t > n))
-      return new T(t, n);
+      return new D(t, n);
   }
   static ofLength(t) {
-    return new T(0, t);
+    return new D(0, t);
+  }
+  static ofStartAndLength(t, n) {
+    return new D(t, t + n);
   }
   constructor(t, n) {
     if (this.start = t, this.endExclusive = n, t > n)
-      throw new xe(`Invalid range: ${this.toString()}`);
+      throw new be(`Invalid range: ${this.toString()}`);
   }
   get isEmpty() {
     return this.start === this.endExclusive;
   }
   delta(t) {
-    return new T(this.start + t, this.endExclusive + t);
+    return new D(this.start + t, this.endExclusive + t);
   }
   deltaStart(t) {
-    return new T(this.start + t, this.endExclusive);
+    return new D(this.start + t, this.endExclusive);
   }
   deltaEnd(t) {
-    return new T(this.start, this.endExclusive + t);
+    return new D(this.start, this.endExclusive + t);
   }
   get length() {
     return this.endExclusive - this.start;
@@ -5255,7 +5260,7 @@ class T {
    * The joined range is the smallest range that contains both ranges.
    */
   join(t) {
-    return new T(Math.min(this.start, t.start), Math.max(this.endExclusive, t.endExclusive));
+    return new D(Math.min(this.start, t.start), Math.max(this.endExclusive, t.endExclusive));
   }
   /**
    * for all numbers n: range1.contains(n) and range2.contains(n) <=> range1.intersect(range2).contains(n)
@@ -5266,7 +5271,13 @@ class T {
   intersect(t) {
     const n = Math.max(this.start, t.start), r = Math.min(this.endExclusive, t.endExclusive);
     if (n <= r)
-      return new T(n, r);
+      return new D(n, r);
+  }
+  isBefore(t) {
+    return this.endExclusive <= t.start;
+  }
+  isAfter(t) {
+    return this.start >= t.endExclusive;
   }
   slice(t) {
     return t.slice(this.start, this.endExclusive);
@@ -5277,7 +5288,7 @@ class T {
    */
   clip(t) {
     if (this.isEmpty)
-      throw new xe(`Invalid clipping range: ${this.toString()}`);
+      throw new be(`Invalid clipping range: ${this.toString()}`);
     return Math.max(this.start, Math.min(this.endExclusive - 1, t));
   }
   /**
@@ -5288,7 +5299,7 @@ class T {
    */
   clipCyclic(t) {
     if (this.isEmpty)
-      throw new xe(`Invalid clipping range: ${this.toString()}`);
+      throw new be(`Invalid clipping range: ${this.toString()}`);
     return t < this.start ? this.endExclusive - (this.start - t) % this.length : t >= this.endExclusive ? this.start + (t - this.start) % this.length : t;
   }
   forEach(t) {
@@ -5296,31 +5307,31 @@ class T {
       t(n);
   }
 }
-function Xe(e, t) {
-  const n = Je(e, t);
+function Ue(e, t) {
+  const n = Xe(e, t);
   return n === -1 ? void 0 : e[n];
 }
-function Je(e, t, n = 0, r = e.length) {
+function Xe(e, t, n = 0, r = e.length) {
   let s = n, i = r;
   for (; s < i; ) {
-    const a = Math.floor((s + i) / 2);
-    t(e[a]) ? s = a + 1 : i = a;
+    const l = Math.floor((s + i) / 2);
+    t(e[l]) ? s = l + 1 : i = l;
   }
   return s - 1;
 }
 function yi(e, t) {
-  const n = Wt(e, t);
+  const n = Ht(e, t);
   return n === e.length ? void 0 : e[n];
 }
-function Wt(e, t, n = 0, r = e.length) {
+function Ht(e, t, n = 0, r = e.length) {
   let s = n, i = r;
   for (; s < i; ) {
-    const a = Math.floor((s + i) / 2);
-    t(e[a]) ? i = a : s = a + 1;
+    const l = Math.floor((s + i) / 2);
+    t(e[l]) ? i = l : s = l + 1;
   }
   return s;
 }
-class et {
+class Ke {
   constructor(t) {
     this._array = t, this._findLastMonotonousLastIdx = 0;
   }
@@ -5329,7 +5340,7 @@ class et {
    * For subsequent calls, current predicate must be weaker than (or equal to) the previous predicate, i.e. more entries must be `true`.
    */
   findLastMonotonous(t) {
-    if (et.assertInvariants) {
+    if (Ke.assertInvariants) {
       if (this._prevFindLastPredicate) {
         for (const r of this._array)
           if (this._prevFindLastPredicate(r) && !t(r))
@@ -5337,14 +5348,17 @@ class et {
       }
       this._prevFindLastPredicate = t;
     }
-    const n = Je(this._array, t, this._findLastMonotonousLastIdx);
+    const n = Xe(this._array, t, this._findLastMonotonousLastIdx);
     return this._findLastMonotonousLastIdx = n + 1, n === -1 ? void 0 : this._array[n];
   }
 }
-et.assertInvariants = !1;
+Ke.assertInvariants = !1;
 class V {
   static fromRange(t) {
     return new V(t.startLineNumber, t.endLineNumber);
+  }
+  static fromRangeInclusive(t) {
+    return new V(t.startLineNumber, t.endLineNumber + 1);
   }
   /**
    * @param lineRanges An array of sorted line ranges.
@@ -5352,9 +5366,9 @@ class V {
   static joinMany(t) {
     if (t.length === 0)
       return [];
-    let n = new oe(t[0].slice());
+    let n = new le(t[0].slice());
     for (let r = 1; r < t.length; r++)
-      n = n.getUnion(new oe(t[r].slice()));
+      n = n.getUnion(new le(t[r].slice()));
     return n.ranges;
   }
   static ofLength(t, n) {
@@ -5368,7 +5382,7 @@ class V {
   }
   constructor(t, n) {
     if (t > n)
-      throw new xe(`startLineNumber ${t} cannot be after endLineNumberExclusive ${n}`);
+      throw new be(`startLineNumber ${t} cannot be after endLineNumberExclusive ${n}`);
     this.startLineNumber = t, this.endLineNumberExclusive = n;
   }
   /**
@@ -5426,10 +5440,10 @@ class V {
     return this.startLineNumber === t.startLineNumber && this.endLineNumberExclusive === t.endLineNumberExclusive;
   }
   toInclusiveRange() {
-    return this.isEmpty ? null : new D(this.startLineNumber, 1, this.endLineNumberExclusive - 1, Number.MAX_SAFE_INTEGER);
+    return this.isEmpty ? null : new T(this.startLineNumber, 1, this.endLineNumberExclusive - 1, Number.MAX_SAFE_INTEGER);
   }
   toExclusiveRange() {
-    return new D(this.startLineNumber, 1, this.endLineNumberExclusive, 1);
+    return new T(this.startLineNumber, 1, this.endLineNumberExclusive, 1);
   }
   mapToLineArray(t) {
     const n = [];
@@ -5455,10 +5469,10 @@ class V {
    * @internal
    */
   toOffsetRange() {
-    return new T(this.startLineNumber - 1, this.endLineNumberExclusive - 1);
+    return new D(this.startLineNumber - 1, this.endLineNumberExclusive - 1);
   }
 }
-class oe {
+class le {
   constructor(t = []) {
     this._normalizedRanges = t;
   }
@@ -5468,7 +5482,7 @@ class oe {
   addRange(t) {
     if (t.length === 0)
       return;
-    const n = Wt(this._normalizedRanges, (s) => s.endLineNumberExclusive >= t.startLineNumber), r = Je(this._normalizedRanges, (s) => s.startLineNumber <= t.endLineNumberExclusive) + 1;
+    const n = Ht(this._normalizedRanges, (s) => s.endLineNumberExclusive >= t.startLineNumber), r = Xe(this._normalizedRanges, (s) => s.startLineNumber <= t.endLineNumberExclusive) + 1;
     if (n === r)
       this._normalizedRanges.splice(n, 0, t);
     else if (n === r - 1) {
@@ -5480,8 +5494,12 @@ class oe {
     }
   }
   contains(t) {
-    const n = Xe(this._normalizedRanges, (r) => r.startLineNumber <= t);
+    const n = Ue(this._normalizedRanges, (r) => r.startLineNumber <= t);
     return !!n && n.endLineNumberExclusive > t;
+  }
+  intersects(t) {
+    const n = Ue(this._normalizedRanges, (r) => r.startLineNumber < t.endLineNumberExclusive);
+    return !!n && n.endLineNumberExclusive > t.startLineNumber;
   }
   getUnion(t) {
     if (this._normalizedRanges.length === 0)
@@ -5491,30 +5509,30 @@ class oe {
     const n = [];
     let r = 0, s = 0, i = null;
     for (; r < this._normalizedRanges.length || s < t._normalizedRanges.length; ) {
-      let a = null;
+      let l = null;
       if (r < this._normalizedRanges.length && s < t._normalizedRanges.length) {
-        const o = this._normalizedRanges[r], c = t._normalizedRanges[s];
-        o.startLineNumber < c.startLineNumber ? (a = o, r++) : (a = c, s++);
+        const o = this._normalizedRanges[r], u = t._normalizedRanges[s];
+        o.startLineNumber < u.startLineNumber ? (l = o, r++) : (l = u, s++);
       } else
-        r < this._normalizedRanges.length ? (a = this._normalizedRanges[r], r++) : (a = t._normalizedRanges[s], s++);
-      i === null ? i = a : i.endLineNumberExclusive >= a.startLineNumber ? i = new V(i.startLineNumber, Math.max(i.endLineNumberExclusive, a.endLineNumberExclusive)) : (n.push(i), i = a);
+        r < this._normalizedRanges.length ? (l = this._normalizedRanges[r], r++) : (l = t._normalizedRanges[s], s++);
+      i === null ? i = l : i.endLineNumberExclusive >= l.startLineNumber ? i = new V(i.startLineNumber, Math.max(i.endLineNumberExclusive, l.endLineNumberExclusive)) : (n.push(i), i = l);
     }
-    return i !== null && n.push(i), new oe(n);
+    return i !== null && n.push(i), new le(n);
   }
   /**
    * Subtracts all ranges in this set from `range` and returns the result.
    */
   subtractFrom(t) {
-    const n = Wt(this._normalizedRanges, (a) => a.endLineNumberExclusive >= t.startLineNumber), r = Je(this._normalizedRanges, (a) => a.startLineNumber <= t.endLineNumberExclusive) + 1;
+    const n = Ht(this._normalizedRanges, (l) => l.endLineNumberExclusive >= t.startLineNumber), r = Xe(this._normalizedRanges, (l) => l.startLineNumber <= t.endLineNumberExclusive) + 1;
     if (n === r)
-      return new oe([t]);
+      return new le([t]);
     const s = [];
     let i = t.startLineNumber;
-    for (let a = n; a < r; a++) {
-      const o = this._normalizedRanges[a];
+    for (let l = n; l < r; l++) {
+      const o = this._normalizedRanges[l];
       o.startLineNumber > i && s.push(new V(i, o.startLineNumber)), i = o.endLineNumberExclusive;
     }
-    return i < t.endLineNumberExclusive && s.push(new V(i, t.endLineNumberExclusive)), new oe(s);
+    return i < t.endLineNumberExclusive && s.push(new V(i, t.endLineNumberExclusive)), new le(s);
   }
   toString() {
     return this._normalizedRanges.map((t) => t.toString()).join(", ");
@@ -5523,24 +5541,24 @@ class oe {
     const n = [];
     let r = 0, s = 0;
     for (; r < this._normalizedRanges.length && s < t._normalizedRanges.length; ) {
-      const i = this._normalizedRanges[r], a = t._normalizedRanges[s], o = i.intersect(a);
-      o && !o.isEmpty && n.push(o), i.endLineNumberExclusive < a.endLineNumberExclusive ? r++ : s++;
+      const i = this._normalizedRanges[r], l = t._normalizedRanges[s], o = i.intersect(l);
+      o && !o.isEmpty && n.push(o), i.endLineNumberExclusive < l.endLineNumberExclusive ? r++ : s++;
     }
-    return new oe(n);
+    return new le(n);
   }
   getWithDelta(t) {
-    return new oe(this._normalizedRanges.map((n) => n.delta(t)));
+    return new le(this._normalizedRanges.map((n) => n.delta(t)));
   }
 }
 class Le {
   static inverse(t, n, r) {
     const s = [];
-    let i = 1, a = 1;
-    for (const c of t) {
-      const u = new fe(new V(i, c.original.startLineNumber), new V(a, c.modified.startLineNumber), void 0);
-      u.modified.isEmpty || s.push(u), i = c.original.endLineNumberExclusive, a = c.modified.endLineNumberExclusive;
+    let i = 1, l = 1;
+    for (const u of t) {
+      const c = new he(new V(i, u.original.startLineNumber), new V(l, u.modified.startLineNumber), void 0);
+      c.modified.isEmpty || s.push(c), i = u.original.endLineNumberExclusive, l = u.modified.endLineNumberExclusive;
     }
-    const o = new fe(new V(i, n + 1), new V(a, r + 1), void 0);
+    const o = new he(new V(i, n + 1), new V(l, r + 1), void 0);
     return o.modified.isEmpty || s.push(o), s;
   }
   constructor(t, n) {
@@ -5556,16 +5574,16 @@ class Le {
     return new Le(this.original.join(t.original), this.modified.join(t.modified));
   }
 }
-class fe extends Le {
+class he extends Le {
   constructor(t, n, r) {
     super(t, n), this.innerChanges = r;
   }
   flip() {
     var t;
-    return new fe(this.modified, this.original, (t = this.innerChanges) === null || t === void 0 ? void 0 : t.map((n) => n.flip()));
+    return new he(this.modified, this.original, (t = this.innerChanges) === null || t === void 0 ? void 0 : t.map((n) => n.flip()));
   }
 }
-class Ye {
+class Je {
   constructor(t, n) {
     this.originalRange = t, this.modifiedRange = n;
   }
@@ -5573,41 +5591,41 @@ class Ye {
     return `{${this.originalRange.toString()}->${this.modifiedRange.toString()}}`;
   }
   flip() {
-    return new Ye(this.modifiedRange, this.originalRange);
+    return new Je(this.modifiedRange, this.originalRange);
   }
 }
 const Mi = 3;
 class Ei {
   computeDiff(t, n, r) {
     var s;
-    const a = new Fi(t, n, {
+    const l = new Fi(t, n, {
       maxComputationTime: r.maxComputationTimeMs,
       shouldIgnoreTrimWhitespace: r.ignoreTrimWhitespace,
       shouldComputeCharChanges: !0,
       shouldMakePrettyDiff: !0,
       shouldPostProcessCharChanges: !0
     }).computeDiff(), o = [];
-    let c = null;
-    for (const u of a.changes) {
+    let u = null;
+    for (const c of l.changes) {
       let h;
-      u.originalEndLineNumber === 0 ? h = new V(u.originalStartLineNumber + 1, u.originalStartLineNumber + 1) : h = new V(u.originalStartLineNumber, u.originalEndLineNumber + 1);
+      c.originalEndLineNumber === 0 ? h = new V(c.originalStartLineNumber + 1, c.originalStartLineNumber + 1) : h = new V(c.originalStartLineNumber, c.originalEndLineNumber + 1);
       let f;
-      u.modifiedEndLineNumber === 0 ? f = new V(u.modifiedStartLineNumber + 1, u.modifiedStartLineNumber + 1) : f = new V(u.modifiedStartLineNumber, u.modifiedEndLineNumber + 1);
-      let m = new fe(h, f, (s = u.charChanges) === null || s === void 0 ? void 0 : s.map((d) => new Ye(new D(d.originalStartLineNumber, d.originalStartColumn, d.originalEndLineNumber, d.originalEndColumn), new D(d.modifiedStartLineNumber, d.modifiedStartColumn, d.modifiedEndLineNumber, d.modifiedEndColumn))));
-      c && (c.modified.endLineNumberExclusive === m.modified.startLineNumber || c.original.endLineNumberExclusive === m.original.startLineNumber) && (m = new fe(c.original.join(m.original), c.modified.join(m.modified), c.innerChanges && m.innerChanges ? c.innerChanges.concat(m.innerChanges) : void 0), o.pop()), o.push(m), c = m;
+      c.modifiedEndLineNumber === 0 ? f = new V(c.modifiedStartLineNumber + 1, c.modifiedStartLineNumber + 1) : f = new V(c.modifiedStartLineNumber, c.modifiedEndLineNumber + 1);
+      let m = new he(h, f, (s = c.charChanges) === null || s === void 0 ? void 0 : s.map((d) => new Je(new T(d.originalStartLineNumber, d.originalStartColumn, d.originalEndLineNumber, d.originalEndColumn), new T(d.modifiedStartLineNumber, d.modifiedStartColumn, d.modifiedEndLineNumber, d.modifiedEndColumn))));
+      u && (u.modified.endLineNumberExclusive === m.modified.startLineNumber || u.original.endLineNumberExclusive === m.original.startLineNumber) && (m = new he(u.original.join(m.original), u.modified.join(m.modified), u.innerChanges && m.innerChanges ? u.innerChanges.concat(m.innerChanges) : void 0), o.pop()), o.push(m), u = m;
     }
-    return gt(() => Dr(o, (u, h) => h.original.startLineNumber - u.original.endLineNumberExclusive === h.modified.startLineNumber - u.modified.endLineNumberExclusive && // There has to be an unchanged line in between (otherwise both diffs should have been joined)
-    u.original.endLineNumberExclusive < h.original.startLineNumber && u.modified.endLineNumberExclusive < h.modified.startLineNumber)), new ut(o, [], a.quitEarly);
+    return mt(() => Tr(o, (c, h) => h.original.startLineNumber - c.original.endLineNumberExclusive === h.modified.startLineNumber - c.modified.endLineNumberExclusive && // There has to be an unchanged line in between (otherwise both diffs should have been joined)
+    c.original.endLineNumberExclusive < h.original.startLineNumber && c.modified.endLineNumberExclusive < h.modified.startLineNumber)), new ot(o, [], l.quitEarly);
   }
 }
-function Tr(e, t, n, r) {
-  return new _e(e, t, n).ComputeDiff(r);
+function Vr(e, t, n, r) {
+  return new ge(e, t, n).ComputeDiff(r);
 }
 let ir = class {
   constructor(t) {
     const n = [], r = [];
     for (let s = 0, i = t.length; s < i; s++)
-      n[s] = zt(t[s], 1), r[s] = $t(t[s], 1);
+      n[s] = Wt(t[s], 1), r[s] = zt(t[s], 1);
     this.lines = t, this._startColumns = n, this._endColumns = r;
   }
   getElements() {
@@ -5626,15 +5644,15 @@ let ir = class {
     return t + 1;
   }
   createCharSequence(t, n, r) {
-    const s = [], i = [], a = [];
+    const s = [], i = [], l = [];
     let o = 0;
-    for (let c = n; c <= r; c++) {
-      const u = this.lines[c], h = t ? this._startColumns[c] : 1, f = t ? this._endColumns[c] : u.length + 1;
+    for (let u = n; u <= r; u++) {
+      const c = this.lines[u], h = t ? this._startColumns[u] : 1, f = t ? this._endColumns[u] : c.length + 1;
       for (let m = h; m < f; m++)
-        s[o] = u.charCodeAt(m - 1), i[o] = c + 1, a[o] = m, o++;
-      !t && c < r && (s[o] = 10, i[o] = c + 1, a[o] = u.length + 1, o++);
+        s[o] = c.charCodeAt(m - 1), i[o] = u + 1, l[o] = m, o++;
+      !t && u < r && (s[o] = 10, i[o] = u + 1, l[o] = c.length + 1, o++);
     }
-    return new ki(s, i, a);
+    return new ki(s, i, l);
   }
 };
 class ki {
@@ -5665,12 +5683,12 @@ class ki {
   }
 }
 class Ve {
-  constructor(t, n, r, s, i, a, o, c) {
-    this.originalStartLineNumber = t, this.originalStartColumn = n, this.originalEndLineNumber = r, this.originalEndColumn = s, this.modifiedStartLineNumber = i, this.modifiedStartColumn = a, this.modifiedEndLineNumber = o, this.modifiedEndColumn = c;
+  constructor(t, n, r, s, i, l, o, u) {
+    this.originalStartLineNumber = t, this.originalStartColumn = n, this.originalEndLineNumber = r, this.originalEndColumn = s, this.modifiedStartLineNumber = i, this.modifiedStartColumn = l, this.modifiedEndLineNumber = o, this.modifiedEndColumn = u;
   }
   static createFromDiffChange(t, n, r) {
-    const s = n.getStartLineNumber(t.originalStart), i = n.getStartColumn(t.originalStart), a = n.getEndLineNumber(t.originalStart + t.originalLength - 1), o = n.getEndColumn(t.originalStart + t.originalLength - 1), c = r.getStartLineNumber(t.modifiedStart), u = r.getStartColumn(t.modifiedStart), h = r.getEndLineNumber(t.modifiedStart + t.modifiedLength - 1), f = r.getEndColumn(t.modifiedStart + t.modifiedLength - 1);
-    return new Ve(s, i, a, o, c, u, h, f);
+    const s = n.getStartLineNumber(t.originalStart), i = n.getStartColumn(t.originalStart), l = n.getEndLineNumber(t.originalStart + t.originalLength - 1), o = n.getEndColumn(t.originalStart + t.originalLength - 1), u = r.getStartLineNumber(t.modifiedStart), c = r.getStartColumn(t.modifiedStart), h = r.getEndLineNumber(t.modifiedStart + t.modifiedLength - 1), f = r.getEndColumn(t.modifiedStart + t.modifiedLength - 1);
+    return new Ve(s, i, l, o, u, c, h, f);
   }
 }
 function Pi(e) {
@@ -5679,8 +5697,8 @@ function Pi(e) {
   const t = [e[0]];
   let n = t[0];
   for (let r = 1, s = e.length; r < s; r++) {
-    const i = e[r], a = i.originalStart - (n.originalStart + n.originalLength), o = i.modifiedStart - (n.modifiedStart + n.modifiedLength);
-    Math.min(a, o) < Mi ? (n.originalLength = i.originalStart + i.originalLength - n.originalStart, n.modifiedLength = i.modifiedStart + i.modifiedLength - n.modifiedStart) : (t.push(i), n = i);
+    const i = e[r], l = i.originalStart - (n.originalStart + n.originalLength), o = i.modifiedStart - (n.modifiedStart + n.modifiedLength);
+    Math.min(l, o) < Mi ? (n.originalLength = i.originalStart + i.originalLength - n.originalStart, n.modifiedLength = i.modifiedStart + i.modifiedLength - n.modifiedStart) : (t.push(i), n = i);
   }
   return t;
 }
@@ -5688,18 +5706,18 @@ class Oe {
   constructor(t, n, r, s, i) {
     this.originalStartLineNumber = t, this.originalEndLineNumber = n, this.modifiedStartLineNumber = r, this.modifiedEndLineNumber = s, this.charChanges = i;
   }
-  static createFromDiffResult(t, n, r, s, i, a, o) {
-    let c, u, h, f, m;
-    if (n.originalLength === 0 ? (c = r.getStartLineNumber(n.originalStart) - 1, u = 0) : (c = r.getStartLineNumber(n.originalStart), u = r.getEndLineNumber(n.originalStart + n.originalLength - 1)), n.modifiedLength === 0 ? (h = s.getStartLineNumber(n.modifiedStart) - 1, f = 0) : (h = s.getStartLineNumber(n.modifiedStart), f = s.getEndLineNumber(n.modifiedStart + n.modifiedLength - 1)), a && n.originalLength > 0 && n.originalLength < 20 && n.modifiedLength > 0 && n.modifiedLength < 20 && i()) {
+  static createFromDiffResult(t, n, r, s, i, l, o) {
+    let u, c, h, f, m;
+    if (n.originalLength === 0 ? (u = r.getStartLineNumber(n.originalStart) - 1, c = 0) : (u = r.getStartLineNumber(n.originalStart), c = r.getEndLineNumber(n.originalStart + n.originalLength - 1)), n.modifiedLength === 0 ? (h = s.getStartLineNumber(n.modifiedStart) - 1, f = 0) : (h = s.getStartLineNumber(n.modifiedStart), f = s.getEndLineNumber(n.modifiedStart + n.modifiedLength - 1)), l && n.originalLength > 0 && n.originalLength < 20 && n.modifiedLength > 0 && n.modifiedLength < 20 && i()) {
       const d = r.createCharSequence(t, n.originalStart, n.originalStart + n.originalLength - 1), g = s.createCharSequence(t, n.modifiedStart, n.modifiedStart + n.modifiedLength - 1);
       if (d.getElements().length > 0 && g.getElements().length > 0) {
-        let b = Tr(d, g, i, !0).changes;
+        let b = Vr(d, g, i, !0).changes;
         o && (b = Pi(b)), m = [];
-        for (let w = 0, L = b.length; w < L; w++)
-          m.push(Ve.createFromDiffChange(b[w], d, g));
+        for (let v = 0, w = b.length; v < w; v++)
+          m.push(Ve.createFromDiffChange(b[v], d, g));
       }
     }
-    return new Oe(c, u, h, f, m);
+    return new Oe(u, c, h, f, m);
   }
 }
 class Fi {
@@ -5732,74 +5750,74 @@ class Fi {
           charChanges: void 0
         }]
       };
-    const t = Tr(this.original, this.modified, this.continueLineDiff, this.shouldMakePrettyDiff), n = t.changes, r = t.quitEarly;
+    const t = Vr(this.original, this.modified, this.continueLineDiff, this.shouldMakePrettyDiff), n = t.changes, r = t.quitEarly;
     if (this.shouldIgnoreTrimWhitespace) {
       const o = [];
-      for (let c = 0, u = n.length; c < u; c++)
-        o.push(Oe.createFromDiffResult(this.shouldIgnoreTrimWhitespace, n[c], this.original, this.modified, this.continueCharDiff, this.shouldComputeCharChanges, this.shouldPostProcessCharChanges));
+      for (let u = 0, c = n.length; u < c; u++)
+        o.push(Oe.createFromDiffResult(this.shouldIgnoreTrimWhitespace, n[u], this.original, this.modified, this.continueCharDiff, this.shouldComputeCharChanges, this.shouldPostProcessCharChanges));
       return {
         quitEarly: r,
         changes: o
       };
     }
     const s = [];
-    let i = 0, a = 0;
-    for (let o = -1, c = n.length; o < c; o++) {
-      const u = o + 1 < c ? n[o + 1] : null, h = u ? u.originalStart : this.originalLines.length, f = u ? u.modifiedStart : this.modifiedLines.length;
-      for (; i < h && a < f; ) {
-        const m = this.originalLines[i], d = this.modifiedLines[a];
+    let i = 0, l = 0;
+    for (let o = -1, u = n.length; o < u; o++) {
+      const c = o + 1 < u ? n[o + 1] : null, h = c ? c.originalStart : this.originalLines.length, f = c ? c.modifiedStart : this.modifiedLines.length;
+      for (; i < h && l < f; ) {
+        const m = this.originalLines[i], d = this.modifiedLines[l];
         if (m !== d) {
           {
-            let g = zt(m, 1), b = zt(d, 1);
+            let g = Wt(m, 1), b = Wt(d, 1);
             for (; g > 1 && b > 1; ) {
-              const w = m.charCodeAt(g - 2), L = d.charCodeAt(b - 2);
-              if (w !== L)
+              const v = m.charCodeAt(g - 2), w = d.charCodeAt(b - 2);
+              if (v !== w)
                 break;
               g--, b--;
             }
-            (g > 1 || b > 1) && this._pushTrimWhitespaceCharChange(s, i + 1, 1, g, a + 1, 1, b);
+            (g > 1 || b > 1) && this._pushTrimWhitespaceCharChange(s, i + 1, 1, g, l + 1, 1, b);
           }
           {
-            let g = $t(m, 1), b = $t(d, 1);
-            const w = m.length + 1, L = d.length + 1;
-            for (; g < w && b < L; ) {
+            let g = zt(m, 1), b = zt(d, 1);
+            const v = m.length + 1, w = d.length + 1;
+            for (; g < v && b < w; ) {
               const _ = m.charCodeAt(g - 1), x = m.charCodeAt(b - 1);
               if (_ !== x)
                 break;
               g++, b++;
             }
-            (g < w || b < L) && this._pushTrimWhitespaceCharChange(s, i + 1, g, w, a + 1, b, L);
+            (g < v || b < w) && this._pushTrimWhitespaceCharChange(s, i + 1, g, v, l + 1, b, w);
           }
         }
-        i++, a++;
+        i++, l++;
       }
-      u && (s.push(Oe.createFromDiffResult(this.shouldIgnoreTrimWhitespace, u, this.original, this.modified, this.continueCharDiff, this.shouldComputeCharChanges, this.shouldPostProcessCharChanges)), i += u.originalLength, a += u.modifiedLength);
+      c && (s.push(Oe.createFromDiffResult(this.shouldIgnoreTrimWhitespace, c, this.original, this.modified, this.continueCharDiff, this.shouldComputeCharChanges, this.shouldPostProcessCharChanges)), i += c.originalLength, l += c.modifiedLength);
     }
     return {
       quitEarly: r,
       changes: s
     };
   }
-  _pushTrimWhitespaceCharChange(t, n, r, s, i, a, o) {
-    if (this._mergeTrimWhitespaceCharChange(t, n, r, s, i, a, o))
+  _pushTrimWhitespaceCharChange(t, n, r, s, i, l, o) {
+    if (this._mergeTrimWhitespaceCharChange(t, n, r, s, i, l, o))
       return;
-    let c;
-    this.shouldComputeCharChanges && (c = [new Ve(n, r, n, s, i, a, i, o)]), t.push(new Oe(n, n, i, i, c));
+    let u;
+    this.shouldComputeCharChanges && (u = [new Ve(n, r, n, s, i, l, i, o)]), t.push(new Oe(n, n, i, i, u));
   }
-  _mergeTrimWhitespaceCharChange(t, n, r, s, i, a, o) {
-    const c = t.length;
-    if (c === 0)
+  _mergeTrimWhitespaceCharChange(t, n, r, s, i, l, o) {
+    const u = t.length;
+    if (u === 0)
       return !1;
-    const u = t[c - 1];
-    return u.originalEndLineNumber === 0 || u.modifiedEndLineNumber === 0 ? !1 : u.originalEndLineNumber === n && u.modifiedEndLineNumber === i ? (this.shouldComputeCharChanges && u.charChanges && u.charChanges.push(new Ve(n, r, n, s, i, a, i, o)), !0) : u.originalEndLineNumber + 1 === n && u.modifiedEndLineNumber + 1 === i ? (u.originalEndLineNumber = n, u.modifiedEndLineNumber = i, this.shouldComputeCharChanges && u.charChanges && u.charChanges.push(new Ve(n, r, n, s, i, a, i, o)), !0) : !1;
+    const c = t[u - 1];
+    return c.originalEndLineNumber === 0 || c.modifiedEndLineNumber === 0 ? !1 : c.originalEndLineNumber === n && c.modifiedEndLineNumber === i ? (this.shouldComputeCharChanges && c.charChanges && c.charChanges.push(new Ve(n, r, n, s, i, l, i, o)), !0) : c.originalEndLineNumber + 1 === n && c.modifiedEndLineNumber + 1 === i ? (c.originalEndLineNumber = n, c.modifiedEndLineNumber = i, this.shouldComputeCharChanges && c.charChanges && c.charChanges.push(new Ve(n, r, n, s, i, l, i, o)), !0) : !1;
   }
 }
-function zt(e, t) {
-  const n = ds(e);
+function Wt(e, t) {
+  const n = ms(e);
   return n === -1 ? t : n + 1;
 }
-function $t(e, t) {
-  const n = ms(e);
+function zt(e, t) {
+  const n = gs(e);
   return n === -1 ? t : n + 2;
 }
 function ar(e) {
@@ -5808,12 +5826,12 @@ function ar(e) {
   const t = Date.now();
   return () => Date.now() - t < e;
 }
-class he {
+class ce {
   static trivial(t, n) {
-    return new he([new O(T.ofLength(t.length), T.ofLength(n.length))], !1);
+    return new ce([new O(D.ofLength(t.length), D.ofLength(n.length))], !1);
   }
   static trivialTimedOut(t, n) {
-    return new he([new O(T.ofLength(t.length), T.ofLength(n.length))], !0);
+    return new ce([new O(D.ofLength(t.length), D.ofLength(n.length))], !0);
   }
   constructor(t, n) {
     this.diffs = t, this.hitTimeout = n;
@@ -5822,12 +5840,12 @@ class he {
 class O {
   static invert(t, n) {
     const r = [];
-    return Xs(t, (s, i) => {
-      r.push(O.fromOffsetPairs(s ? s.getEndExclusives() : ue.zero, i ? i.getStarts() : new ue(n, (s ? s.seq2Range.endExclusive - s.seq1Range.endExclusive : 0) + n)));
+    return Js(t, (s, i) => {
+      r.push(O.fromOffsetPairs(s ? s.getEndExclusives() : oe.zero, i ? i.getStarts() : new oe(n, (s ? s.seq2Range.endExclusive - s.seq1Range.endExclusive : 0) + n)));
     }), r;
   }
   static fromOffsetPairs(t, n) {
-    return new O(new T(t.offset1, n.offset1), new T(t.offset2, n.offset2));
+    return new O(new D(t.offset1, n.offset1), new D(t.offset2, n.offset2));
   }
   constructor(t, n) {
     this.seq1Range = t, this.seq2Range = n;
@@ -5856,13 +5874,13 @@ class O {
       return new O(n, r);
   }
   getStarts() {
-    return new ue(this.seq1Range.start, this.seq2Range.start);
+    return new oe(this.seq1Range.start, this.seq2Range.start);
   }
   getEndExclusives() {
-    return new ue(this.seq1Range.endExclusive, this.seq2Range.endExclusive);
+    return new oe(this.seq1Range.endExclusive, this.seq2Range.endExclusive);
   }
 }
-class ue {
+class oe {
   constructor(t, n) {
     this.offset1 = t, this.offset2 = n;
   }
@@ -5870,18 +5888,18 @@ class ue {
     return `${this.offset1} <-> ${this.offset2}`;
   }
 }
-ue.zero = new ue(0, 0);
-ue.max = new ue(Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER);
-class Ze {
+oe.zero = new oe(0, 0);
+oe.max = new oe(Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER);
+class Ye {
   isValid() {
     return !0;
   }
 }
-Ze.instance = new Ze();
+Ye.instance = new Ye();
 class Di {
   constructor(t) {
     if (this.timeout = t, this.startTime = Date.now(), this.valid = !0, t <= 0)
-      throw new xe("timeout must be positive");
+      throw new be("timeout must be positive");
   }
   // Recommendation: Set a log-point `{this.disable()}` in the body
   isValid() {
@@ -5903,10 +5921,10 @@ class Nt {
     this.array[t + n * this.width] = r;
   }
 }
-function Ot(e) {
+function $t(e) {
   return e === 32 || e === 9;
 }
-class Ue {
+class He {
   static getKey(t) {
     let n = this.chrKeys.get(t);
     return n === void 0 && (n = this.chrKeys.size, this.chrKeys.set(t, n)), n;
@@ -5915,14 +5933,14 @@ class Ue {
     this.range = t, this.lines = n, this.source = r, this.histogram = [];
     let s = 0;
     for (let i = t.startLineNumber - 1; i < t.endLineNumberExclusive - 1; i++) {
-      const a = n[i];
-      for (let c = 0; c < a.length; c++) {
+      const l = n[i];
+      for (let u = 0; u < l.length; u++) {
         s++;
-        const u = a[c], h = Ue.getKey(u);
+        const c = l[u], h = He.getKey(c);
         this.histogram[h] = (this.histogram[h] || 0) + 1;
       }
       s++;
-      const o = Ue.getKey(`
+      const o = He.getKey(`
 `);
       this.histogram[o] = (this.histogram[o] || 0) + 1;
     }
@@ -5932,85 +5950,85 @@ class Ue {
     var n, r;
     let s = 0;
     const i = Math.max(this.histogram.length, t.histogram.length);
-    for (let a = 0; a < i; a++)
-      s += Math.abs(((n = this.histogram[a]) !== null && n !== void 0 ? n : 0) - ((r = t.histogram[a]) !== null && r !== void 0 ? r : 0));
+    for (let l = 0; l < i; l++)
+      s += Math.abs(((n = this.histogram[l]) !== null && n !== void 0 ? n : 0) - ((r = t.histogram[l]) !== null && r !== void 0 ? r : 0));
     return 1 - s / (this.totalCount + t.totalCount);
   }
 }
-Ue.chrKeys = /* @__PURE__ */ new Map();
+He.chrKeys = /* @__PURE__ */ new Map();
 class Ti {
-  compute(t, n, r = Ze.instance, s) {
+  compute(t, n, r = Ye.instance, s) {
     if (t.length === 0 || n.length === 0)
-      return he.trivial(t, n);
-    const i = new Nt(t.length, n.length), a = new Nt(t.length, n.length), o = new Nt(t.length, n.length);
+      return ce.trivial(t, n);
+    const i = new Nt(t.length, n.length), l = new Nt(t.length, n.length), o = new Nt(t.length, n.length);
     for (let g = 0; g < t.length; g++)
       for (let b = 0; b < n.length; b++) {
         if (!r.isValid())
-          return he.trivialTimedOut(t, n);
-        const w = g === 0 ? 0 : i.get(g - 1, b), L = b === 0 ? 0 : i.get(g, b - 1);
+          return ce.trivialTimedOut(t, n);
+        const v = g === 0 ? 0 : i.get(g - 1, b), w = b === 0 ? 0 : i.get(g, b - 1);
         let _;
-        t.getElement(g) === n.getElement(b) ? (g === 0 || b === 0 ? _ = 0 : _ = i.get(g - 1, b - 1), g > 0 && b > 0 && a.get(g - 1, b - 1) === 3 && (_ += o.get(g - 1, b - 1)), _ += s ? s(g, b) : 1) : _ = -1;
-        const x = Math.max(w, L, _);
+        t.getElement(g) === n.getElement(b) ? (g === 0 || b === 0 ? _ = 0 : _ = i.get(g - 1, b - 1), g > 0 && b > 0 && l.get(g - 1, b - 1) === 3 && (_ += o.get(g - 1, b - 1)), _ += s ? s(g, b) : 1) : _ = -1;
+        const x = Math.max(v, w, _);
         if (x === _) {
           const S = g > 0 && b > 0 ? o.get(g - 1, b - 1) : 0;
-          o.set(g, b, S + 1), a.set(g, b, 3);
+          o.set(g, b, S + 1), l.set(g, b, 3);
         } else
-          x === w ? (o.set(g, b, 0), a.set(g, b, 1)) : x === L && (o.set(g, b, 0), a.set(g, b, 2));
+          x === v ? (o.set(g, b, 0), l.set(g, b, 1)) : x === w && (o.set(g, b, 0), l.set(g, b, 2));
         i.set(g, b, x);
       }
-    const c = [];
-    let u = t.length, h = n.length;
+    const u = [];
+    let c = t.length, h = n.length;
     function f(g, b) {
-      (g + 1 !== u || b + 1 !== h) && c.push(new O(new T(g + 1, u), new T(b + 1, h))), u = g, h = b;
+      (g + 1 !== c || b + 1 !== h) && u.push(new O(new D(g + 1, c), new D(b + 1, h))), c = g, h = b;
     }
     let m = t.length - 1, d = n.length - 1;
     for (; m >= 0 && d >= 0; )
-      a.get(m, d) === 3 ? (f(m, d), m--, d--) : a.get(m, d) === 1 ? m-- : d--;
-    return f(-1, -1), c.reverse(), new he(c, !1);
+      l.get(m, d) === 3 ? (f(m, d), m--, d--) : l.get(m, d) === 1 ? m-- : d--;
+    return f(-1, -1), u.reverse(), new ce(u, !1);
   }
 }
-class Vr {
-  compute(t, n, r = Ze.instance) {
+class Br {
+  compute(t, n, r = Ye.instance) {
     if (t.length === 0 || n.length === 0)
-      return he.trivial(t, n);
+      return ce.trivial(t, n);
     const s = t, i = n;
-    function a(b, w) {
-      for (; b < s.length && w < i.length && s.getElement(b) === i.getElement(w); )
-        b++, w++;
+    function l(b, v) {
+      for (; b < s.length && v < i.length && s.getElement(b) === i.getElement(v); )
+        b++, v++;
       return b;
     }
     let o = 0;
-    const c = new Vi();
-    c.set(0, a(0, 0));
-    const u = new Bi();
-    u.set(0, c.get(0) === 0 ? null : new lr(null, 0, 0, c.get(0)));
+    const u = new Vi();
+    u.set(0, l(0, 0));
+    const c = new Bi();
+    c.set(0, u.get(0) === 0 ? null : new lr(null, 0, 0, u.get(0)));
     let h = 0;
     e:
       for (; ; ) {
         if (o++, !r.isValid())
-          return he.trivialTimedOut(s, i);
-        const b = -Math.min(o, i.length + o % 2), w = Math.min(o, s.length + o % 2);
-        for (h = b; h <= w; h += 2) {
-          const L = h === w ? -1 : c.get(h + 1), _ = h === b ? -1 : c.get(h - 1) + 1, x = Math.min(Math.max(L, _), s.length), S = x - h;
+          return ce.trivialTimedOut(s, i);
+        const b = -Math.min(o, i.length + o % 2), v = Math.min(o, s.length + o % 2);
+        for (h = b; h <= v; h += 2) {
+          const w = h === v ? -1 : u.get(h + 1), _ = h === b ? -1 : u.get(h - 1) + 1, x = Math.min(Math.max(w, _), s.length), S = x - h;
           if (x > s.length || S > i.length)
             continue;
-          const N = a(x, S);
-          c.set(h, N);
-          const R = x === L ? u.get(h + 1) : u.get(h - 1);
-          if (u.set(h, N !== x ? new lr(R, x, S, N - x) : R), c.get(h) === s.length && c.get(h) - h === i.length)
+          const N = l(x, S);
+          u.set(h, N);
+          const R = x === w ? c.get(h + 1) : c.get(h - 1);
+          if (c.set(h, N !== x ? new lr(R, x, S, N - x) : R), u.get(h) === s.length && u.get(h) - h === i.length)
             break e;
         }
       }
-    let f = u.get(h);
+    let f = c.get(h);
     const m = [];
     let d = s.length, g = i.length;
     for (; ; ) {
-      const b = f ? f.x + f.length : 0, w = f ? f.y + f.length : 0;
-      if ((b !== d || w !== g) && m.push(new O(new T(b, d), new T(w, g))), !f)
+      const b = f ? f.x + f.length : 0, v = f ? f.y + f.length : 0;
+      if ((b !== d || v !== g) && m.push(new O(new D(b, d), new D(v, g))), !f)
         break;
       d = f.x, g = f.y, f = f.prev;
     }
-    return m.reverse(), new he(m, !1);
+    return m.reverse(), new ce(m, !1);
   }
 }
 class lr {
@@ -6073,24 +6091,23 @@ class qi {
     return n || /* @__PURE__ */ new Set();
   }
 }
-class bt {
+class gt {
   constructor(t, n, r) {
     this.lines = t, this.considerWhitespaceChanges = r, this.elements = [], this.firstCharOffsetByLine = [], this.additionalOffsetByLine = [];
     let s = !1;
-    n.start > 0 && n.endExclusive >= t.length && (n = new T(n.start - 1, n.endExclusive), s = !0), this.lineRange = n, this.firstCharOffsetByLine[0] = 0;
+    n.start > 0 && n.endExclusive >= t.length && (n = new D(n.start - 1, n.endExclusive), s = !0), this.lineRange = n, this.firstCharOffsetByLine[0] = 0;
     for (let i = this.lineRange.start; i < this.lineRange.endExclusive; i++) {
-      let a = t[i], o = 0;
+      let l = t[i], o = 0;
       if (s)
-        o = a.length, a = "", s = !1;
+        o = l.length, l = "", s = !1;
       else if (!r) {
-        const c = a.trimStart();
-        o = a.length - c.length, a = c.trimEnd();
+        const u = l.trimStart();
+        o = l.length - u.length, l = u.trimEnd();
       }
       this.additionalOffsetByLine.push(o);
-      for (let c = 0; c < a.length; c++)
-        this.elements.push(a.charCodeAt(c));
-      i < t.length - 1 && (this.elements.push(`
-`.charCodeAt(0)), this.firstCharOffsetByLine[i - this.lineRange.start + 1] = this.elements.length);
+      for (let u = 0; u < l.length; u++)
+        this.elements.push(l.charCodeAt(u));
+      i < t.length - 1 && (this.elements.push(10), this.firstCharOffsetByLine[i - this.lineRange.start + 1] = this.elements.length);
     }
     this.additionalOffsetByLine.push(0);
   }
@@ -6098,7 +6115,7 @@ class bt {
     return `Slice: "${this.text}"`;
   }
   get text() {
-    return this.getText(new T(0, this.length));
+    return this.getText(new D(0, this.length));
   }
   getText(t) {
     return this.elements.slice(t.start, t.endExclusive).map((n) => String.fromCharCode(n)).join("");
@@ -6111,19 +6128,19 @@ class bt {
   }
   getBoundaryScore(t) {
     const n = ur(t > 0 ? this.elements[t - 1] : -1), r = ur(t < this.elements.length ? this.elements[t] : -1);
-    if (n === 6 && r === 7)
+    if (n === 7 && r === 8)
       return 0;
     let s = 0;
     return n !== r && (s += 10, n === 0 && r === 1 && (s += 1)), s += or(n), s += or(r), s;
   }
   translateOffset(t) {
     if (this.lineRange.isEmpty)
-      return new J(this.lineRange.start + 1, 1);
-    const n = Je(this.firstCharOffsetByLine, (r) => r <= t);
-    return new J(this.lineRange.start + n + 1, t - this.firstCharOffsetByLine[n] + this.additionalOffsetByLine[n] + 1);
+      return new Y(this.lineRange.start + 1, 1);
+    const n = Xe(this.firstCharOffsetByLine, (r) => r <= t);
+    return new Y(this.lineRange.start + n + 1, t - this.firstCharOffsetByLine[n] + this.additionalOffsetByLine[n] + 1);
   }
   translateRange(t) {
-    return D.fromPositions(this.translateOffset(t.start), this.translateOffset(t.endExclusive));
+    return T.fromPositions(this.translateOffset(t.start), this.translateOffset(t.endExclusive));
   }
   /**
    * Finds the word that contains the character at the given offset
@@ -6137,7 +6154,7 @@ class bt {
     let r = t;
     for (; r < this.elements.length && St(this.elements[r]); )
       r++;
-    return new T(n, r);
+    return new D(n, r);
   }
   countLinesIn(t) {
     return this.translateOffset(t.endExclusive).lineNumber - this.translateOffset(t.start).lineNumber;
@@ -6147,8 +6164,8 @@ class bt {
   }
   extendToFullLines(t) {
     var n, r;
-    const s = (n = Xe(this.firstCharOffsetByLine, (a) => a <= t.start)) !== null && n !== void 0 ? n : 0, i = (r = yi(this.firstCharOffsetByLine, (a) => t.endExclusive <= a)) !== null && r !== void 0 ? r : this.elements.length;
-    return new T(s, i);
+    const s = (n = Ue(this.firstCharOffsetByLine, (l) => l <= t.start)) !== null && n !== void 0 ? n : 0, i = (r = yi(this.firstCharOffsetByLine, (l) => t.endExclusive <= l)) !== null && r !== void 0 ? r : this.elements.length;
+    return new D(s, i);
   }
 }
 function St(e) {
@@ -6161,126 +6178,136 @@ const Ii = {
   3: 10,
   4: 2,
   5: 3,
-  6: 10,
-  7: 10
+  6: 3,
+  7: 10,
+  8: 10
 };
 function or(e) {
   return Ii[e];
 }
 function ur(e) {
-  return e === 10 ? 7 : e === 13 ? 6 : Ot(e) ? 5 : e >= 97 && e <= 122 ? 0 : e >= 65 && e <= 90 ? 1 : e >= 48 && e <= 57 ? 2 : e === -1 ? 3 : 4;
+  return e === 10 ? 8 : e === 13 ? 7 : $t(e) ? 6 : e >= 97 && e <= 122 ? 0 : e >= 65 && e <= 90 ? 1 : e >= 48 && e <= 57 ? 2 : e === -1 ? 3 : e === 44 || e === 59 ? 5 : 4;
 }
 function Ui(e, t, n, r, s, i) {
-  let { moves: a, excludedChanges: o } = Hi(e, t, n, i);
+  let { moves: l, excludedChanges: o } = Wi(e, t, n, i);
   if (!i.isValid())
     return [];
-  const c = e.filter((h) => !o.has(h)), u = Wi(c, r, s, t, n, i);
-  return Ys(a, u), a = zi(a), a = a.filter((h) => h.original.toOffsetRange().slice(t).map((m) => m.trim()).join(`
-`).length >= 10), a = $i(e, a), a;
+  const u = e.filter((h) => !o.has(h)), c = zi(u, r, s, t, n, i);
+  return Zs(l, c), l = $i(l), l = l.filter((h) => {
+    const f = h.original.toOffsetRange().slice(t).map((d) => d.trim());
+    return f.join(`
+`).length >= 15 && Hi(f, (d) => d.length >= 2) >= 2;
+  }), l = Oi(e, l), l;
 }
-function Hi(e, t, n, r) {
-  const s = [], i = e.filter((c) => c.modified.isEmpty && c.original.length >= 3).map((c) => new Ue(c.original, t, c)), a = new Set(e.filter((c) => c.original.isEmpty && c.modified.length >= 3).map((c) => new Ue(c.modified, n, c))), o = /* @__PURE__ */ new Set();
-  for (const c of i) {
-    let u = -1, h;
-    for (const f of a) {
-      const m = c.computeSimilarity(f);
-      m > u && (u = m, h = f);
+function Hi(e, t) {
+  let n = 0;
+  for (const r of e)
+    t(r) && n++;
+  return n;
+}
+function Wi(e, t, n, r) {
+  const s = [], i = e.filter((u) => u.modified.isEmpty && u.original.length >= 3).map((u) => new He(u.original, t, u)), l = new Set(e.filter((u) => u.original.isEmpty && u.modified.length >= 3).map((u) => new He(u.modified, n, u))), o = /* @__PURE__ */ new Set();
+  for (const u of i) {
+    let c = -1, h;
+    for (const f of l) {
+      const m = u.computeSimilarity(f);
+      m > c && (c = m, h = f);
     }
-    if (u > 0.9 && h && (a.delete(h), s.push(new Le(c.range, h.range)), o.add(c.source), o.add(h.source)), !r.isValid())
+    if (c > 0.9 && h && (l.delete(h), s.push(new Le(u.range, h.range)), o.add(u.source), o.add(h.source)), !r.isValid())
       return { moves: s, excludedChanges: o };
   }
   return { moves: s, excludedChanges: o };
 }
-function Wi(e, t, n, r, s, i) {
-  const a = [], o = new qi();
+function zi(e, t, n, r, s, i) {
+  const l = [], o = new qi();
   for (const m of e)
     for (let d = m.original.startLineNumber; d < m.original.endLineNumberExclusive - 2; d++) {
       const g = `${t[d - 1]}:${t[d + 1 - 1]}:${t[d + 2 - 1]}`;
       o.add(g, { range: new V(d, d + 3) });
     }
-  const c = [];
-  e.sort(it((m) => m.modified.startLineNumber, at));
+  const u = [];
+  e.sort(st((m) => m.modified.startLineNumber, it));
   for (const m of e) {
     let d = [];
     for (let g = m.modified.startLineNumber; g < m.modified.endLineNumberExclusive - 2; g++) {
-      const b = `${n[g - 1]}:${n[g + 1 - 1]}:${n[g + 2 - 1]}`, w = new V(g, g + 3), L = [];
+      const b = `${n[g - 1]}:${n[g + 1 - 1]}:${n[g + 2 - 1]}`, v = new V(g, g + 3), w = [];
       o.forEach(b, ({ range: _ }) => {
         for (const S of d)
-          if (S.originalLineRange.endLineNumberExclusive + 1 === _.endLineNumberExclusive && S.modifiedLineRange.endLineNumberExclusive + 1 === w.endLineNumberExclusive) {
-            S.originalLineRange = new V(S.originalLineRange.startLineNumber, _.endLineNumberExclusive), S.modifiedLineRange = new V(S.modifiedLineRange.startLineNumber, w.endLineNumberExclusive), L.push(S);
+          if (S.originalLineRange.endLineNumberExclusive + 1 === _.endLineNumberExclusive && S.modifiedLineRange.endLineNumberExclusive + 1 === v.endLineNumberExclusive) {
+            S.originalLineRange = new V(S.originalLineRange.startLineNumber, _.endLineNumberExclusive), S.modifiedLineRange = new V(S.modifiedLineRange.startLineNumber, v.endLineNumberExclusive), w.push(S);
             return;
           }
         const x = {
-          modifiedLineRange: w,
+          modifiedLineRange: v,
           originalLineRange: _
         };
-        c.push(x), L.push(x);
-      }), d = L;
+        u.push(x), w.push(x);
+      }), d = w;
     }
     if (!i.isValid())
       return [];
   }
-  c.sort(Zs(it((m) => m.modifiedLineRange.length, at)));
-  const u = new oe(), h = new oe();
-  for (const m of c) {
-    const d = m.modifiedLineRange.startLineNumber - m.originalLineRange.startLineNumber, g = u.subtractFrom(m.modifiedLineRange), b = h.subtractFrom(m.originalLineRange).getWithDelta(d), w = g.getIntersection(b);
-    for (const L of w.ranges) {
-      if (L.length < 3)
+  u.sort(Ks(st((m) => m.modifiedLineRange.length, it)));
+  const c = new le(), h = new le();
+  for (const m of u) {
+    const d = m.modifiedLineRange.startLineNumber - m.originalLineRange.startLineNumber, g = c.subtractFrom(m.modifiedLineRange), b = h.subtractFrom(m.originalLineRange).getWithDelta(d), v = g.getIntersection(b);
+    for (const w of v.ranges) {
+      if (w.length < 3)
         continue;
-      const _ = L, x = L.delta(-d);
-      a.push(new Le(x, _)), u.addRange(_), h.addRange(x);
+      const _ = w, x = w.delta(-d);
+      l.push(new Le(x, _)), c.addRange(_), h.addRange(x);
     }
   }
-  a.sort(it((m) => m.original.startLineNumber, at));
-  const f = new et(e);
-  for (let m = 0; m < a.length; m++) {
-    const d = a[m], g = f.findLastMonotonous((R) => R.original.startLineNumber <= d.original.startLineNumber), b = Xe(e, (R) => R.modified.startLineNumber <= d.modified.startLineNumber), w = Math.max(d.original.startLineNumber - g.original.startLineNumber, d.modified.startLineNumber - b.modified.startLineNumber), L = f.findLastMonotonous((R) => R.original.startLineNumber < d.original.endLineNumberExclusive), _ = Xe(e, (R) => R.modified.startLineNumber < d.modified.endLineNumberExclusive), x = Math.max(L.original.endLineNumberExclusive - d.original.endLineNumberExclusive, _.modified.endLineNumberExclusive - d.modified.endLineNumberExclusive);
+  l.sort(st((m) => m.original.startLineNumber, it));
+  const f = new Ke(e);
+  for (let m = 0; m < l.length; m++) {
+    const d = l[m], g = f.findLastMonotonous((R) => R.original.startLineNumber <= d.original.startLineNumber), b = Ue(e, (R) => R.modified.startLineNumber <= d.modified.startLineNumber), v = Math.max(d.original.startLineNumber - g.original.startLineNumber, d.modified.startLineNumber - b.modified.startLineNumber), w = f.findLastMonotonous((R) => R.original.startLineNumber < d.original.endLineNumberExclusive), _ = Ue(e, (R) => R.modified.startLineNumber < d.modified.endLineNumberExclusive), x = Math.max(w.original.endLineNumberExclusive - d.original.endLineNumberExclusive, _.modified.endLineNumberExclusive - d.modified.endLineNumberExclusive);
     let S;
-    for (S = 0; S < w; S++) {
+    for (S = 0; S < v; S++) {
       const R = d.original.startLineNumber - S - 1, M = d.modified.startLineNumber - S - 1;
-      if (R > r.length || M > s.length || u.contains(M) || h.contains(R) || !cr(r[R - 1], s[M - 1], i))
+      if (R > r.length || M > s.length || c.contains(M) || h.contains(R) || !cr(r[R - 1], s[M - 1], i))
         break;
     }
-    S > 0 && (h.addRange(new V(d.original.startLineNumber - S, d.original.startLineNumber)), u.addRange(new V(d.modified.startLineNumber - S, d.modified.startLineNumber)));
+    S > 0 && (h.addRange(new V(d.original.startLineNumber - S, d.original.startLineNumber)), c.addRange(new V(d.modified.startLineNumber - S, d.modified.startLineNumber)));
     let N;
     for (N = 0; N < x; N++) {
       const R = d.original.endLineNumberExclusive + N, M = d.modified.endLineNumberExclusive + N;
-      if (R > r.length || M > s.length || u.contains(M) || h.contains(R) || !cr(r[R - 1], s[M - 1], i))
+      if (R > r.length || M > s.length || c.contains(M) || h.contains(R) || !cr(r[R - 1], s[M - 1], i))
         break;
     }
-    N > 0 && (h.addRange(new V(d.original.endLineNumberExclusive, d.original.endLineNumberExclusive + N)), u.addRange(new V(d.modified.endLineNumberExclusive, d.modified.endLineNumberExclusive + N))), (S > 0 || N > 0) && (a[m] = new Le(new V(d.original.startLineNumber - S, d.original.endLineNumberExclusive + N), new V(d.modified.startLineNumber - S, d.modified.endLineNumberExclusive + N)));
+    N > 0 && (h.addRange(new V(d.original.endLineNumberExclusive, d.original.endLineNumberExclusive + N)), c.addRange(new V(d.modified.endLineNumberExclusive, d.modified.endLineNumberExclusive + N))), (S > 0 || N > 0) && (l[m] = new Le(new V(d.original.startLineNumber - S, d.original.endLineNumberExclusive + N), new V(d.modified.startLineNumber - S, d.modified.endLineNumberExclusive + N)));
   }
-  return a;
+  return l;
 }
 function cr(e, t, n) {
   if (e.trim() === t.trim())
     return !0;
   if (e.length > 300 && t.length > 300)
     return !1;
-  const s = new Vr().compute(new bt([e], new T(0, 1), !1), new bt([t], new T(0, 1), !1), n);
+  const s = new Br().compute(new gt([e], new D(0, 1), !1), new gt([t], new D(0, 1), !1), n);
   let i = 0;
-  const a = O.invert(s.diffs, e.length);
-  for (const h of a)
+  const l = O.invert(s.diffs, e.length);
+  for (const h of l)
     h.seq1Range.forEach((f) => {
-      Ot(e.charCodeAt(f)) || i++;
+      $t(e.charCodeAt(f)) || i++;
     });
   function o(h) {
     let f = 0;
     for (let m = 0; m < e.length; m++)
-      Ot(h.charCodeAt(m)) || f++;
+      $t(h.charCodeAt(m)) || f++;
     return f;
   }
-  const c = o(e.length > t.length ? e : t);
-  return i / c > 0.6 && c > 10;
+  const u = o(e.length > t.length ? e : t);
+  return i / u > 0.6 && u > 10;
 }
-function zi(e) {
+function $i(e) {
   if (e.length === 0)
     return e;
-  e.sort(it((n) => n.original.startLineNumber, at));
+  e.sort(st((n) => n.original.startLineNumber, it));
   const t = [e[0]];
   for (let n = 1; n < e.length; n++) {
-    const r = t[t.length - 1], s = e[n], i = s.original.startLineNumber - r.original.endLineNumberExclusive, a = s.modified.startLineNumber - r.modified.endLineNumberExclusive;
-    if (i >= 0 && a >= 0 && i + a <= 2) {
+    const r = t[t.length - 1], s = e[n], i = s.original.startLineNumber - r.original.endLineNumberExclusive, l = s.modified.startLineNumber - r.modified.endLineNumberExclusive;
+    if (i >= 0 && l >= 0 && i + l <= 2) {
       t[t.length - 1] = r.join(s);
       continue;
     }
@@ -6288,52 +6315,52 @@ function zi(e) {
   }
   return t;
 }
-function $i(e, t) {
-  const n = new et(e);
+function Oi(e, t) {
+  const n = new Ke(e);
   return t = t.filter((r) => {
-    const s = n.findLastMonotonous((o) => o.original.endLineNumberExclusive < r.original.endLineNumberExclusive) || new Le(new V(1, 1), new V(1, 1)), i = Xe(e, (o) => o.modified.endLineNumberExclusive < r.modified.endLineNumberExclusive);
+    const s = n.findLastMonotonous((o) => o.original.startLineNumber < r.original.endLineNumberExclusive) || new Le(new V(1, 1), new V(1, 1)), i = Ue(e, (o) => o.modified.startLineNumber < r.modified.endLineNumberExclusive);
     return s !== i;
   }), t;
 }
 function hr(e, t, n) {
   let r = n;
-  return r = Oi(e, t, r), r = Gi(e, t, r), r;
+  return r = fr(e, t, r), r = fr(e, t, r), r = Gi(e, t, r), r;
 }
-function Oi(e, t, n) {
+function fr(e, t, n) {
   if (n.length === 0)
     return n;
   const r = [];
   r.push(n[0]);
   for (let i = 1; i < n.length; i++) {
-    const a = r[r.length - 1];
+    const l = r[r.length - 1];
     let o = n[i];
     if (o.seq1Range.isEmpty || o.seq2Range.isEmpty) {
-      const c = o.seq1Range.start - a.seq1Range.endExclusive;
-      let u;
-      for (u = 1; u <= c && !(e.getElement(o.seq1Range.start - u) !== e.getElement(o.seq1Range.endExclusive - u) || t.getElement(o.seq2Range.start - u) !== t.getElement(o.seq2Range.endExclusive - u)); u++)
+      const u = o.seq1Range.start - l.seq1Range.endExclusive;
+      let c;
+      for (c = 1; c <= u && !(e.getElement(o.seq1Range.start - c) !== e.getElement(o.seq1Range.endExclusive - c) || t.getElement(o.seq2Range.start - c) !== t.getElement(o.seq2Range.endExclusive - c)); c++)
         ;
-      if (u--, u === c) {
-        r[r.length - 1] = new O(new T(a.seq1Range.start, o.seq1Range.endExclusive - c), new T(a.seq2Range.start, o.seq2Range.endExclusive - c));
+      if (c--, c === u) {
+        r[r.length - 1] = new O(new D(l.seq1Range.start, o.seq1Range.endExclusive - u), new D(l.seq2Range.start, o.seq2Range.endExclusive - u));
         continue;
       }
-      o = o.delta(-u);
+      o = o.delta(-c);
     }
     r.push(o);
   }
   const s = [];
   for (let i = 0; i < r.length - 1; i++) {
-    const a = r[i + 1];
+    const l = r[i + 1];
     let o = r[i];
     if (o.seq1Range.isEmpty || o.seq2Range.isEmpty) {
-      const c = a.seq1Range.start - o.seq1Range.endExclusive;
-      let u;
-      for (u = 0; u < c && !(!e.isStronglyEqual(o.seq1Range.start + u, o.seq1Range.endExclusive + u) || !t.isStronglyEqual(o.seq2Range.start + u, o.seq2Range.endExclusive + u)); u++)
+      const u = l.seq1Range.start - o.seq1Range.endExclusive;
+      let c;
+      for (c = 0; c < u && !(!e.isStronglyEqual(o.seq1Range.start + c, o.seq1Range.endExclusive + c) || !t.isStronglyEqual(o.seq2Range.start + c, o.seq2Range.endExclusive + c)); c++)
         ;
-      if (u === c) {
-        r[i + 1] = new O(new T(o.seq1Range.start + c, a.seq1Range.endExclusive), new T(o.seq2Range.start + c, a.seq2Range.endExclusive));
+      if (c === u) {
+        r[i + 1] = new O(new D(o.seq1Range.start + u, l.seq1Range.endExclusive), new D(o.seq2Range.start + u, l.seq2Range.endExclusive));
         continue;
       }
-      u > 0 && (o = o.delta(u));
+      c > 0 && (o = o.delta(c));
     }
     s.push(o);
   }
@@ -6343,27 +6370,27 @@ function Gi(e, t, n) {
   if (!e.getBoundaryScore || !t.getBoundaryScore)
     return n;
   for (let r = 0; r < n.length; r++) {
-    const s = r > 0 ? n[r - 1] : void 0, i = n[r], a = r + 1 < n.length ? n[r + 1] : void 0, o = new T(s ? s.seq1Range.start + 1 : 0, a ? a.seq1Range.endExclusive - 1 : e.length), c = new T(s ? s.seq2Range.start + 1 : 0, a ? a.seq2Range.endExclusive - 1 : t.length);
-    i.seq1Range.isEmpty ? n[r] = fr(i, e, t, o, c) : i.seq2Range.isEmpty && (n[r] = fr(i.swap(), t, e, c, o).swap());
+    const s = r > 0 ? n[r - 1] : void 0, i = n[r], l = r + 1 < n.length ? n[r + 1] : void 0, o = new D(s ? s.seq1Range.start + 1 : 0, l ? l.seq1Range.endExclusive - 1 : e.length), u = new D(s ? s.seq2Range.start + 1 : 0, l ? l.seq2Range.endExclusive - 1 : t.length);
+    i.seq1Range.isEmpty ? n[r] = dr(i, e, t, o, u) : i.seq2Range.isEmpty && (n[r] = dr(i.swap(), t, e, u, o).swap());
   }
   return n;
 }
-function fr(e, t, n, r, s) {
-  let a = 1;
-  for (; e.seq1Range.start - a >= r.start && e.seq2Range.start - a >= s.start && n.isStronglyEqual(e.seq2Range.start - a, e.seq2Range.endExclusive - a) && a < 100; )
-    a++;
-  a--;
+function dr(e, t, n, r, s) {
+  let l = 1;
+  for (; e.seq1Range.start - l >= r.start && e.seq2Range.start - l >= s.start && n.isStronglyEqual(e.seq2Range.start - l, e.seq2Range.endExclusive - l) && l < 100; )
+    l++;
+  l--;
   let o = 0;
   for (; e.seq1Range.start + o < r.endExclusive && e.seq2Range.endExclusive + o < s.endExclusive && n.isStronglyEqual(e.seq2Range.start + o, e.seq2Range.endExclusive + o) && o < 100; )
     o++;
-  if (a === 0 && o === 0)
+  if (l === 0 && o === 0)
     return e;
-  let c = 0, u = -1;
-  for (let h = -a; h <= o; h++) {
+  let u = 0, c = -1;
+  for (let h = -l; h <= o; h++) {
     const f = e.seq2Range.start + h, m = e.seq2Range.endExclusive + h, d = e.seq1Range.start + h, g = t.getBoundaryScore(d) + n.getBoundaryScore(f) + n.getBoundaryScore(m);
-    g > u && (u = g, c = h);
+    g > c && (c = g, u = h);
   }
-  return e.delta(c);
+  return e.delta(u);
 }
 function ji(e, t, n) {
   const r = [];
@@ -6387,19 +6414,19 @@ function Qi(e, t, n) {
     s.s2Range.length - s.added, Math.max(s.deleted, s.added) + (s.count - 1) > o && r.push(new O(s.s1Range, s.s2Range)), s = void 0;
   }
   for (const o of n) {
-    let c = function(d, g) {
-      var b, w, L, _;
+    let u = function(d, g) {
+      var b, v, w, _;
       if (!s || !s.s1Range.containsRange(d) || !s.s2Range.containsRange(g))
         if (s && !(s.s1Range.endExclusive < d.start && s.s2Range.endExclusive < g.start)) {
-          const N = T.tryCreate(s.s1Range.endExclusive, d.start), R = T.tryCreate(s.s2Range.endExclusive, g.start);
-          s.deleted += (b = N == null ? void 0 : N.length) !== null && b !== void 0 ? b : 0, s.added += (w = R == null ? void 0 : R.length) !== null && w !== void 0 ? w : 0, s.s1Range = s.s1Range.join(d), s.s2Range = s.s2Range.join(g);
+          const N = D.tryCreate(s.s1Range.endExclusive, d.start), R = D.tryCreate(s.s2Range.endExclusive, g.start);
+          s.deleted += (b = N == null ? void 0 : N.length) !== null && b !== void 0 ? b : 0, s.added += (v = R == null ? void 0 : R.length) !== null && v !== void 0 ? v : 0, s.s1Range = s.s1Range.join(d), s.s2Range = s.s2Range.join(g);
         } else
           i(), s = { added: 0, deleted: 0, count: 0, s1Range: d, s2Range: g };
       const x = d.intersect(o.seq1Range), S = g.intersect(o.seq2Range);
-      s.count++, s.deleted += (L = x == null ? void 0 : x.length) !== null && L !== void 0 ? L : 0, s.added += (_ = S == null ? void 0 : S.length) !== null && _ !== void 0 ? _ : 0;
+      s.count++, s.deleted += (w = x == null ? void 0 : x.length) !== null && w !== void 0 ? w : 0, s.added += (_ = S == null ? void 0 : S.length) !== null && _ !== void 0 ? _ : 0;
     };
-    const u = e.findWordContaining(o.seq1Range.start - 1), h = t.findWordContaining(o.seq2Range.start - 1), f = e.findWordContaining(o.seq1Range.endExclusive), m = t.findWordContaining(o.seq2Range.endExclusive);
-    u && f && h && m && u.equals(f) && h.equals(m) ? c(u, h) : (u && h && c(u, h), f && m && c(f, m));
+    const c = e.findWordContaining(o.seq1Range.start - 1), h = t.findWordContaining(o.seq2Range.start - 1), f = e.findWordContaining(o.seq1Range.endExclusive), m = t.findWordContaining(o.seq2Range.endExclusive);
+    c && f && h && m && c.equals(f) && h.equals(m) ? u(c, h) : (c && h && u(c, h), f && m && u(f, m));
   }
   return i(), Xi(n, r);
 }
@@ -6419,18 +6446,18 @@ function Ji(e, t, n) {
   let s = 0, i;
   do {
     i = !1;
-    const a = [
+    const l = [
       r[0]
     ];
     for (let o = 1; o < r.length; o++) {
       let h = function(m, d) {
-        const g = new T(u.seq1Range.endExclusive, c.seq1Range.start);
+        const g = new D(c.seq1Range.endExclusive, u.seq1Range.start);
         return e.getText(g).replace(/\s/g, "").length <= 4 && (m.seq1Range.length + m.seq2Range.length > 5 || d.seq1Range.length + d.seq2Range.length > 5);
       };
-      const c = r[o], u = a[a.length - 1];
-      h(u, c) ? (i = !0, a[a.length - 1] = a[a.length - 1].join(c)) : a.push(c);
+      const u = r[o], c = l[l.length - 1];
+      h(c, u) ? (i = !0, l[l.length - 1] = l[l.length - 1].join(u)) : l.push(u);
     }
-    r = a;
+    r = l;
   } while (s++ < 10 && i);
   return r;
 }
@@ -6444,40 +6471,40 @@ function Yi(e, t, n) {
     const o = [
       r[0]
     ];
-    for (let c = 1; c < r.length; c++) {
+    for (let u = 1; u < r.length; u++) {
       let f = function(d, g) {
-        const b = new T(h.seq1Range.endExclusive, u.seq1Range.start);
+        const b = new D(h.seq1Range.endExclusive, c.seq1Range.start);
         if (e.countLinesIn(b) > 5 || b.length > 500)
           return !1;
-        const L = e.getText(b).trim();
-        if (L.length > 20 || L.split(/\r\n|\r|\n/).length > 1)
+        const w = e.getText(b).trim();
+        if (w.length > 20 || w.split(/\r\n|\r|\n/).length > 1)
           return !1;
-        const _ = e.countLinesIn(d.seq1Range), x = d.seq1Range.length, S = t.countLinesIn(d.seq2Range), N = d.seq2Range.length, R = e.countLinesIn(g.seq1Range), M = g.seq1Range.length, E = t.countLinesIn(g.seq2Range), I = g.seq2Range.length, G = 2 * 40 + 50;
+        const _ = e.countLinesIn(d.seq1Range), x = d.seq1Range.length, S = t.countLinesIn(d.seq2Range), N = d.seq2Range.length, R = e.countLinesIn(g.seq1Range), M = g.seq1Range.length, k = t.countLinesIn(g.seq2Range), U = g.seq2Range.length, G = 2 * 40 + 50;
         function B(p) {
           return Math.min(p, G);
         }
-        return Math.pow(Math.pow(B(_ * 40 + x), 1.5) + Math.pow(B(S * 40 + N), 1.5), 1.5) + Math.pow(Math.pow(B(R * 40 + M), 1.5) + Math.pow(B(E * 40 + I), 1.5), 1.5) > Math.pow(Math.pow(G, 1.5), 1.5) * 1.3;
+        return Math.pow(Math.pow(B(_ * 40 + x), 1.5) + Math.pow(B(S * 40 + N), 1.5), 1.5) + Math.pow(Math.pow(B(R * 40 + M), 1.5) + Math.pow(B(k * 40 + U), 1.5), 1.5) > (G ** 1.5) ** 1.5 * 1.3;
       };
-      const u = r[c], h = o[o.length - 1];
-      f(h, u) ? (i = !0, o[o.length - 1] = o[o.length - 1].join(u)) : o.push(u);
+      const c = r[u], h = o[o.length - 1];
+      f(h, c) ? (i = !0, o[o.length - 1] = o[o.length - 1].join(c)) : o.push(c);
     }
     r = o;
   } while (s++ < 10 && i);
-  const a = [];
-  return Js(r, (o, c, u) => {
-    let h = c;
-    function f(L) {
-      return L.length > 0 && L.trim().length <= 3 && c.seq1Range.length + c.seq2Range.length > 100;
+  const l = [];
+  return Ys(r, (o, u, c) => {
+    let h = u;
+    function f(w) {
+      return w.length > 0 && w.trim().length <= 3 && u.seq1Range.length + u.seq2Range.length > 100;
     }
-    const m = e.extendToFullLines(c.seq1Range), d = e.getText(new T(m.start, c.seq1Range.start));
+    const m = e.extendToFullLines(u.seq1Range), d = e.getText(new D(m.start, u.seq1Range.start));
     f(d) && (h = h.deltaStart(-d.length));
-    const g = e.getText(new T(c.seq1Range.endExclusive, m.endExclusive));
+    const g = e.getText(new D(u.seq1Range.endExclusive, m.endExclusive));
     f(g) && (h = h.deltaEnd(g.length));
-    const b = O.fromOffsetPairs(o ? o.getEndExclusives() : ue.zero, u ? u.getStarts() : ue.max), w = h.intersect(b);
-    a.push(w);
-  }), a;
+    const b = O.fromOffsetPairs(o ? o.getEndExclusives() : oe.zero, c ? c.getStarts() : oe.max), v = h.intersect(b);
+    l.push(v);
+  }), l;
 }
-class dr {
+class mr {
   constructor(t, n) {
     this.trimmedHash = t, this.lines = n;
   }
@@ -6488,7 +6515,7 @@ class dr {
     return this.trimmedHash.length;
   }
   getBoundaryScore(t) {
-    const n = t === 0 ? 0 : mr(this.lines[t - 1]), r = t === this.lines.length ? 0 : mr(this.lines[t]);
+    const n = t === 0 ? 0 : gr(this.lines[t - 1]), r = t === this.lines.length ? 0 : gr(this.lines[t]);
     return 1e3 - (n + r);
   }
   getText(t) {
@@ -6499,7 +6526,7 @@ class dr {
     return this.lines[t] === this.lines[n];
   }
 }
-function mr(e) {
+function gr(e) {
   let t = 0;
   for (; t < e.length && (e.charCodeAt(t) === 32 || e.charCodeAt(t) === 9); )
     t++;
@@ -6507,113 +6534,113 @@ function mr(e) {
 }
 class Zi {
   constructor() {
-    this.dynamicProgrammingDiffing = new Ti(), this.myersDiffingAlgorithm = new Vr();
+    this.dynamicProgrammingDiffing = new Ti(), this.myersDiffingAlgorithm = new Br();
   }
   computeDiff(t, n, r) {
-    if (t.length <= 1 && js(t, n, (N, R) => N === R))
-      return new ut([], [], !1);
+    if (t.length <= 1 && Qs(t, n, (N, R) => N === R))
+      return new ot([], [], !1);
     if (t.length === 1 && t[0].length === 0 || n.length === 1 && n[0].length === 0)
-      return new ut([
-        new fe(new V(1, t.length + 1), new V(1, n.length + 1), [
-          new Ye(new D(1, 1, t.length, t[0].length + 1), new D(1, 1, n.length, n[0].length + 1))
+      return new ot([
+        new he(new V(1, t.length + 1), new V(1, n.length + 1), [
+          new Je(new T(1, 1, t.length, t[0].length + 1), new T(1, 1, n.length, n[0].length + 1))
         ])
       ], [], !1);
-    const s = r.maxComputationTimeMs === 0 ? Ze.instance : new Di(r.maxComputationTimeMs), i = !r.ignoreTrimWhitespace, a = /* @__PURE__ */ new Map();
+    const s = r.maxComputationTimeMs === 0 ? Ye.instance : new Di(r.maxComputationTimeMs), i = !r.ignoreTrimWhitespace, l = /* @__PURE__ */ new Map();
     function o(N) {
-      let R = a.get(N);
-      return R === void 0 && (R = a.size, a.set(N, R)), R;
+      let R = l.get(N);
+      return R === void 0 && (R = l.size, l.set(N, R)), R;
     }
-    const c = t.map((N) => o(N.trim())), u = n.map((N) => o(N.trim())), h = new dr(c, t), f = new dr(u, n), m = (() => h.length + f.length < 1700 ? this.dynamicProgrammingDiffing.compute(h, f, s, (N, R) => t[N] === n[R] ? n[R].length === 0 ? 0.1 : 1 + Math.log(1 + n[R].length) : 0.99) : this.myersDiffingAlgorithm.compute(h, f))();
+    const u = t.map((N) => o(N.trim())), c = n.map((N) => o(N.trim())), h = new mr(u, t), f = new mr(c, n), m = h.length + f.length < 1700 ? this.dynamicProgrammingDiffing.compute(h, f, s, (N, R) => t[N] === n[R] ? n[R].length === 0 ? 0.1 : 1 + Math.log(1 + n[R].length) : 0.99) : this.myersDiffingAlgorithm.compute(h, f);
     let d = m.diffs, g = m.hitTimeout;
     d = hr(h, f, d), d = Ji(h, f, d);
-    const b = [], w = (N) => {
+    const b = [], v = (N) => {
       if (i)
         for (let R = 0; R < N; R++) {
-          const M = L + R, E = _ + R;
-          if (t[M] !== n[E]) {
-            const I = this.refineDiff(t, n, new O(new T(M, M + 1), new T(E, E + 1)), s, i);
-            for (const G of I.mappings)
+          const M = w + R, k = _ + R;
+          if (t[M] !== n[k]) {
+            const U = this.refineDiff(t, n, new O(new D(M, M + 1), new D(k, k + 1)), s, i);
+            for (const G of U.mappings)
               b.push(G);
-            I.hitTimeout && (g = !0);
+            U.hitTimeout && (g = !0);
           }
         }
     };
-    let L = 0, _ = 0;
+    let w = 0, _ = 0;
     for (const N of d) {
-      gt(() => N.seq1Range.start - L === N.seq2Range.start - _);
-      const R = N.seq1Range.start - L;
-      w(R), L = N.seq1Range.endExclusive, _ = N.seq2Range.endExclusive;
+      mt(() => N.seq1Range.start - w === N.seq2Range.start - _);
+      const R = N.seq1Range.start - w;
+      v(R), w = N.seq1Range.endExclusive, _ = N.seq2Range.endExclusive;
       const M = this.refineDiff(t, n, N, s, i);
       M.hitTimeout && (g = !0);
-      for (const E of M.mappings)
-        b.push(E);
+      for (const k of M.mappings)
+        b.push(k);
     }
-    w(t.length - L);
-    const x = gr(b, t, n);
+    v(t.length - w);
+    const x = br(b, t, n);
     let S = [];
-    return r.computeMoves && (S = this.computeMoves(x, t, n, c, u, s, i)), gt(() => {
-      function N(M, E) {
-        if (M.lineNumber < 1 || M.lineNumber > E.length)
+    return r.computeMoves && (S = this.computeMoves(x, t, n, u, c, s, i)), mt(() => {
+      function N(M, k) {
+        if (M.lineNumber < 1 || M.lineNumber > k.length)
           return !1;
-        const I = E[M.lineNumber - 1];
-        return !(M.column < 1 || M.column > I.length + 1);
+        const U = k[M.lineNumber - 1];
+        return !(M.column < 1 || M.column > U.length + 1);
       }
-      function R(M, E) {
-        return !(M.startLineNumber < 1 || M.startLineNumber > E.length + 1 || M.endLineNumberExclusive < 1 || M.endLineNumberExclusive > E.length + 1);
+      function R(M, k) {
+        return !(M.startLineNumber < 1 || M.startLineNumber > k.length + 1 || M.endLineNumberExclusive < 1 || M.endLineNumberExclusive > k.length + 1);
       }
       for (const M of x) {
         if (!M.innerChanges)
           return !1;
-        for (const E of M.innerChanges)
-          if (!(N(E.modifiedRange.getStartPosition(), n) && N(E.modifiedRange.getEndPosition(), n) && N(E.originalRange.getStartPosition(), t) && N(E.originalRange.getEndPosition(), t)))
+        for (const k of M.innerChanges)
+          if (!(N(k.modifiedRange.getStartPosition(), n) && N(k.modifiedRange.getEndPosition(), n) && N(k.originalRange.getStartPosition(), t) && N(k.originalRange.getEndPosition(), t)))
             return !1;
         if (!R(M.modified, n) || !R(M.original, t))
           return !1;
       }
       return !0;
-    }), new ut(x, S, g);
+    }), new ot(x, S, g);
   }
-  computeMoves(t, n, r, s, i, a, o) {
-    return Ui(t, n, r, s, i, a).map((h) => {
-      const f = this.refineDiff(n, r, new O(h.original.toOffsetRange(), h.modified.toOffsetRange()), a, o), m = gr(f.mappings, n, r, !0);
+  computeMoves(t, n, r, s, i, l, o) {
+    return Ui(t, n, r, s, i, l).map((h) => {
+      const f = this.refineDiff(n, r, new O(h.original.toOffsetRange(), h.modified.toOffsetRange()), l, o), m = br(f.mappings, n, r, !0);
       return new Ri(h, m);
     });
   }
   refineDiff(t, n, r, s, i) {
-    const a = new bt(t, r.seq1Range, i), o = new bt(n, r.seq2Range, i), c = a.length + o.length < 500 ? this.dynamicProgrammingDiffing.compute(a, o, s) : this.myersDiffingAlgorithm.compute(a, o, s);
-    let u = c.diffs;
-    return u = hr(a, o, u), u = Qi(a, o, u), u = ji(a, o, u), u = Yi(a, o, u), {
-      mappings: u.map((f) => new Ye(a.translateRange(f.seq1Range), o.translateRange(f.seq2Range))),
-      hitTimeout: c.hitTimeout
+    const l = new gt(t, r.seq1Range, i), o = new gt(n, r.seq2Range, i), u = l.length + o.length < 500 ? this.dynamicProgrammingDiffing.compute(l, o, s) : this.myersDiffingAlgorithm.compute(l, o, s);
+    let c = u.diffs;
+    return c = hr(l, o, c), c = Qi(l, o, c), c = ji(l, o, c), c = Yi(l, o, c), {
+      mappings: c.map((f) => new Je(l.translateRange(f.seq1Range), o.translateRange(f.seq2Range))),
+      hitTimeout: u.hitTimeout
     };
   }
 }
-function gr(e, t, n, r = !1) {
+function br(e, t, n, r = !1) {
   const s = [];
-  for (const i of Qs(e.map((a) => Ki(a, t, n)), (a, o) => a.original.overlapOrTouch(o.original) || a.modified.overlapOrTouch(o.modified))) {
-    const a = i[0], o = i[i.length - 1];
-    s.push(new fe(a.original.join(o.original), a.modified.join(o.modified), i.map((c) => c.innerChanges[0])));
+  for (const i of Xs(e.map((l) => Ki(l, t, n)), (l, o) => l.original.overlapOrTouch(o.original) || l.modified.overlapOrTouch(o.modified))) {
+    const l = i[0], o = i[i.length - 1];
+    s.push(new he(l.original.join(o.original), l.modified.join(o.modified), i.map((u) => u.innerChanges[0])));
   }
-  return gt(() => !r && s.length > 0 && s[0].original.startLineNumber !== s[0].modified.startLineNumber ? !1 : Dr(s, (i, a) => a.original.startLineNumber - i.original.endLineNumberExclusive === a.modified.startLineNumber - i.modified.endLineNumberExclusive && // There has to be an unchanged line in between (otherwise both diffs should have been joined)
-  i.original.endLineNumberExclusive < a.original.startLineNumber && i.modified.endLineNumberExclusive < a.modified.startLineNumber)), s;
+  return mt(() => !r && s.length > 0 && s[0].original.startLineNumber !== s[0].modified.startLineNumber ? !1 : Tr(s, (i, l) => l.original.startLineNumber - i.original.endLineNumberExclusive === l.modified.startLineNumber - i.modified.endLineNumberExclusive && // There has to be an unchanged line in between (otherwise both diffs should have been joined)
+  i.original.endLineNumberExclusive < l.original.startLineNumber && i.modified.endLineNumberExclusive < l.modified.startLineNumber)), s;
 }
 function Ki(e, t, n) {
   let r = 0, s = 0;
   e.modifiedRange.endColumn === 1 && e.originalRange.endColumn === 1 && e.originalRange.startLineNumber + r <= e.originalRange.endLineNumber && e.modifiedRange.startLineNumber + r <= e.modifiedRange.endLineNumber && (s = -1), e.modifiedRange.startColumn - 1 >= n[e.modifiedRange.startLineNumber - 1].length && e.originalRange.startColumn - 1 >= t[e.originalRange.startLineNumber - 1].length && e.originalRange.startLineNumber <= e.originalRange.endLineNumber + s && e.modifiedRange.startLineNumber <= e.modifiedRange.endLineNumber + s && (r = 1);
-  const i = new V(e.originalRange.startLineNumber + r, e.originalRange.endLineNumber + 1 + s), a = new V(e.modifiedRange.startLineNumber + r, e.modifiedRange.endLineNumber + 1 + s);
-  return new fe(i, a, [e]);
+  const i = new V(e.originalRange.startLineNumber + r, e.originalRange.endLineNumber + 1 + s), l = new V(e.modifiedRange.startLineNumber + r, e.modifiedRange.endLineNumber + 1 + s);
+  return new he(i, l, [e]);
 }
-const br = {
+const _r = {
   getLegacy: () => new Ei(),
   getDefault: () => new Zi()
 };
-function we(e, t) {
+function pe(e, t) {
   const n = Math.pow(10, t);
   return Math.round(e * n) / n;
 }
 class j {
   constructor(t, n, r, s = 1) {
-    this._rgbaBrand = void 0, this.r = Math.min(255, Math.max(0, t)) | 0, this.g = Math.min(255, Math.max(0, n)) | 0, this.b = Math.min(255, Math.max(0, r)) | 0, this.a = we(Math.max(Math.min(1, s), 0), 3);
+    this._rgbaBrand = void 0, this.r = Math.min(255, Math.max(0, t)) | 0, this.g = Math.min(255, Math.max(0, n)) | 0, this.b = Math.min(255, Math.max(0, r)) | 0, this.a = pe(Math.max(Math.min(1, s), 0), 3);
   }
   static equals(t, n) {
     return t.r === n.r && t.g === n.g && t.b === n.b && t.a === n.a;
@@ -6621,7 +6648,7 @@ class j {
 }
 class re {
   constructor(t, n, r, s) {
-    this._hslaBrand = void 0, this.h = Math.max(Math.min(360, t), 0) | 0, this.s = we(Math.max(Math.min(1, n), 0), 3), this.l = we(Math.max(Math.min(1, r), 0), 3), this.a = we(Math.max(Math.min(1, s), 0), 3);
+    this._hslaBrand = void 0, this.h = Math.max(Math.min(360, t), 0) | 0, this.s = pe(Math.max(Math.min(1, n), 0), 3), this.l = pe(Math.max(Math.min(1, r), 0), 3), this.a = pe(Math.max(Math.min(1, s), 0), 3);
   }
   static equals(t, n) {
     return t.h === n.h && t.s === n.s && t.l === n.l && t.a === n.a;
@@ -6633,24 +6660,24 @@ class re {
    * returns h in the set [0, 360], s, and l in the set [0, 1].
    */
   static fromRGBA(t) {
-    const n = t.r / 255, r = t.g / 255, s = t.b / 255, i = t.a, a = Math.max(n, r, s), o = Math.min(n, r, s);
-    let c = 0, u = 0;
-    const h = (o + a) / 2, f = a - o;
+    const n = t.r / 255, r = t.g / 255, s = t.b / 255, i = t.a, l = Math.max(n, r, s), o = Math.min(n, r, s);
+    let u = 0, c = 0;
+    const h = (o + l) / 2, f = l - o;
     if (f > 0) {
-      switch (u = Math.min(h <= 0.5 ? f / (2 * h) : f / (2 - 2 * h), 1), a) {
+      switch (c = Math.min(h <= 0.5 ? f / (2 * h) : f / (2 - 2 * h), 1), l) {
         case n:
-          c = (r - s) / f + (r < s ? 6 : 0);
+          u = (r - s) / f + (r < s ? 6 : 0);
           break;
         case r:
-          c = (s - n) / f + 2;
+          u = (s - n) / f + 2;
           break;
         case s:
-          c = (n - r) / f + 4;
+          u = (n - r) / f + 4;
           break;
       }
-      c *= 60, c = Math.round(c);
+      u *= 60, u = Math.round(u);
     }
-    return new re(c, u, h, i);
+    return new re(u, c, h, i);
   }
   static _hue2rgb(t, n, r) {
     return r < 0 && (r += 1), r > 1 && (r -= 1), r < 1 / 6 ? t + (n - t) * 6 * r : r < 1 / 2 ? n : r < 2 / 3 ? t + (n - t) * (2 / 3 - r) * 6 : t;
@@ -6663,34 +6690,34 @@ class re {
    */
   static toRGBA(t) {
     const n = t.h / 360, { s: r, l: s, a: i } = t;
-    let a, o, c;
+    let l, o, u;
     if (r === 0)
-      a = o = c = s;
+      l = o = u = s;
     else {
-      const u = s < 0.5 ? s * (1 + r) : s + r - s * r, h = 2 * s - u;
-      a = re._hue2rgb(h, u, n + 1 / 3), o = re._hue2rgb(h, u, n), c = re._hue2rgb(h, u, n - 1 / 3);
+      const c = s < 0.5 ? s * (1 + r) : s + r - s * r, h = 2 * s - c;
+      l = re._hue2rgb(h, c, n + 1 / 3), o = re._hue2rgb(h, c, n), u = re._hue2rgb(h, c, n - 1 / 3);
     }
-    return new j(Math.round(a * 255), Math.round(o * 255), Math.round(c * 255), i);
+    return new j(Math.round(l * 255), Math.round(o * 255), Math.round(u * 255), i);
   }
 }
 class De {
   constructor(t, n, r, s) {
-    this._hsvaBrand = void 0, this.h = Math.max(Math.min(360, t), 0) | 0, this.s = we(Math.max(Math.min(1, n), 0), 3), this.v = we(Math.max(Math.min(1, r), 0), 3), this.a = we(Math.max(Math.min(1, s), 0), 3);
+    this._hsvaBrand = void 0, this.h = Math.max(Math.min(360, t), 0) | 0, this.s = pe(Math.max(Math.min(1, n), 0), 3), this.v = pe(Math.max(Math.min(1, r), 0), 3), this.a = pe(Math.max(Math.min(1, s), 0), 3);
   }
   static equals(t, n) {
     return t.h === n.h && t.s === n.s && t.v === n.v && t.a === n.a;
   }
   // from http://www.rapidtables.com/convert/color/rgb-to-hsv.htm
   static fromRGBA(t) {
-    const n = t.r / 255, r = t.g / 255, s = t.b / 255, i = Math.max(n, r, s), a = Math.min(n, r, s), o = i - a, c = i === 0 ? 0 : o / i;
-    let u;
-    return o === 0 ? u = 0 : i === n ? u = ((r - s) / o % 6 + 6) % 6 : i === r ? u = (s - n) / o + 2 : u = (n - r) / o + 4, new De(Math.round(u * 60), c, i, t.a);
+    const n = t.r / 255, r = t.g / 255, s = t.b / 255, i = Math.max(n, r, s), l = Math.min(n, r, s), o = i - l, u = i === 0 ? 0 : o / i;
+    let c;
+    return o === 0 ? c = 0 : i === n ? c = ((r - s) / o % 6 + 6) % 6 : i === r ? c = (s - n) / o + 2 : c = (n - r) / o + 4, new De(Math.round(c * 60), u, i, t.a);
   }
   // from http://www.rapidtables.com/convert/color/hsv-to-rgb.htm
   static toRGBA(t) {
-    const { h: n, s: r, v: s, a: i } = t, a = s * r, o = a * (1 - Math.abs(n / 60 % 2 - 1)), c = s - a;
-    let [u, h, f] = [0, 0, 0];
-    return n < 60 ? (u = a, h = o) : n < 120 ? (u = o, h = a) : n < 180 ? (h = a, f = o) : n < 240 ? (h = o, f = a) : n < 300 ? (u = o, f = a) : n <= 360 && (u = a, f = o), u = Math.round((u + c) * 255), h = Math.round((h + c) * 255), f = Math.round((f + c) * 255), new j(u, h, f, i);
+    const { h: n, s: r, v: s, a: i } = t, l = s * r, o = l * (1 - Math.abs(n / 60 % 2 - 1)), u = s - l;
+    let [c, h, f] = [0, 0, 0];
+    return n < 60 ? (c = l, h = o) : n < 120 ? (c = o, h = l) : n < 180 ? (h = l, f = o) : n < 240 ? (h = o, f = l) : n < 300 ? (c = o, f = l) : n <= 360 && (c = l, f = o), c = Math.round((c + u) * 255), h = Math.round((h + u) * 255), f = Math.round((f + u) * 255), new j(c, h, f, i);
   }
 }
 class q {
@@ -6728,7 +6755,7 @@ class q {
    */
   getRelativeLuminance() {
     const t = q._relativeLuminanceForComponent(this.rgba.r), n = q._relativeLuminanceForComponent(this.rgba.g), r = q._relativeLuminanceForComponent(this.rgba.b), s = 0.2126 * t + 0.7152 * n + 0.0722 * r;
-    return we(s, 4);
+    return pe(s, 4);
   }
   static _relativeLuminanceForComponent(t) {
     const n = t / 255;
@@ -6815,22 +6842,22 @@ q.transparent = new q(new j(0, 0, 0, 0));
         return d.hsla.a === 1 ? `hsl(${d.hsla.h}, ${(d.hsla.s * 100).toFixed(2)}%, ${(d.hsla.l * 100).toFixed(2)}%)` : e.Format.CSS.formatHSLA(d);
       }
       n.formatHSL = i;
-      function a(d) {
+      function l(d) {
         return `hsla(${d.hsla.h}, ${(d.hsla.s * 100).toFixed(2)}%, ${(d.hsla.l * 100).toFixed(2)}%, ${d.hsla.a.toFixed(2)})`;
       }
-      n.formatHSLA = a;
+      n.formatHSLA = l;
       function o(d) {
         const g = d.toString(16);
         return g.length !== 2 ? "0" + g : g;
       }
-      function c(d) {
+      function u(d) {
         return `#${o(d.rgba.r)}${o(d.rgba.g)}${o(d.rgba.b)}`;
       }
-      n.formatHex = c;
-      function u(d, g = !1) {
+      n.formatHex = u;
+      function c(d, g = !1) {
         return g && d.rgba.a === 1 ? e.Format.CSS.formatHex(d) : `#${o(d.rgba.r)}${o(d.rgba.g)}${o(d.rgba.b)}${o(Math.round(d.rgba.a * 255))}`;
       }
-      n.formatHexA = u;
+      n.formatHexA = c;
       function h(d) {
         return d.isOpaque() ? e.Format.CSS.formatHex(d) : e.Format.CSS.formatRGBA(d);
       }
@@ -6840,20 +6867,20 @@ q.transparent = new q(new j(0, 0, 0, 0));
         if (g === 0 || d.charCodeAt(0) !== 35)
           return null;
         if (g === 7) {
-          const b = 16 * m(d.charCodeAt(1)) + m(d.charCodeAt(2)), w = 16 * m(d.charCodeAt(3)) + m(d.charCodeAt(4)), L = 16 * m(d.charCodeAt(5)) + m(d.charCodeAt(6));
-          return new e(new j(b, w, L, 1));
+          const b = 16 * m(d.charCodeAt(1)) + m(d.charCodeAt(2)), v = 16 * m(d.charCodeAt(3)) + m(d.charCodeAt(4)), w = 16 * m(d.charCodeAt(5)) + m(d.charCodeAt(6));
+          return new e(new j(b, v, w, 1));
         }
         if (g === 9) {
-          const b = 16 * m(d.charCodeAt(1)) + m(d.charCodeAt(2)), w = 16 * m(d.charCodeAt(3)) + m(d.charCodeAt(4)), L = 16 * m(d.charCodeAt(5)) + m(d.charCodeAt(6)), _ = 16 * m(d.charCodeAt(7)) + m(d.charCodeAt(8));
-          return new e(new j(b, w, L, _ / 255));
+          const b = 16 * m(d.charCodeAt(1)) + m(d.charCodeAt(2)), v = 16 * m(d.charCodeAt(3)) + m(d.charCodeAt(4)), w = 16 * m(d.charCodeAt(5)) + m(d.charCodeAt(6)), _ = 16 * m(d.charCodeAt(7)) + m(d.charCodeAt(8));
+          return new e(new j(b, v, w, _ / 255));
         }
         if (g === 4) {
-          const b = m(d.charCodeAt(1)), w = m(d.charCodeAt(2)), L = m(d.charCodeAt(3));
-          return new e(new j(16 * b + b, 16 * w + w, 16 * L + L));
+          const b = m(d.charCodeAt(1)), v = m(d.charCodeAt(2)), w = m(d.charCodeAt(3));
+          return new e(new j(16 * b + b, 16 * v + v, 16 * w + w));
         }
         if (g === 5) {
-          const b = m(d.charCodeAt(1)), w = m(d.charCodeAt(2)), L = m(d.charCodeAt(3)), _ = m(d.charCodeAt(4));
-          return new e(new j(16 * b + b, 16 * w + w, 16 * L + L, (16 * _ + _) / 255));
+          const b = m(d.charCodeAt(1)), v = m(d.charCodeAt(2)), w = m(d.charCodeAt(3)), _ = m(d.charCodeAt(4));
+          return new e(new j(16 * b + b, 16 * v + v, 16 * w + w, (16 * _ + _) / 255));
         }
         return null;
       }
@@ -6910,7 +6937,7 @@ q.transparent = new q(new j(0, 0, 0, 0));
     })(t.CSS || (t.CSS = {}));
   })(e.Format || (e.Format = {}));
 })(q || (q = {}));
-function Br(e) {
+function qr(e) {
   const t = [];
   for (const n of e) {
     const r = Number(n);
@@ -6918,7 +6945,7 @@ function Br(e) {
   }
   return t;
 }
-function Yt(e, t, n, r) {
+function Jt(e, t, n, r) {
   return {
     red: e / 255,
     blue: n / 255,
@@ -6945,25 +6972,25 @@ function e1(e, t) {
   if (n)
     return {
       range: e,
-      color: Yt(n.rgba.r, n.rgba.g, n.rgba.b, n.rgba.a)
+      color: Jt(n.rgba.r, n.rgba.g, n.rgba.b, n.rgba.a)
     };
-}
-function _r(e, t, n) {
-  if (!e || t.length !== 1)
-    return;
-  const s = t[0].values(), i = Br(s);
-  return {
-    range: e,
-    color: Yt(i[0], i[1], i[2], n ? i[3] : 1)
-  };
 }
 function xr(e, t, n) {
   if (!e || t.length !== 1)
     return;
-  const s = t[0].values(), i = Br(s), a = new q(new re(i[0], i[1] / 100, i[2] / 100, n ? i[3] : 1));
+  const s = t[0].values(), i = qr(s);
   return {
     range: e,
-    color: Yt(a.rgba.r, a.rgba.g, a.rgba.b, a.rgba.a)
+    color: Jt(i[0], i[1], i[2], n ? i[3] : 1)
+  };
+}
+function pr(e, t, n) {
+  if (!e || t.length !== 1)
+    return;
+  const s = t[0].values(), i = qr(s), l = new q(new re(i[0], i[1] / 100, i[2] / 100, n ? i[3] : 1));
+  return {
+    range: e,
+    color: Jt(l.rgba.r, l.rgba.g, l.rgba.b, l.rgba.a)
   };
 }
 function $e(e, t) {
@@ -6973,59 +7000,32 @@ function t1(e) {
   const t = [], r = $e(e, /\b(rgb|rgba|hsl|hsla)(\([0-9\s,.\%]*\))|(#)([A-Fa-f0-9]{3})\b|(#)([A-Fa-f0-9]{4})\b|(#)([A-Fa-f0-9]{6})\b|(#)([A-Fa-f0-9]{8})\b/gm);
   if (r.length > 0)
     for (const s of r) {
-      const i = s.filter((u) => u !== void 0), a = i[1], o = i[2];
+      const i = s.filter((c) => c !== void 0), l = i[1], o = i[2];
       if (!o)
         continue;
-      let c;
-      if (a === "rgb") {
-        const u = /^\(\s*(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]|[0-9])\s*,\s*(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]|[0-9])\s*,\s*(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]|[0-9])\s*\)$/gm;
-        c = _r(ze(e, s), $e(o, u), !1);
-      } else if (a === "rgba") {
-        const u = /^\(\s*(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]|[0-9])\s*,\s*(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]|[0-9])\s*,\s*(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]|[0-9])\s*,\s*(0[.][0-9]+|[.][0-9]+|[01][.]|[01])\s*\)$/gm;
-        c = _r(ze(e, s), $e(o, u), !0);
-      } else if (a === "hsl") {
-        const u = /^\(\s*(36[0]|3[0-5][0-9]|[12][0-9][0-9]|[1-9]?[0-9])\s*,\s*(100|\d{1,2}[.]\d*|\d{1,2})%\s*,\s*(100|\d{1,2}[.]\d*|\d{1,2})%\s*\)$/gm;
-        c = xr(ze(e, s), $e(o, u), !1);
-      } else if (a === "hsla") {
-        const u = /^\(\s*(36[0]|3[0-5][0-9]|[12][0-9][0-9]|[1-9]?[0-9])\s*,\s*(100|\d{1,2}[.]\d*|\d{1,2})%\s*,\s*(100|\d{1,2}[.]\d*|\d{1,2})%\s*,\s*(0[.][0-9]+|[.][0-9]+|[01][.]|[01])\s*\)$/gm;
-        c = xr(ze(e, s), $e(o, u), !0);
+      let u;
+      if (l === "rgb") {
+        const c = /^\(\s*(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]|[0-9])\s*,\s*(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]|[0-9])\s*,\s*(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]|[0-9])\s*\)$/gm;
+        u = xr(ze(e, s), $e(o, c), !1);
+      } else if (l === "rgba") {
+        const c = /^\(\s*(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]|[0-9])\s*,\s*(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]|[0-9])\s*,\s*(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]|[0-9])\s*,\s*(0[.][0-9]+|[.][0-9]+|[01][.]|[01])\s*\)$/gm;
+        u = xr(ze(e, s), $e(o, c), !0);
+      } else if (l === "hsl") {
+        const c = /^\(\s*(36[0]|3[0-5][0-9]|[12][0-9][0-9]|[1-9]?[0-9])\s*,\s*(100|\d{1,2}[.]\d*|\d{1,2})%\s*,\s*(100|\d{1,2}[.]\d*|\d{1,2})%\s*\)$/gm;
+        u = pr(ze(e, s), $e(o, c), !1);
+      } else if (l === "hsla") {
+        const c = /^\(\s*(36[0]|3[0-5][0-9]|[12][0-9][0-9]|[1-9]?[0-9])\s*,\s*(100|\d{1,2}[.]\d*|\d{1,2})%\s*,\s*(100|\d{1,2}[.]\d*|\d{1,2})%\s*,\s*(0[.][0-9]+|[.][0-9]+|[01][.]|[01])\s*\)$/gm;
+        u = pr(ze(e, s), $e(o, c), !0);
       } else
-        a === "#" && (c = e1(ze(e, s), a + o));
-      c && t.push(c);
+        l === "#" && (u = e1(ze(e, s), l + o));
+      u && t.push(u);
     }
   return t;
 }
 function n1(e) {
   return !e || typeof e.getValue != "function" || typeof e.positionAt != "function" ? [] : t1(e);
 }
-var ge = globalThis && globalThis.__awaiter || function(e, t, n, r) {
-  function s(i) {
-    return i instanceof n ? i : new n(function(a) {
-      a(i);
-    });
-  }
-  return new (n || (n = Promise))(function(i, a) {
-    function o(h) {
-      try {
-        u(r.next(h));
-      } catch (f) {
-        a(f);
-      }
-    }
-    function c(h) {
-      try {
-        u(r.throw(h));
-      } catch (f) {
-        a(f);
-      }
-    }
-    function u(h) {
-      h.done ? i(h.value) : s(h.value).then(o, c);
-    }
-    u((r = r.apply(e, t || [])).next());
-  });
-};
-class r1 extends ti {
+class r1 extends ni {
   get uri() {
     return this._uri;
   }
@@ -7038,8 +7038,8 @@ class r1 extends ti {
   findMatches(t) {
     const n = [];
     for (let r = 0; r < this._lines.length; r++) {
-      const s = this._lines[r], i = this.offsetAt(new J(r + 1, 1)), a = s.matchAll(t);
-      for (const o of a)
+      const s = this._lines[r], i = this.offsetAt(new Y(r + 1, 1)), l = s.matchAll(t);
+      for (const o of l)
         (o.index || o.index === 0) && (o.index = o.index + i), n.push(o);
     }
     return n;
@@ -7054,20 +7054,20 @@ class r1 extends ti {
     return this._lines[t - 1];
   }
   getWordAtPosition(t, n) {
-    const r = Qt(t.column, si(n), this._lines[t.lineNumber - 1], 0);
-    return r ? new D(t.lineNumber, r.startColumn, t.lineNumber, r.endColumn) : null;
+    const r = jt(t.column, Pr(n), this._lines[t.lineNumber - 1], 0);
+    return r ? new T(t.lineNumber, r.startColumn, t.lineNumber, r.endColumn) : null;
   }
   words(t) {
     const n = this._lines, r = this._wordenize.bind(this);
-    let s = 0, i = "", a = 0, o = [];
+    let s = 0, i = "", l = 0, o = [];
     return {
       *[Symbol.iterator]() {
         for (; ; )
-          if (a < o.length) {
-            const c = i.substring(o[a].start, o[a].end);
-            a += 1, yield c;
+          if (l < o.length) {
+            const u = i.substring(o[l].start, o[l].end);
+            l += 1, yield u;
           } else if (s < n.length)
-            i = n[s], o = r(i, t), a = 0, s += 1;
+            i = n[s], o = r(i, t), l = 0, s += 1;
           else
             break;
       }
@@ -7075,11 +7075,11 @@ class r1 extends ti {
   }
   getLineWords(t, n) {
     const r = this._lines[t - 1], s = this._wordenize(r, n), i = [];
-    for (const a of s)
+    for (const l of s)
       i.push({
-        word: r.substring(a.start, a.end),
-        startColumn: a.start + 1,
-        endColumn: a.end + 1
+        word: r.substring(l.start, l.end),
+        startColumn: l.start + 1,
+        endColumn: l.end + 1
       });
     return i;
   }
@@ -7095,8 +7095,8 @@ class r1 extends ti {
       return this._lines[t.startLineNumber - 1].substring(t.startColumn - 1, t.endColumn - 1);
     const n = this._eol, r = t.startLineNumber - 1, s = t.endLineNumber - 1, i = [];
     i.push(this._lines[r].substring(t.startColumn - 1));
-    for (let a = r + 1; a < s; a++)
-      i.push(this._lines[a]);
+    for (let l = r + 1; l < s; l++)
+      i.push(this._lines[l]);
     return i.push(this._lines[s].substring(0, t.endColumn - 1)), i.join(n);
   }
   offsetAt(t) {
@@ -7120,7 +7120,7 @@ class r1 extends ti {
     } : t;
   }
   _validatePosition(t) {
-    if (!J.isIPosition(t))
+    if (!Y.isIPosition(t))
       throw new Error("bad position");
     let { lineNumber: n, column: r } = t, s = !1;
     if (n < 1)
@@ -7134,7 +7134,7 @@ class r1 extends ti {
     return s ? { lineNumber: n, column: r } : t;
   }
 }
-class Ae {
+class Ce {
   constructor(t, n) {
     this._host = t, this._models = /* @__PURE__ */ Object.create(null), this._foreignModuleFactory = n, this._foreignModule = null;
   }
@@ -7149,7 +7149,7 @@ class Ae {
     return Object.keys(this._models).forEach((n) => t.push(this._models[n])), t;
   }
   acceptNewModel(t) {
-    this._models[t.url] = new r1(Ce.parse(t.url), t.lines, t.EOL, t.versionId);
+    this._models[t.url] = new r1(Se.parse(t.url), t.lines, t.EOL, t.versionId);
   }
   acceptModelChanged(t, n) {
     if (!this._models[t])
@@ -7159,21 +7159,17 @@ class Ae {
   acceptRemovedModel(t) {
     this._models[t] && delete this._models[t];
   }
-  computeUnicodeHighlights(t, n, r) {
-    return ge(this, void 0, void 0, function* () {
-      const s = this._getModel(t);
-      return s ? Ci.computeUnicodeHighlights(s, n, r) : { ranges: [], hasMore: !1, ambiguousCharacterCount: 0, invisibleCharacterCount: 0, nonBasicAsciiCharacterCount: 0 };
-    });
+  async computeUnicodeHighlights(t, n, r) {
+    const s = this._getModel(t);
+    return s ? Ci.computeUnicodeHighlights(s, n, r) : { ranges: [], hasMore: !1, ambiguousCharacterCount: 0, invisibleCharacterCount: 0, nonBasicAsciiCharacterCount: 0 };
   }
   // ---- BEGIN diff --------------------------------------------------------------------------
-  computeDiff(t, n, r, s) {
-    return ge(this, void 0, void 0, function* () {
-      const i = this._getModel(t), a = this._getModel(n);
-      return !i || !a ? null : Ae.computeDiff(i, a, r, s);
-    });
+  async computeDiff(t, n, r, s) {
+    const i = this._getModel(t), l = this._getModel(n);
+    return !i || !l ? null : Ce.computeDiff(i, l, r, s);
   }
   static computeDiff(t, n, r, s) {
-    const i = s === "advanced" ? br.getDefault() : br.getLegacy(), a = t.getLinesContent(), o = n.getLinesContent(), c = i.computeDiff(a, o, r), u = c.changes.length > 0 ? !1 : this._modelsAreIdentical(t, n);
+    const i = s === "advanced" ? _r.getDefault() : _r.getLegacy(), l = t.getLinesContent(), o = n.getLinesContent(), u = i.computeDiff(l, o, r), c = u.changes.length > 0 ? !1 : this._modelsAreIdentical(t, n);
     function h(f) {
       return f.map((m) => {
         var d;
@@ -7190,10 +7186,10 @@ class Ae {
       });
     }
     return {
-      identical: u,
-      quitEarly: c.hitTimeout,
-      changes: h(c.changes),
-      moves: c.moves.map((f) => [
+      identical: c,
+      quitEarly: u.hitTimeout,
+      changes: h(u.changes),
+      moves: u.moves.map((f) => [
         f.lineRangeMapping.original.startLineNumber,
         f.lineRangeMapping.original.endLineNumberExclusive,
         f.lineRangeMapping.modified.startLineNumber,
@@ -7207,132 +7203,120 @@ class Ae {
     if (r !== s)
       return !1;
     for (let i = 1; i <= r; i++) {
-      const a = t.getLineContent(i), o = n.getLineContent(i);
-      if (a !== o)
+      const l = t.getLineContent(i), o = n.getLineContent(i);
+      if (l !== o)
         return !1;
     }
     return !0;
   }
-  computeMoreMinimalEdits(t, n, r) {
-    return ge(this, void 0, void 0, function* () {
-      const s = this._getModel(t);
-      if (!s)
-        return n;
-      const i = [];
-      let a;
-      n = n.slice(0).sort((c, u) => {
-        if (c.range && u.range)
-          return D.compareRangesUsingStarts(c.range, u.range);
-        const h = c.range ? 0 : 1, f = u.range ? 0 : 1;
-        return h - f;
-      });
-      let o = 0;
-      for (let c = 1; c < n.length; c++)
-        D.getEndPosition(n[o].range).equals(D.getStartPosition(n[c].range)) ? (n[o].range = D.fromPositions(D.getStartPosition(n[o].range), D.getEndPosition(n[c].range)), n[o].text += n[c].text) : (o++, n[o] = n[c]);
-      n.length = o + 1;
-      for (let { range: c, text: u, eol: h } of n) {
-        if (typeof h == "number" && (a = h), D.isEmpty(c) && !u)
-          continue;
-        const f = s.getValueInRange(c);
-        if (u = u.replace(/\r\n|\n|\r/g, s.eol), f === u)
-          continue;
-        if (Math.max(u.length, f.length) > Ae._diffLimit) {
-          i.push({ range: c, text: u });
-          continue;
-        }
-        const m = Ms(f, u, r), d = s.offsetAt(D.lift(c).getStartPosition());
-        for (const g of m) {
-          const b = s.positionAt(d + g.originalStart), w = s.positionAt(d + g.originalStart + g.originalLength), L = {
-            text: u.substr(g.modifiedStart, g.modifiedLength),
-            range: { startLineNumber: b.lineNumber, startColumn: b.column, endLineNumber: w.lineNumber, endColumn: w.column }
-          };
-          s.getValueInRange(L.range) !== L.text && i.push(L);
-        }
-      }
-      return typeof a == "number" && i.push({ eol: a, text: "", range: { startLineNumber: 0, startColumn: 0, endLineNumber: 0, endColumn: 0 } }), i;
+  async computeMoreMinimalEdits(t, n, r) {
+    const s = this._getModel(t);
+    if (!s)
+      return n;
+    const i = [];
+    let l;
+    n = n.slice(0).sort((u, c) => {
+      if (u.range && c.range)
+        return T.compareRangesUsingStarts(u.range, c.range);
+      const h = u.range ? 0 : 1, f = c.range ? 0 : 1;
+      return h - f;
     });
+    let o = 0;
+    for (let u = 1; u < n.length; u++)
+      T.getEndPosition(n[o].range).equals(T.getStartPosition(n[u].range)) ? (n[o].range = T.fromPositions(T.getStartPosition(n[o].range), T.getEndPosition(n[u].range)), n[o].text += n[u].text) : (o++, n[o] = n[u]);
+    n.length = o + 1;
+    for (let { range: u, text: c, eol: h } of n) {
+      if (typeof h == "number" && (l = h), T.isEmpty(u) && !c)
+        continue;
+      const f = s.getValueInRange(u);
+      if (c = c.replace(/\r\n|\n|\r/g, s.eol), f === c)
+        continue;
+      if (Math.max(c.length, f.length) > Ce._diffLimit) {
+        i.push({ range: u, text: c });
+        continue;
+      }
+      const m = Es(f, c, r), d = s.offsetAt(T.lift(u).getStartPosition());
+      for (const g of m) {
+        const b = s.positionAt(d + g.originalStart), v = s.positionAt(d + g.originalStart + g.originalLength), w = {
+          text: c.substr(g.modifiedStart, g.modifiedLength),
+          range: { startLineNumber: b.lineNumber, startColumn: b.column, endLineNumber: v.lineNumber, endColumn: v.column }
+        };
+        s.getValueInRange(w.range) !== w.text && i.push(w);
+      }
+    }
+    return typeof l == "number" && i.push({ eol: l, text: "", range: { startLineNumber: 0, startColumn: 0, endLineNumber: 0, endColumn: 0 } }), i;
   }
   // ---- END minimal edits ---------------------------------------------------------------
-  computeLinks(t) {
-    return ge(this, void 0, void 0, function* () {
-      const n = this._getModel(t);
-      return n ? ci(n) : null;
-    });
+  async computeLinks(t) {
+    const n = this._getModel(t);
+    return n ? ci(n) : null;
   }
   // --- BEGIN default document colors -----------------------------------------------------------
-  computeDefaultDocumentColors(t) {
-    return ge(this, void 0, void 0, function* () {
-      const n = this._getModel(t);
-      return n ? n1(n) : null;
-    });
+  async computeDefaultDocumentColors(t) {
+    const n = this._getModel(t);
+    return n ? n1(n) : null;
   }
-  textualSuggest(t, n, r, s) {
-    return ge(this, void 0, void 0, function* () {
-      const i = new _t(), a = new RegExp(r, s), o = /* @__PURE__ */ new Set();
-      e:
-        for (const c of t) {
-          const u = this._getModel(c);
-          if (u) {
-            for (const h of u.words(a))
-              if (!(h === n || !isNaN(Number(h))) && (o.add(h), o.size > Ae._suggestionsLimit))
-                break e;
-          }
+  async textualSuggest(t, n, r, s) {
+    const i = new bt(), l = new RegExp(r, s), o = /* @__PURE__ */ new Set();
+    e:
+      for (const u of t) {
+        const c = this._getModel(u);
+        if (c) {
+          for (const h of c.words(l))
+            if (!(h === n || !isNaN(Number(h))) && (o.add(h), o.size > Ce._suggestionsLimit))
+              break e;
         }
-      return { words: Array.from(o), duration: i.elapsed() };
-    });
+      }
+    return { words: Array.from(o), duration: i.elapsed() };
   }
   // ---- END suggest --------------------------------------------------------------------------
   //#region -- word ranges --
-  computeWordRanges(t, n, r, s) {
-    return ge(this, void 0, void 0, function* () {
-      const i = this._getModel(t);
-      if (!i)
-        return /* @__PURE__ */ Object.create(null);
-      const a = new RegExp(r, s), o = /* @__PURE__ */ Object.create(null);
-      for (let c = n.startLineNumber; c < n.endLineNumber; c++) {
-        const u = i.getLineWords(c, a);
-        for (const h of u) {
-          if (!isNaN(Number(h.word)))
-            continue;
-          let f = o[h.word];
-          f || (f = [], o[h.word] = f), f.push({
-            startLineNumber: c,
-            startColumn: h.startColumn,
-            endLineNumber: c,
-            endColumn: h.endColumn
-          });
-        }
+  async computeWordRanges(t, n, r, s) {
+    const i = this._getModel(t);
+    if (!i)
+      return /* @__PURE__ */ Object.create(null);
+    const l = new RegExp(r, s), o = /* @__PURE__ */ Object.create(null);
+    for (let u = n.startLineNumber; u < n.endLineNumber; u++) {
+      const c = i.getLineWords(u, l);
+      for (const h of c) {
+        if (!isNaN(Number(h.word)))
+          continue;
+        let f = o[h.word];
+        f || (f = [], o[h.word] = f), f.push({
+          startLineNumber: u,
+          startColumn: h.startColumn,
+          endLineNumber: u,
+          endColumn: h.endColumn
+        });
       }
-      return o;
-    });
+    }
+    return o;
   }
   //#endregion
-  navigateValueSet(t, n, r, s, i) {
-    return ge(this, void 0, void 0, function* () {
-      const a = this._getModel(t);
-      if (!a)
-        return null;
-      const o = new RegExp(s, i);
-      n.startColumn === n.endColumn && (n = {
-        startLineNumber: n.startLineNumber,
-        startColumn: n.startColumn,
-        endLineNumber: n.endLineNumber,
-        endColumn: n.endColumn + 1
-      });
-      const c = a.getValueInRange(n), u = a.getWordAtPosition({ lineNumber: n.startLineNumber, column: n.startColumn }, o);
-      if (!u)
-        return null;
-      const h = a.getValueInRange(u);
-      return Dt.INSTANCE.navigateValueSet(n, c, u, h, r);
+  async navigateValueSet(t, n, r, s, i) {
+    const l = this._getModel(t);
+    if (!l)
+      return null;
+    const o = new RegExp(s, i);
+    n.startColumn === n.endColumn && (n = {
+      startLineNumber: n.startLineNumber,
+      startColumn: n.startColumn,
+      endLineNumber: n.endLineNumber,
+      endColumn: n.endColumn + 1
     });
+    const u = l.getValueInRange(n), c = l.getWordAtPosition({ lineNumber: n.startLineNumber, column: n.startColumn }, o);
+    if (!c)
+      return null;
+    const h = l.getValueInRange(c);
+    return Dt.INSTANCE.navigateValueSet(n, u, c, h, r);
   }
   // ---- BEGIN foreign module support --------------------------------------------------------------------------
   loadForeignModule(t, n, r) {
-    const a = {
-      host: ts(r, (o, c) => this._host.fhr(o, c)),
+    const l = {
+      host: ns(r, (o, u) => this._host.fhr(o, u)),
       getMirrorModels: () => this._getModels()
     };
-    return this._foreignModuleFactory ? (this._foreignModule = this._foreignModuleFactory(a, n), Promise.resolve(Rt(this._foreignModule))) : Promise.reject(new Error("Unexpected usage"));
+    return this._foreignModuleFactory ? (this._foreignModule = this._foreignModuleFactory(l, n), Promise.resolve(Rt(this._foreignModule))) : Promise.reject(new Error("Unexpected usage"));
   }
   // foreign method request
   fmr(t, n) {
@@ -7345,23 +7329,23 @@ class Ae {
     }
   }
 }
-Ae._diffLimit = 1e5;
-Ae._suggestionsLimit = 1e4;
+Ce._diffLimit = 1e5;
+Ce._suggestionsLimit = 1e4;
 typeof importScripts == "function" && (globalThis.monaco = pi());
-let Gt = !1;
+let Ot = !1;
 function s1(e) {
-  if (Gt)
+  if (Ot)
     return;
-  Gt = !0;
-  const t = new Rs((n) => {
+  Ot = !0;
+  const t = new ys((n) => {
     globalThis.postMessage(n);
-  }, (n) => new Ae(n, e));
+  }, (n) => new Ce(n, e));
   globalThis.onmessage = (n) => {
     t.onmessage(n.data);
   };
 }
 globalThis.onmessage = (e) => {
-  Gt || s1(null);
+  Ot || s1(null);
 };
 export {
   s1 as initialize

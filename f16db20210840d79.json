@@ -1,0 +1,118 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "scopeName": "source.dyvil",
+  "name": "Dyvil",
+  "fileTypes": [
+    "dyv"
+  ],
+  "patterns": [
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#keywords"
+    },
+    {
+      "include": "#strings"
+    },
+    {
+      "include": "#numbers"
+    },
+    {
+      "include": "#operators"
+    },
+    {
+      "include": "#identifiers"
+    }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash.dyvil",
+          "begin": "//",
+          "end": "$"
+        },
+        {
+          "name": "comment.block.documentation.dyvil",
+          "begin": "/\\*\\*",
+          "end": "\\*/"
+        },
+        {
+          "name": "comment.block.dyvil",
+          "begin": "/\\*",
+          "end": "\\*/"
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.dyvil",
+          "match": "\\b(?:class|var|init|func|int|boolean|string|void|true|false|while|if|else)\\b"
+        },
+        {
+          "name": "keyword.other.dyvil",
+          "match": "\\b(?:this|super)\\b"
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.dyvil",
+          "begin": "\"",
+          "end": "\"",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.begin.dyvil"
+            }
+          },
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.end.dyvil"
+            }
+          },
+          "patterns": [
+            {
+              "name": "constant.character.escape.dyvil",
+              "match": "\\\\."
+            }
+          ]
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.integer.decimal.dyvil",
+          "match": "\\b[+-]?\\d+\\b"
+        },
+        {
+          "name": "constant.numeric.float.decimal.dyvil",
+          "match": "\\b[+-]?\\d+\\.\\d+\\b"
+        }
+      ]
+    },
+    "operators": {
+      "patterns": [
+        {
+          "name": "keyword.operator.dyvil",
+          "match": "\\b(?:[+\\-*/%&|<>!:^=]+)\\b"
+        }
+      ]
+    },
+    "identifiers": {
+      "patterns": [
+        {
+          "name": "entity.name.class.dyvil",
+          "match": "\\b[A-Z][A-Za-z0-9_]*\\b"
+        },
+        {
+          "name": "variable.name.dyvil",
+          "match": "\\b[a-z][A-Za-z0-9_]*\\b"
+        }
+      ]
+    }
+  }
+}
