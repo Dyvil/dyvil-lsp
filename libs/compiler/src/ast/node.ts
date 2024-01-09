@@ -2,6 +2,8 @@ import {Position, Range} from '../lint';
 import {Scope} from '../scope';
 import {DyvilParser} from "../parser/DyvilParser";
 import {ParserRuleContext} from "antlr4ts/ParserRuleContext";
+import {CompilationUnit} from "./declarations";
+import {SignatureBuilder} from "./signature";
 
 export type StringFormat = 'plain' | 'js';
 
@@ -41,6 +43,12 @@ export class Node<K extends string> {
   constructor(
     public kind: K,
   ) {
+  }
+
+  buildSignature(builder: SignatureBuilder) {
+    for (const child of children(this)) {
+      child.buildSignature(builder);
+    }
   }
 
   definition(purpose?: 'rename' | 'definition'): Node<any> | undefined {

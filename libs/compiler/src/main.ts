@@ -2,6 +2,7 @@ import {readFileSync} from 'fs';
 import {SimpleScope} from './scope';
 import {compilationUnit} from './compiler';
 import {log} from "./lint";
+import {SignatureBuilder} from "./ast";
 
 const path = process.argv[2] || 'examples/Greeter.dyv';
 
@@ -15,3 +16,7 @@ console.log('---', 'Dyvil', '---');
 console.log(file.toString());
 console.log('---', 'JS', '---');
 console.log(file.toString('js'));
+console.log('---', 'Signature', '---');
+const sigBuilder = new SignatureBuilder();
+file.buildSignature(sigBuilder);
+console.log(sigBuilder.signature, sigBuilder.hash);

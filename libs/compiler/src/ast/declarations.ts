@@ -4,6 +4,7 @@ import {autoIndent, CommentAware, Concept, Node, ParserMethod, StringFormat} fro
 import {Name, Scope, SimpleScope} from '../scope';
 import {Block} from './statements';
 import {Type, ClassType, isAssignable, ErrorType} from './types';
+import {SignatureBuilder} from "./signature";
 
 export class CompilationUnit extends Node<'unit'> {
   static enclosing = Symbol('enclosing compilation unit');
@@ -94,6 +95,19 @@ export class Class extends Declaration<'class'> implements Scope {
       label: this.name,
       kind: 'class',
     };
+  }
+
+  buildSignature(builder: SignatureBuilder) {
+    builder.addSignature(`class ${this.name} { `);
+    for (let decl of [
+      this.fields,
+      this.constructors,
+      this.methods,
+    ].map(decls => decls.sort((a, b) => a.name.localeCompare(b.name))).flat()) {
+      decl.buildSignature(builder);
+      builder.addSignature(' ');
+    }
+    builder.addSignature('}');
   }
 
   @CommentAware()
@@ -192,6 +206,15 @@ export class Constructor extends MethodLike<'constructor'> {
     super('constructor', 'init', parameters, body);
   }
 
+  buildSignature(builder: SignatureBuilder) {
+    builder.addSignature('init(');
+    for (let parameter of this.parameters) {
+      parameter.buildSignature(builder);
+    }
+    builder.addSignature(')');
+    this.body.buildSignature(builder);
+  }
+
   @CommentAware()
   toString(format?: StringFormat): string {
     const keyword = format === 'js' ? 'constructor' : 'init';
@@ -236,6 +259,12 @@ export class Field extends Declaration<'field'> {
       kind: 'field',
       signature: ': ' + this.type.toString(),
     };
+  }
+
+  buildSignature(builder: SignatureBuilder) {
+    builder.addSignature(`${this.name}:${this.type}`);
+    this.type.buildSignature(builder);
+    this.value?.buildSignature(builder);
   }
 
   @CommentAware()
@@ -291,6 +320,16 @@ export class Method extends MethodLike<'method'> {
       doc += '\n#### Returns\n`' + this.returnType.toString() + '`';
     }
     return doc;
+  }
+
+  buildSignature(builder: SignatureBuilder) {
+    builder.addSignature(`${this.name}(`);
+    for (let parameter of this.parameters) {
+      parameter.buildSignature(builder);
+    }
+    builder.addSignature(`):${this.returnType}`);
+    this.returnType.buildSignature(builder);
+    this.body.buildSignature(builder);
   }
 
   @CommentAware()
@@ -367,6 +406,11 @@ export class Parameter extends VariableLike<'parameter'> {
 
   documentation(): string | undefined {
     return `\`${this.name}: ${this.type.toString()}\`${this.doc ? '\n' + this.doc : ''}`;
+  }
+
+  buildSignature(builder: SignatureBuilder) {
+    builder.addSignature(`${this.name}:${this.type}`);
+    super.buildSignature(builder);
   }
 
   toString(format?: StringFormat): string {
