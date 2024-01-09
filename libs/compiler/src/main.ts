@@ -35,6 +35,8 @@ for (const diagnostic of units.flatMap(u => u.diagnostics)) {
   log(diagnostic);
 }
 
+units.forEach(u => u.link());
+
 for (const unit of units) {
   const sigBuilder = new SignatureBuilder();
   unit.buildSignature(sigBuilder);

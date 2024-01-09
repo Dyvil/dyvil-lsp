@@ -2,7 +2,7 @@ import {Position, Range} from '../lint';
 import {Scope} from '../scope';
 import {DyvilParser} from "../parser/DyvilParser";
 import {ParserRuleContext} from "antlr4ts/ParserRuleContext";
-import {Declaration} from "./declarations";
+import {CompilationUnit, Declaration} from "./declarations";
 import {SignatureBuilder} from "./signature";
 
 export type StringFormat = 'plain' | 'js';
@@ -35,6 +35,7 @@ export function isSubConcept(sub: Concept<any>, sup: Concept<any>): boolean {
 export type ParserMethod = keyof { [K in keyof DyvilParser]: DyvilParser[K] extends (...args: any[]) => ParserRuleContext ? K : never };
 
 export class Node<K extends string> {
+  _parent?: Node<string>;
   location?: Range;
   range?: Range;
   commentBefore?: string;
@@ -45,13 +46,22 @@ export class Node<K extends string> {
   ) {
   }
 
+  compilationUnit(): CompilationUnit | undefined {
+    let parent = this._parent;
+    while (parent && !(parent instanceof CompilationUnit)) {
+      parent = parent._parent;
+    }
+    return parent;
+  }
+
   buildSignature(builder: SignatureBuilder) {
     for (const child of children(this)) {
       child.buildSignature(builder);
     }
     const def = this.definition();
-    if (def && def instanceof Declaration && def._enclosingCU) {
-      builder.addDependency(def._enclosingCU);
+    if (def && def instanceof Declaration) {
+      const unit = def.compilationUnit();
+      unit && builder.addDependency(unit);
     }
   }
 
@@ -74,11 +84,12 @@ export class Node<K extends string> {
 
   link() {
     for (const [key, value] of Object.entries(this)) {
-      if (key.startsWith('_') && value && '_references' in value) {
+      if (key.startsWith('_') && key !== '_parent' && value && '_references' in value) {
         value._references.push(this);
       }
     }
     for (const child of children(this)) {
+      child._parent = this;
       child.link();
     }
   }

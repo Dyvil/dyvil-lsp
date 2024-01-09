@@ -42,8 +42,6 @@ export class CompilationUnit extends Node<'unit'> {
 }
 
 export class Declaration<K extends string> extends Node<K> {
-  _enclosingCU?: CompilationUnit;
-
   _references: Node<any>[] = [];
   doc?: string;
 
@@ -52,11 +50,6 @@ export class Declaration<K extends string> extends Node<K> {
     public name: string,
   ) {
     super(kind);
-  }
-
-  resolve(scope: Scope): this {
-    this._enclosingCU = scope.lookup(CompilationUnit.enclosing, CompilationUnit);
-    return super.resolve(scope);
   }
 
   docComment(): string {
