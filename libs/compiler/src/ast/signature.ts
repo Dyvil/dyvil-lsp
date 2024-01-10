@@ -2,7 +2,7 @@ import {CompilationUnit} from "@stc/compiler";
 import {createHash} from 'crypto';
 
 export class SignatureBuilder {
-  #dependencies = new Set<CompilationUnit>;
+  #dependencies = new Set<string>;
   #signature = '';
   #hash = createHash('sha1');
 
@@ -12,18 +12,20 @@ export class SignatureBuilder {
   }
 
   addDependency(dep: CompilationUnit) {
-    this.#dependencies.add(dep);
+    this.#dependencies.add(dep.path);
   }
 
-  get dependencies(): Set<CompilationUnit> {
-    return this.#dependencies;
+  build(): Signature {
+    return {
+      dependencies: this.#dependencies,
+      signature: this.#signature,
+      hash: this.#hash.digest('hex'),
+    };
   }
+}
 
-  get signature(): string {
-    return this.#signature;
-  }
-
-  get hash(): string {
-    return this.#hash.digest('hex');
-  }
+export interface Signature {
+  dependencies: Set<string>;
+  signature: string;
+  hash: string;
 }

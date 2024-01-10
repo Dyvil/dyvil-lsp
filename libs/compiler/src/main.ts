@@ -40,5 +40,6 @@ units.forEach(u => u.link());
 for (const unit of units) {
   const sigBuilder = new SignatureBuilder();
   unit.buildSignature(sigBuilder);
-  console.log(sigBuilder.signature, sigBuilder.hash, [...sigBuilder.dependencies].map(u => u.path));
+  const signature = sigBuilder.build();
+  console.log(signature.signature, signature.hash, signature.dependencies);
 }
