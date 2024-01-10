@@ -12,8 +12,22 @@ file returns [ast.CompilationUnit cu]:
   EOF { $cu.range = makeRange($start, $EOF); }
 ;
 
+attribute: annotation | modifier;
+annotation: '@' type ('(' expressionList? ')')?;
+modifier:
+  // visibility
+  'public' | 'private' 'protected'? | 'protected' | 'package' 'private' | 'internal'
+  // operators
+  | 'prefix' | 'infix' | 'postfix'
+  // other
+  | 'extension' | 'abstract' | 'final' | 'static' | 'override' | 'implicit' | 'explicit'
+  | 'synchronized' | 'const' | 'lazy' | 'inline'
+;
+
+classType: '@' 'interface' | 'case'? 'class' | 'interface' | 'trait' | 'enum' | 'case'? 'object' | 'extension';
+
 class returns [ast.Class cn] @after { $cn.range = makeRange($start, $stop); }:
-  DOC? 'class' ID {
+  DOC? attribute* classType ID {
     $cn = new ast.Class($ID.text)
     $cn.location = makeRange($ID);
     $cn.doc = cleanDoc($DOC);
@@ -26,7 +40,7 @@ class returns [ast.Class cn] @after { $cn.range = makeRange($start, $stop); }:
   )* '}'
 ;
 field returns [ast.Field fn] @after { $fn.range = makeRange($start, $stop); }:
-  DOC? 'var' ID {
+  DOC? attribute* 'var' ID {
     $fn = new ast.Field($ID.text);
     $fn.location = makeRange($ID);
     $fn.doc = cleanDoc($DOC);
@@ -36,7 +50,7 @@ field returns [ast.Field fn] @after { $fn.range = makeRange($start, $stop); }:
   ';'?
 ;
 ctor returns [ast.Constructor cn] @after { $cn.range = makeRange($start, $stop); }:
-  DOC? init='init' {
+  DOC? attribute* init='init' {
     $cn = new ast.Constructor();
     $cn.location = makeRange($init);
     $cn.doc = cleanDoc($DOC);
@@ -45,7 +59,7 @@ ctor returns [ast.Constructor cn] @after { $cn.range = makeRange($start, $stop);
   blockStatement { $cn.body = $blockStatement.bs; }
 ;
 method returns [ast.Method mn] @after { $mn.range = makeRange($start, $stop); }:
-  DOC? 'func' ID {
+  DOC? attribute* 'func' ID {
     $mn = new ast.Method($ID.text);
     $mn.location = makeRange($ID);
     $mn.doc = cleanDoc($DOC);
@@ -55,7 +69,7 @@ method returns [ast.Method mn] @after { $mn.range = makeRange($start, $stop); }:
   blockStatement { $mn.body = $blockStatement.bs; }
 ;
 parameter returns [ast.Parameter pn] @after { $pn.range = makeRange($start, $stop); }:
-  DOC? ID {
+  DOC? attribute* ID {
     $pn = new ast.Parameter($ID.text);
     $pn.location = makeRange($ID);
     $pn.doc = cleanDoc($DOC);
@@ -69,7 +83,7 @@ parameterList returns [ast.Parameter[] ps] @init { $ps = []; }:
 ;
 
 variable returns [ast.Variable v] @after { $v.range = makeRange($start, $stop); }:
-  'var' ID { $v = new ast.Variable($ID.text); }
+  attribute* 'var' ID { $v = new ast.Variable($ID.text); }
   (':' type { $v.type = $type.tn })?
   '=' expression { $v.value = $expression.e; }
   { $v.location = makeRange($ID); }
