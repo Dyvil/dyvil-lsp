@@ -94,6 +94,17 @@ export class Node<K extends string> {
     }
   }
 
+  unlink() {
+    for (const [key, value] of Object.entries(this)) {
+      if (key.startsWith('_') && key !== '_parent' && value && '_references' in value) {
+        value._references.splice(value._references.indexOf(this), 1);
+      }
+    }
+    for (const child of children(this)) {
+      child.unlink();
+    }
+  }
+
   lint(scope: Scope) {
     for (const child of children(this)) {
       child.lint(scope);
