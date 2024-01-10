@@ -1,14 +1,12 @@
 import {CompilationUnit} from "@stc/compiler";
-import {createHash} from 'crypto';
+import {enc, SHA1} from 'crypto-js';
 
 export class SignatureBuilder {
   #dependencies = new Set<string>;
   #signature = '';
-  #hash = createHash('sha1');
 
   addSignature(signature: string) {
     this.#signature += signature;
-    this.#hash.update(signature);
   }
 
   addDependency(dep: CompilationUnit) {
@@ -19,7 +17,7 @@ export class SignatureBuilder {
     return {
       dependencies: this.#dependencies,
       signature: this.#signature,
-      hash: this.#hash.digest('hex'),
+      hash: SHA1(this.#signature).toString(enc.Base64),
     };
   }
 }

@@ -90,6 +90,9 @@ dependencies:
   assert:
     specifier: ^2.1.0
     version: 2.1.0
+  crypto-js:
+    specifier: ^4.2.0
+    version: 4.2.0
   monaco-editor:
     specifier: npm:@codingame/monaco-editor-treemended@~1.85.0
     version: /@codingame/monaco-editor-treemended@1.85.0
@@ -194,6 +197,9 @@ devDependencies:
   '@schematics/angular':
     specifier: 17.0.3
     version: 17.0.3
+  '@types/crypto-js':
+    specifier: ^4.2.1
+    version: 4.2.1
   '@types/jest':
     specifier: 29.4.4
     version: 29.4.4
@@ -5317,6 +5323,10 @@ packages:
     dependencies:
       '@types/node': 18.16.9
 
+  /@types/crypto-js@4.2.1:
+    resolution: {integrity: sha512-FSPGd9+OcSok3RsM0UZ/9fcvMOXJ1ENE/ZbLfOPlBWj7BgXtEAM8VYfTtT760GiLbQIMoVozwVuisjvsVwqYWw==}
+    dev: true
+
   /@types/eslint-scope@3.7.6:
     resolution: {integrity: sha512-zfM4ipmxVKWdxtDaJ3MP3pBurDXOCoyjvlpE3u6Qzrmw4BPbfm4/ambIeTk/r/J0iq/+2/xp0Fmt+gFvXJY2PQ==}
     dependencies:
@@ -7263,6 +7273,10 @@ packages:
       path-key: 3.1.1
       shebang-command: 2.0.0
       which: 2.0.2
+
+  /crypto-js@4.2.0:
+    resolution: {integrity: sha512-KALDyEYgpY+Rlob/iriUtjV6d5Eq+Y191A5g4UqLAi8CyGP9N1+FdVbkc1SxKc2r4YAYqG8JzO2KGL+AizD70Q==}
+    dev: false
 
   /css-declaration-sorter@6.4.1(postcss@8.4.31):
     resolution: {integrity: sha512-rtdthzxKuyq6IzqX6jEcIzQF/YqccluefyCYheovBOLhFT/drQA9zj/UbRAa9J7C0o6EG6u3E6g+vKkay7/k3g==}
