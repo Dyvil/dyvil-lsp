@@ -1,8 +1,8 @@
 import {readFileSync} from 'fs';
-import {Name, Scope} from './scope';
+import {GlobalScope} from './scope';
 import {compilationUnit} from './compiler';
 import {log} from "./lint";
-import {CompilationUnit, Concept, Node, SignatureBuilder} from "./ast";
+import {CompilationUnit, SignatureBuilder} from "./ast";
 
 const paths = process.argv.slice(2);
 let units: CompilationUnit[] = [];
@@ -13,22 +13,7 @@ for (const path of paths) {
   units.push(unit);
 }
 
-const topScope: Scope = {
-  lookup<N extends Node<any>>(name: Name, concept: Concept<N>): N | undefined {
-    for (const unit of units) {
-      for (const cls of unit.classes) {
-        if (cls.name === name && cls instanceof concept) {
-          return cls;
-        }
-      }
-    }
-    return;
-  },
-
-  list(): Node<any>[] {
-    return units.flatMap(u => u.classes);
-  },
-}
+const topScope = new GlobalScope(() => units);
 
 units = units.map(u => u.resolve(topScope));
 for (const diagnostic of units.flatMap(u => u.diagnostics)) {

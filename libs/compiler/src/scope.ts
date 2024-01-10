@@ -1,4 +1,4 @@
-import {Concept, Node} from './ast';
+import {CompilationUnit, Concept, Node} from './ast';
 
 export type Name = string | symbol;
 
@@ -26,5 +26,27 @@ export class SimpleScope implements Scope {
   list(): Node<any>[] {
     const own = Array.isArray(this.declarations) ? this.declarations : Object.values(this.declarations);
     return this.parent ? [...own, ...this.parent.list()] : own;
+  }
+}
+
+export class GlobalScope implements Scope {
+  constructor(
+    private units: () => Iterable<CompilationUnit>,
+  ) {
+  }
+
+  lookup<N extends Node<any>>(name: Name, concept: Concept<N>): N | undefined {
+    for (const unit of this.units()) {
+      for (const cls of unit.classes) {
+        if (cls.name === name && cls instanceof concept) {
+          return cls;
+        }
+      }
+    }
+    return;
+  }
+
+  list(): Node<any>[] {
+    return [...this.units()].flatMap(u => u.classes);
   }
 }
