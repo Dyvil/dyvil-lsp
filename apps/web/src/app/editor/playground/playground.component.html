@@ -1,4 +1,10 @@
 <div style="display: flex">
-  <stc-editor #editor style="width: 50%" [code]="code" (codeChanged)="compile$.next($event)"></stc-editor>
+  <stc-editor
+    #editor
+    style="width: 50%"
+    [code]="code"
+    (codeChanged)="compile$.next($event)"
+    (ready)="compile$.next(code)"
+  ></stc-editor>
   <stc-editor style="width: 50%" [code]="compiled" language="javascript"></stc-editor>
 </div>
