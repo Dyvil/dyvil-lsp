@@ -5,8 +5,8 @@ import getExtensionsServiceOverride from '@codingame/monaco-vscode-extensions-se
 import getLanguageServiceOverride from '@codingame/monaco-vscode-languages-service-override';
 import getTextmateServiceOverride from '@codingame/monaco-vscode-textmate-service-override';
 import getThemeServiceOverride from '@codingame/monaco-vscode-theme-service-override';
-import {whenReady} from '@codingame/monaco-vscode-theme-defaults-default-extension';
-import '@codingame/monaco-vscode-javascript-default-extension';
+import {whenReady as themesReady} from '@codingame/monaco-vscode-theme-defaults-default-extension';
+import {whenReady as jsReady} from '@codingame/monaco-vscode-javascript-default-extension';
 
 import {CloseAction, ErrorAction, MessageTransports} from "vscode-languageclient";
 import {ExtensionHostKind, registerExtension} from 'vscode/extensions'
@@ -23,10 +23,15 @@ export const ready = initServices({
     ...getLanguageServiceOverride(),
     ...getEditorServiceOverride(useOpenEditorStub),
   },
-}).then(() => {
-  const extension = registerExtension(extensionManifest, ExtensionHostKind.LocalProcess);
-  extension.registerFileUrl('./assets/dyvil.tmGrammar.json', new URL('apps/vs-code-client/assets/dyvil.tmGrammar.json', import.meta.url).href);
-}).then(() => whenReady());
+})
+  .then(themesReady)
+  .then(jsReady)
+  .then(() => {
+    const extension = registerExtension(extensionManifest, ExtensionHostKind.LocalProcess);
+    extension.registerFileUrl('./assets/dyvil.tmGrammar.json', new URL('apps/vs-code-client/assets/dyvil.tmGrammar.json', import.meta.url).href);
+    return extension.whenReady();
+  })
+;
 
 buildWorkerDefinition('./assets/monaco-editor-workers/workers', document.baseURI, false);
 
@@ -47,9 +52,7 @@ export function createLanguageClient(transports: MessageTransports): MonacoLangu
       },
     },
     connectionProvider: {
-      get: () => {
-        return Promise.resolve(transports);
-      },
+      get: async () => transports,
     },
   });
 }
