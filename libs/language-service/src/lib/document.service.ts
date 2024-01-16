@@ -1,9 +1,16 @@
 import {CompilationUnit, compilationUnit, GlobalScope, Signature, SignatureBuilder} from '@stc/compiler';
-import {TextDocumentChangeEvent, TextDocuments} from 'vscode-languageserver';
+import {TextDocuments} from 'vscode-languageserver';
 import {TextDocument} from 'vscode-languageserver-textdocument';
 import {ConnectionService} from './connection.service';
 import * as fs from 'fs';
 import {glob} from 'glob';
+import {
+  DidChangeWatchedFilesNotification,
+  DidChangeWatchedFilesParams,
+  FileChangeType,
+  FileSystemWatcher,
+  WorkspaceFolder,
+} from 'vscode-languageserver-protocol';
 
 export class DocumentService {
   documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
@@ -16,13 +23,30 @@ export class DocumentService {
     private connectionService: ConnectionService,
   ) {
     this.documents.listen(this.connectionService.connection);
-    this.connectionService.connection.onInitialized(() => this.init());
+    this.connectionService.connection.onInitialized(async () => {
+      const workspaceFolders = await this.connectionService.connection.workspace.getWorkspaceFolders();
+      if (!workspaceFolders) {
+        return;
+      }
+
+      await this.connectionService.connection.client.register(DidChangeWatchedFilesNotification.type, {
+        watchers: workspaceFolders.map((folder): FileSystemWatcher => ({
+          globPattern: {
+            baseUri: folder.uri,
+            pattern: '**/*.dyv',
+          },
+        })),
+      });
+      await this.init(workspaceFolders);
+    });
+    this.documents.onDidChangeContent(e => this.change(e.document.uri));
+
+    this.connectionService.connection.onDidChangeWatchedFiles(params => this.onChanges(params));
   }
 
-  private async init() {
+  private async init(workspaceFolders: WorkspaceFolder[]) {
     const progress = await this.connectionService.connection.window.createWorkDoneProgress();
     progress.begin('Loading Dyvil workspace...');
-    const workspaceFolders = await this.connectionService.connection.workspace.getWorkspaceFolders();
 
     // 1. collect all files
     progress.report('Collecting files...');
@@ -65,20 +89,39 @@ export class DocumentService {
     });
   }
 
-  private change(e: TextDocumentChangeEvent<TextDocument>) {
-    console.log('change', e.document.uri);
-    const newUnit = this.parse(e.document);
+  private onChanges(params: DidChangeWatchedFilesParams) {
+    for (let change of params.changes) {
+      switch (change.type) {
+        case FileChangeType.Changed:
+        case FileChangeType.Created:
+          this.change(change.uri);
+          break;
+        case FileChangeType.Deleted:
+          const ast = this.astCache.get(change.uri);
+          ast?.unlink();
+          this.updateDependends(change.uri);
+          this.astCache.delete(change.uri);
+          break;
+      }
+    }
+  }
+
+  private change(uri: string) {
+    const document = this.documents.get(uri);
+    if (!document) {
+      console.log('document not found', uri);
+      return;
+    }
+    const newUnit = this.parse(document);
     this.update(newUnit);
   }
 
   private update(newUnit: CompilationUnit, seen = new Set<string>) {
     const path = newUnit.path;
     if (seen.has(path)) {
-      console.log('skip', path);
       return;
     }
 
-    console.log('update', path);
     seen.add(path);
 
     const oldUnit = this.astCache.get(path);
@@ -99,9 +142,13 @@ export class DocumentService {
 
     if (oldUnit && oldSignature && newSignature.hash !== oldSignature.hash) {
       console.log('signature changed', path, oldSignature.signature, newSignature.signature);
-      for (let dependent of this.dependends(path)) {
-        this.update(dependent, seen);
-      }
+      this.updateDependends(path, seen);
+    }
+  }
+
+  private updateDependends(path: string, seen = new Set<string>) {
+    for (let dependent of this.dependends(path)) {
+      this.update(dependent, seen);
     }
   }
 
