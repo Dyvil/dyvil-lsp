@@ -15,7 +15,7 @@ export class ConnectionService {
   constructor(
     public readonly connection: Connection,
   ) {
-    connection.onInitialize((params: InitializeParams) => {
+    connection.onInitialize((params: InitializeParams, _, workDoneProgress) => {
       const capabilities = params.capabilities;
 
       this.hasConfigurationCapability = !!capabilities.workspace?.configuration;
