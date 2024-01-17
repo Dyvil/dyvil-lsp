@@ -52,7 +52,7 @@ export class DocumentService {
     progress.report('Collecting files...');
     const files: string[] = [];
     for (let workspaceFolder of workspaceFolders ?? []) {
-      const folder = parseFileUri(workspaceFolder.uri);
+      const folder = this.parseFileUri(workspaceFolder.uri);
       if (folder) {
         files.push(...await glob(`${folder}/**/*.dyv`));
       }
@@ -76,6 +76,11 @@ export class DocumentService {
     }
 
     progress.done();
+  }
+
+  parseFileUri(uri: string): string | undefined {
+    const prefix = 'file://';
+    return uri.startsWith(prefix) ? uri.slice(prefix.length) : undefined;
   }
 
   private resolve(unit: CompilationUnit) {
@@ -120,7 +125,7 @@ export class DocumentService {
     if (!document) {
       // this can happen if the file is not created externally (not by the client)
       // e.g. "touch file.dyv"
-      const fileUri = parseFileUri(uri);
+      const fileUri = this.parseFileUri(uri);
       if (!fileUri) {
         return;
       }
@@ -180,9 +185,4 @@ export class DocumentService {
     const uri = typeof uriOrDoc === 'string' ? uriOrDoc : uriOrDoc.uri;
     return this.astCache.get(uri);
   }
-}
-
-function parseFileUri(uri: string): string | undefined {
-  const prefix = 'file://';
-  return uri.startsWith(prefix) ? uri.slice(prefix.length) : undefined;
 }
