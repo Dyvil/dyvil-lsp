@@ -72,12 +72,17 @@ export class DocumentService {
     let i = 0;
     for (const unit of this.astCache.values()) {
       progress.report(i / files.length, `Resolving ${unit.path}...`);
-      unit.resolve(this.globalScope);
-      unit.link();
-      unit.lint(this.globalScope);
+      this.resolve(unit);
     }
 
     progress.done();
+  }
+
+  private resolve(unit: CompilationUnit) {
+    unit.diagnostics = [];
+    unit.resolve(this.globalScope);
+    unit.link();
+    unit.lint(this.globalScope);
   }
 
   private async loadDocument(file: string) {
@@ -137,10 +142,7 @@ export class DocumentService {
     this.astCache.set(path, newUnit);
 
     oldUnit?.unlink();
-    newUnit.diagnostics = [];
-    newUnit.resolve(this.globalScope);
-    newUnit.link();
-    newUnit.lint(this.globalScope);
+    this.resolve(newUnit);
 
     const oldSignature = this.signatures.get(path);
 
