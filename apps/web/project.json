@@ -39,6 +39,9 @@
         "plugins": ["apps/web/ttf-loader.esbuild-plugin.js"],
         "allowedCommonJsDependencies": [
           "antlr4ts",
+          "vscode-textmate",
+          "vscode-oniguruma",
+          "vscode-semver",
           "vscode-languageclient",
           "vscode-languageserver",
           "vscode-languageserver-protocol",

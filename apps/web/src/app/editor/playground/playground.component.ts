@@ -12,10 +12,8 @@ export class PlaygroundComponent implements OnInit {
   @ViewChild('editor', {static: true}) editor: EditorComponent;
 
   code = '';
-  compiled = 'class Foo {}';
+  compiled = '';
   compile$ = new Subject<string>();
-
-  worker?: Worker;
 
   constructor(
     private http: HttpClient,
@@ -23,34 +21,28 @@ export class PlaygroundComponent implements OnInit {
   }
 
   ngOnInit() {
-    const examplePath = 'assets/examples/Greeter.dyv';
-    this.http.get(examplePath, {responseType: 'text'}).subscribe(code => {
-      this.code = code;
-    });
+    const loadCode = localStorage.getItem('playground/dyvil');
+    if (loadCode) {
+      this.code = loadCode;
+    } else {
+      const examplePath = 'assets/examples/Greeter.dyv';
+      this.http.get(examplePath, {responseType: 'text'}).subscribe(code => {
+        this.code = code;
+      });
+    }
 
     this.compile$.pipe(
       debounceTime(400),
     ).subscribe(code => {
-      this.compile(code).then(c => this.compiled = c);
-    });
-
-    this.worker = new Worker(new URL('./playground.worker.ts', import.meta.url));
-  }
-
-  async compile(compile: string): Promise<string> {
-    return new Promise((resolve, reject) => {
-      if (!this.worker) {
-        return;
-      }
-
-      this.worker.postMessage({compile});
-      this.worker.addEventListener('message', msg => {
-        const compiled = msg.data.compiled;
-        if (compiled) {
-          resolve(compiled);
-        }
-      });
+      localStorage.setItem('playground/dyvil', code);
+      this.compile();
     });
   }
 
+  async compile() {
+    const compiled = await this.editor.compile();
+    if (compiled) {
+      this.compiled = compiled;
+    }
+  }
 }

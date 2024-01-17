@@ -24,6 +24,22 @@ export class Range {
     ;
   }
 
+  distance(position: Position) {
+    if (position.line < this.start.line) {
+      return position.line - this.start.line; // negative sign = before
+    }
+    if (position.line > this.end.line) {
+      return position.line - this.end.line;
+    }
+    if (position.column < this.start.column) {
+      return (position.column - this.start.column) / 1000;
+    }
+    if (position.column > this.end.column) {
+      return (position.column - this.end.column) / 1000;
+    }
+    return 0; // inside
+  }
+
   encloses(range: Range) {
     return this.includes(range.start) && this.includes(range.end);
   }

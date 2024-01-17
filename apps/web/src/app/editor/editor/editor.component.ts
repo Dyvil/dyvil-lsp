@@ -13,7 +13,7 @@ import {
 import {editor} from 'monaco-editor/esm/vs/editor/editor.api';
 import {MonacoLanguageClient} from 'monaco-languageclient';
 import {BrowserMessageReader, BrowserMessageWriter} from 'vscode-languageserver-protocol/browser';
-import {createLanguageClient} from './monaco';
+import {createLanguageClient, ready} from './monaco';
 
 @Component({
   selector: 'stc-editor',
@@ -27,12 +27,15 @@ export class EditorComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   @Input() code: string;
   @Output() codeChanged = new EventEmitter<string>();
+  @Output() ready = new EventEmitter<void>();
 
   worker?: Worker;
   editor?: editor.IStandaloneCodeEditor;
   lspClient?: MonacoLanguageClient;
 
   async ngAfterViewInit() {
+    await ready;
+
     const domElement = this.container.nativeElement;
     this.editor = editor.create(domElement, {
       value: this.code,
@@ -58,12 +61,21 @@ export class EditorComponent implements AfterViewInit, OnChanges, OnDestroy {
       this.lspClient.start();
       reader.onClose(() => this.lspClient?.stop());
     }
+
+    this.ready.next();
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['code']) {
       this.editor?.setValue(changes['code'].currentValue);
     }
+  }
+
+  async compile(): Promise<string | undefined> {
+    return this.lspClient?.sendRequest('$/compile', {
+      uri: this.editor?.getModel()?.uri.toString(),
+      format: 'js',
+    });
   }
 
   async ngOnDestroy() {

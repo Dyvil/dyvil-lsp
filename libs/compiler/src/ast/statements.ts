@@ -1,7 +1,7 @@
 import {Variable} from './declarations';
 import {ErrorExpression, Expression} from './expressions';
 import {autocomplete, CompletionItem} from '../lint';
-import {autoIndent, Node, ParserMethod, StringFormat} from './node';
+import {autoIndent, CommentAware, Node, ParserMethod, StringFormat} from './node';
 import {Scope, SimpleScope} from '../scope';
 
 class Statement<K extends string> extends Node<`statement:${K}`> {
@@ -25,6 +25,7 @@ export class VarStatement extends Statement<'variable'> {
     super('variable');
   }
 
+  @CommentAware()
   toString(format?: StringFormat): string {
     return this.variable.toString(format);
   }
@@ -37,6 +38,7 @@ export class ExpressionStatement extends Statement<'expr'> {
     super('expr');
   }
 
+  @CommentAware()
   toString(format?: StringFormat): string {
     return this.expression.toString(format);
   }
@@ -51,10 +53,22 @@ export class Block extends Statement<'block'> {
     super('block');
   }
 
+  @CommentAware()
   toString(format?: StringFormat): string {
+    if (!this.statements.length) {
+      return '{}';
+    }
+
+    let statements = this.statements[0].toString(format);
+    for (let i = 1; i < this.statements.length; i++) {
+      const newlines = this.statements[i].range!.start.line - this.statements[i - 1].range!.end.line;
+      statements += newlines > 1 ? '\n\n' : '\n';
+      statements += this.statements[i].toString(format);
+    }
+
     return autoIndent`
     {
-      ${this.statements.map(statement => statement.toString(format) + (format === 'js' ? ';' : '')).join('\n')}
+      ${statements}
     }`;
   }
 
@@ -85,6 +99,7 @@ export class WhileStatement extends Statement<'while'> {
     super('while');
   }
 
+  @CommentAware()
   toString(format?: StringFormat): string {
     if (format === 'js') {
       return `while (${this.condition.toString(format)}) ${this.body.toString(format)}`;
@@ -123,6 +138,7 @@ export class IfStatement extends Statement<'while'> {
     return super.resolve(scope);
   }
 
+  @CommentAware()
   toString(format?: StringFormat): string {
     return `if ${format === 'js' ? '(' : ''}${this.condition.toString(format)}${format === 'js' ? ')' : ''} ${this.then.toString(format)}${this.else ? ` else ${this.else.toString(format)}` : ''}`;
   }

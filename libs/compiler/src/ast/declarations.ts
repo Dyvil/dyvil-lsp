@@ -1,9 +1,10 @@
 import {ErrorExpression, Expression} from './expressions';
 import {autocomplete, CompletionItem, Diagnostic, report} from '../lint';
-import {autoIndent, Concept, Node, ParserMethod, StringFormat} from './node';
+import {autoIndent, CommentAware, Concept, Node, ParserMethod, StringFormat} from './node';
 import {Name, Scope, SimpleScope} from '../scope';
 import {Block} from './statements';
 import {Type, ClassType, isAssignable, ErrorType} from './types';
+import {SignatureBuilder} from "./signature";
 
 export class CompilationUnit extends Node<'unit'> {
   static enclosing = Symbol('enclosing compilation unit');
@@ -34,6 +35,7 @@ export class CompilationUnit extends Node<'unit'> {
     super.lint(new SimpleScope({[CompilationUnit.enclosing]: this}, scope));
   }
 
+  @CommentAware()
   toString(format?: StringFormat): string {
     return this.classes.map(c => c.toString(format)).join('\n\n');
   }
@@ -95,6 +97,20 @@ export class Class extends Declaration<'class'> implements Scope {
     };
   }
 
+  buildSignature(builder: SignatureBuilder) {
+    builder.addSignature(`class ${this.name} { `);
+    for (let decl of [
+      this.fields,
+      this.constructors,
+      this.methods,
+    ].map(decls => decls.sort((a, b) => a.name.localeCompare(b.name))).flat()) {
+      decl.buildSignature(builder);
+      builder.addSignature(' ');
+    }
+    builder.addSignature('}');
+  }
+
+  @CommentAware()
   toString(format?: StringFormat): string {
     return autoIndent`
     ${this.docComment()}\
@@ -190,6 +206,16 @@ export class Constructor extends MethodLike<'constructor'> {
     super('constructor', 'init', parameters, body);
   }
 
+  buildSignature(builder: SignatureBuilder) {
+    builder.addSignature('init(');
+    for (let parameter of this.parameters) {
+      parameter.buildSignature(builder);
+    }
+    builder.addSignature(')');
+    this.body.buildSignature(builder);
+  }
+
+  @CommentAware()
   toString(format?: StringFormat): string {
     const keyword = format === 'js' ? 'constructor' : 'init';
     const params = this.parameters.map(param => param.toString(format)).join(', ');
@@ -235,6 +261,13 @@ export class Field extends Declaration<'field'> {
     };
   }
 
+  buildSignature(builder: SignatureBuilder) {
+    builder.addSignature(`${this.name}:${this.type}`);
+    this.type.buildSignature(builder);
+    this.value?.buildSignature(builder);
+  }
+
+  @CommentAware()
   toString(format?: StringFormat): string {
     const value = this.value ? ' = ' + this.value.toString(format) : '';
     if (format === 'js') {
@@ -289,6 +322,17 @@ export class Method extends MethodLike<'method'> {
     return doc;
   }
 
+  buildSignature(builder: SignatureBuilder) {
+    builder.addSignature(`${this.name}(`);
+    for (let parameter of this.parameters) {
+      parameter.buildSignature(builder);
+    }
+    builder.addSignature(`):${this.returnType}`);
+    this.returnType.buildSignature(builder);
+    this.body.buildSignature(builder);
+  }
+
+  @CommentAware()
   toString(format?: StringFormat): string {
     const name = format !== 'js' ? 'func ' + this.name : this.jsName;
     const params = this.parameters.map(param => param.toString(format)).join(', ');
@@ -340,6 +384,7 @@ export class VariableLike<K extends string> extends Declaration<K> {
     };
   }
 
+  @CommentAware()
   toString(format?: StringFormat): string {
     const type = this.type ? ': ' + this.type.toString(format) : '';
     return `${this.docComment()}${this.name}${type}`;
@@ -361,6 +406,11 @@ export class Parameter extends VariableLike<'parameter'> {
 
   documentation(): string | undefined {
     return `\`${this.name}: ${this.type.toString()}\`${this.doc ? '\n' + this.doc : ''}`;
+  }
+
+  buildSignature(builder: SignatureBuilder) {
+    builder.addSignature(`${this.name}:${this.type}`);
+    super.buildSignature(builder);
   }
 
   toString(format?: StringFormat): string {
@@ -385,11 +435,12 @@ export class Variable extends VariableLike<'variable'> {
     return `\`var ${this.name}: ${this.type?.toString()}\`${this.doc ? '\n' + this.doc : ''}`;
   }
 
+  @CommentAware()
   toString(format?: StringFormat): string {
     if (format === 'js') {
       return `let ${this.name} = ${this.value.toString(format)}`;
     }
-    const type = this.type ? ': ' + this.type.toString(format) : '';
+    const type = this.type && this.type.location ? ': ' + this.type.toString(format) : '';
     return `${this.docComment()}var ${this.name}${type} = ${this.value.toString(format)}`;
   }
 

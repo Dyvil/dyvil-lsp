@@ -2,6 +2,8 @@ import {Position, Range} from '../lint';
 import {Scope} from '../scope';
 import {DyvilParser} from "../parser/DyvilParser";
 import {ParserRuleContext} from "antlr4ts/ParserRuleContext";
+import {CompilationUnit, Declaration} from "./declarations";
+import {SignatureBuilder} from "./signature";
 
 export type StringFormat = 'plain' | 'js';
 
@@ -33,12 +35,34 @@ export function isSubConcept(sub: Concept<any>, sup: Concept<any>): boolean {
 export type ParserMethod = keyof { [K in keyof DyvilParser]: DyvilParser[K] extends (...args: any[]) => ParserRuleContext ? K : never };
 
 export class Node<K extends string> {
+  _parent?: Node<string>;
   location?: Range;
   range?: Range;
+  commentBefore?: string;
+  commentAfter?: string;
 
   constructor(
     public kind: K,
   ) {
+  }
+
+  compilationUnit(): CompilationUnit | undefined {
+    let parent = this._parent;
+    while (parent && !(parent instanceof CompilationUnit)) {
+      parent = parent._parent;
+    }
+    return parent;
+  }
+
+  buildSignature(builder: SignatureBuilder) {
+    for (const child of children(this)) {
+      child.buildSignature(builder);
+    }
+    const def = this.definition();
+    if (def && def instanceof Declaration) {
+      const unit = def.compilationUnit();
+      unit && builder.addDependency(unit);
+    }
   }
 
   definition(purpose?: 'rename' | 'definition'): Node<any> | undefined {
@@ -60,12 +84,24 @@ export class Node<K extends string> {
 
   link() {
     for (const [key, value] of Object.entries(this)) {
-      if (key.startsWith('_') && value && '_references' in value) {
+      if (key.startsWith('_') && key !== '_parent' && value && '_references' in value) {
         value._references.push(this);
       }
     }
     for (const child of children(this)) {
+      child._parent = this;
       child.link();
+    }
+  }
+
+  unlink() {
+    for (const [key, value] of Object.entries(this)) {
+      if (key.startsWith('_') && key !== '_parent' && value && '_references' in value) {
+        value._references.splice(value._references.indexOf(this), 1);
+      }
+    }
+    for (const child of children(this)) {
+      child.unlink();
     }
   }
 
@@ -102,6 +138,14 @@ export class Node<K extends string> {
       }
     }
     return this;
+  }
+
+  before(format?: StringFormat): string {
+    return this.commentBefore && format !== 'js' ? this.commentBefore.endsWith('\n') ? this.commentBefore : this.commentBefore + ' ' : '';
+  }
+
+  after(format?: StringFormat): string {
+    return this.commentAfter && format !== 'js' ? ' ' + this.commentAfter : '';
   }
 
   toString(format?: StringFormat): string {
@@ -213,4 +257,14 @@ export function autoIndent(strings: TemplateStringsArray, ...values: any[]): str
     const indentedValue = value.toString().replace(/\n/g, `\n${lastLineIndent}`);
     return string + indentedValue;
   }).join('');
+}
+
+export function CommentAware(): MethodDecorator {
+  return (target, propertyKey, descriptor) => {
+    const method = descriptor.value as Function;
+    descriptor.value = function (this: Node<string>, format?: StringFormat) {
+      return this.before(format) + method.call(this, format) + this.after(format);
+    } as any;
+    return descriptor;
+  };
 }

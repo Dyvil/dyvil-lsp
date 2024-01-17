@@ -21,4 +21,9 @@ export function setup(connection: Connection) {
   new FormatService(connectionService, documentService);
   new ActionService(connectionService, documentService);
   new InlayHintService(connectionService, documentService);
+
+  connection.onRequest('$/compile', params => {
+    const ast = documentService.getAST(params.uri);
+    return ast?.toString(params.format);
+  });
 }

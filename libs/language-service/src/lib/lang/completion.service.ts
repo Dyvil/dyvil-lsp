@@ -48,7 +48,7 @@ export class CompletionService {
       start: params.position,
       end: {line: document.lineCount, character: 0},
     });
-    const unit = compilationUnit(`${before}§${after}`).resolve(new SimpleScope([]));
+    const unit = compilationUnit(`${before}§${after}`, {completion: true}).resolve(new SimpleScope([]));
     const diagnostic = unit.diagnostics.find(d => d.expected);
     if (!diagnostic || !diagnostic.expected) {
       return [];

@@ -2,7 +2,7 @@ import {ConnectionService} from "../connection.service";
 import {DocumentService} from "../document.service";
 import {InlayHint, InlayHintKind, InlayHintParams} from "vscode-languageserver-protocol";
 import {Expression, FunctionCall, MethodCall, Parameter, recurse, Variable} from "@stc/compiler";
-import {convertPositionToLsp, convertRangeFromLsp} from "./convert";
+import {convertPositionToLsp, convertRangeFromLsp, convertRangeToLsp} from "./convert";
 
 export class InlayHintService {
   constructor(
@@ -33,6 +33,10 @@ export class InlayHintService {
             position: convertPositionToLsp(variable.location!.end),
             label: text,
             paddingLeft: true,
+            textEdits: [{
+              range: convertRangeToLsp(variable.location!),
+              newText: variable.name + text,
+            }],
           });
           break;
         }

@@ -1,9 +1,37 @@
-import {buildWorkerDefinition} from 'monaco-editor-workers';
-import * as monaco from 'monaco-editor';
-import {initServices, MonacoLanguageClient} from 'monaco-languageclient';
-import {CloseAction, ErrorAction, MessageTransports} from "vscode-languageclient";
+import * as extensionManifest from 'apps/vs-code-client/package.json';
 
-initServices()
+import getEditorServiceOverride from '@codingame/monaco-vscode-editor-service-override';
+import getExtensionsServiceOverride from '@codingame/monaco-vscode-extensions-service-override';
+import getLanguageServiceOverride from '@codingame/monaco-vscode-languages-service-override';
+import getTextmateServiceOverride from '@codingame/monaco-vscode-textmate-service-override';
+import getThemeServiceOverride from '@codingame/monaco-vscode-theme-service-override';
+import {whenReady as themesReady} from '@codingame/monaco-vscode-theme-defaults-default-extension';
+import {whenReady as jsReady} from '@codingame/monaco-vscode-javascript-default-extension';
+
+import {CloseAction, ErrorAction, MessageTransports} from "vscode-languageclient";
+import {ExtensionHostKind, registerExtension} from 'vscode/extensions'
+import {buildWorkerDefinition} from 'monaco-editor-workers';
+import {initServices, MonacoLanguageClient, useOpenEditorStub} from 'monaco-languageclient';
+import 'vscode/localExtensionHost';
+import * as monaco from 'monaco-editor';
+
+export const ready = initServices({
+  userServices: {
+    ...getExtensionsServiceOverride(),
+    ...getThemeServiceOverride(),
+    ...getTextmateServiceOverride(),
+    ...getLanguageServiceOverride(),
+    ...getEditorServiceOverride(useOpenEditorStub),
+  },
+})
+  .then(themesReady)
+  .then(jsReady)
+  .then(() => {
+    const extension = registerExtension(extensionManifest, ExtensionHostKind.LocalProcess);
+    extension.registerFileUrl('./assets/dyvil.tmGrammar.json', new URL('apps/vs-code-client/assets/dyvil.tmGrammar.json', import.meta.url).href);
+    return extension.whenReady();
+  })
+;
 
 buildWorkerDefinition('./assets/monaco-editor-workers/workers', document.baseURI, false);
 
@@ -11,55 +39,6 @@ monaco.languages.register({
   id: 'dyvil',
   aliases: ['Dyvil'],
   extensions: ['.dyv'],
-});
-
-monaco.languages.setMonarchTokensProvider('dyvil', {
-  keywords: 'class|var|init|func|true|false|this|super|while|if|else'.split('|'),
-  typeKeywords: [
-    'boolean', 'int', 'void', 'string',
-  ],
-  operators: /[+\-*/%&|<>!:^=]+/,
-  escapes: /\\./,
-  tokenizer: {
-    root: [
-      [/[a-z][A-Za-z0-9_]*/, {
-        cases: {
-          '@typeKeywords': 'keyword',
-          '@keywords': 'keyword',
-          '@default': 'identifier',
-        },
-      }],
-      [/[A-Z][A-Za-z0-9_]*/, 'type.identifier'],
-      {include: '@whitespace'},
-      [/[{}()\[\]]/, '@brackets'],
-      [/@operators/, 'operator'],
-      [/[+-]?\d+\.\d+/, 'number.float'],
-      [/[+-]?\d+/, 'number'],
-      [/[;,.]/, 'delimiter'],
-      [/"([^"\\]|\\.)*$/, 'string.invalid'],
-      [/"/, {token: 'string.quote', bracket: '@open', next: '@string'}],
-    ],
-
-    comment: [
-      [/[^\/*]+/, 'comment'],
-      [/\/\*/, 'comment', '@push'],
-      ['\\*/', 'comment', '@pop'],
-      [/[\/*]/, 'comment'],
-    ],
-
-    string: [
-      [/[^\\"]+/, 'string'],
-      [/@escapes/, 'string.escape'],
-      [/\\./, 'string.escape.invalid'],
-      [/"/, {token: 'string.quote', bracket: '@close', next: '@pop'}],
-    ],
-
-    whitespace: [
-      [/[ \t\r\n]+/, 'white'],
-      [/\/\*/, 'comment', '@comment'],
-      [/\/\/.*$/, 'comment'],
-    ],
-  },
 });
 
 export function createLanguageClient(transports: MessageTransports): MonacoLanguageClient {
@@ -73,9 +52,7 @@ export function createLanguageClient(transports: MessageTransports): MonacoLangu
       },
     },
     connectionProvider: {
-      get: () => {
-        return Promise.resolve(transports);
-      },
+      get: async () => transports,
     },
   });
 }
