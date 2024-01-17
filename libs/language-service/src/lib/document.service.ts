@@ -63,11 +63,9 @@ export class DocumentService {
       const file = files[i];
       progress.report(i / files.length, `Reading ${file}...`);
 
-      const uri = `file://${file}`;
-      const text = await fs.promises.readFile(file, 'utf-8');
-      const doc = TextDocument.create(uri, 'dyvil', 0, text);
+      const doc = await this.loadDocument(file);
       const unit = this.parse(doc);
-      this.astCache.set(uri, unit);
+      this.astCache.set(doc.uri, unit);
     }
 
     // 3. resolve all against global scope
@@ -82,6 +80,12 @@ export class DocumentService {
     progress.done();
   }
 
+  private async loadDocument(file: string) {
+    const uri = `file://${file}`;
+    const text = await fs.promises.readFile(file, 'utf-8');
+    return TextDocument.create(uri, 'dyvil', 0, text);
+  }
+
   private parse(doc: TextDocument): CompilationUnit {
     return compilationUnit(doc.getText(), {
       path: doc.uri,
@@ -89,12 +93,12 @@ export class DocumentService {
     });
   }
 
-  private onChanges(params: DidChangeWatchedFilesParams) {
+  private async onChanges(params: DidChangeWatchedFilesParams) {
     for (let change of params.changes) {
       switch (change.type) {
         case FileChangeType.Changed:
         case FileChangeType.Created:
-          this.change(change.uri);
+          await this.change(change.uri);
           break;
         case FileChangeType.Deleted:
           const ast = this.astCache.get(change.uri);
@@ -106,11 +110,16 @@ export class DocumentService {
     }
   }
 
-  private change(uri: string) {
-    const document = this.documents.get(uri);
+  private async change(uri: string) {
+    let document = this.documents.get(uri);
     if (!document) {
-      console.log('document not found', uri);
-      return;
+      // this can happen if the file is not created externally (not by the client)
+      // e.g. "touch file.dyv"
+      const fileUri = parseFileUri(uri);
+      if (!fileUri) {
+        return;
+      }
+      document = await this.loadDocument(fileUri);
     }
     const newUnit = this.parse(document);
     this.update(newUnit);
