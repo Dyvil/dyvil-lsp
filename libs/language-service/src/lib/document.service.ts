@@ -181,7 +181,7 @@ export class DocumentService {
     return result;
   }
 
-  getAST(uriOrDoc: string | TextDocument): CompilationUnit | undefined {
+  async getAST(uriOrDoc: string | TextDocument): Promise<CompilationUnit | undefined> {
     const uri = typeof uriOrDoc === 'string' ? uriOrDoc : uriOrDoc.uri;
     return this.astCache.get(uri);
   }

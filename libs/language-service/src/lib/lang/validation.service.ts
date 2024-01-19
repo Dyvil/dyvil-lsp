@@ -30,7 +30,7 @@ export class ValidationService {
   }
 
   async validateTextDocument(textDocument: TextDocument): Promise<void> {
-    const unit = this.documentService.getAST(textDocument);
+    const unit = await this.documentService.getAST(textDocument);
     if (!unit) {
       return;
     }

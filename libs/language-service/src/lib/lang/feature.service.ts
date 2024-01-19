@@ -33,8 +33,8 @@ export class FeatureService {
     this.connectionService.connection.onDocumentHighlight(params => this.highlight(params));
   }
 
-  private prepareRename(params: PrepareRenameParams): LspRange | undefined {
-    const node = this.findNode(params);
+  private async prepareRename(params: PrepareRenameParams): Promise<LspRange | undefined> {
+    const node = await this.findNode(params);
     if (!node) {
       return;
     }
@@ -46,8 +46,8 @@ export class FeatureService {
     return convertRangeToLsp(node.location!);
   }
 
-  private rename(params: RenameParams): WorkspaceEdit | undefined {
-    const references = this.findNode(params)?.references('rename');
+  private async rename(params: RenameParams): Promise<WorkspaceEdit | undefined> {
+    const references = (await this.findNode(params))?.references('rename');
     if (!references || !references.length) {
       return;
     }
@@ -65,8 +65,8 @@ export class FeatureService {
     return edit;
   }
 
-  private references(params: ReferenceParams): Location[] | undefined {
-    const references = this.findNode(params)?.references('definition');
+  private async references(params: ReferenceParams): Promise<Location[] | undefined> {
+    const references = (await this.findNode(params))?.references('definition');
     if (!references || !references.length) {
       return undefined;
     }
@@ -79,8 +79,8 @@ export class FeatureService {
     }));
   }
 
-  private definition(params: DeclarationParams): Location | undefined {
-    const references = this.findNode(params)?.references('definition');
+  private async definition(params: DeclarationParams): Promise<Location | undefined> {
+    const references = (await this.findNode(params))?.references('definition');
     if (!references || !references.length) {
       return;
     }
@@ -94,8 +94,8 @@ export class FeatureService {
     };
   }
 
-  private typeDefinition(params: TypeDefinitionParams): Location | undefined {
-    const node = this.findNode(params);
+  private async typeDefinition(params: TypeDefinitionParams): Promise<Location | undefined> {
+    const node = await this.findNode(params);
     if (!node) {
       return;
     }
@@ -109,8 +109,8 @@ export class FeatureService {
     };
   }
 
-  private hover(params: HoverParams): Hover | null {
-    const doc = this.findNode(params)?.documentation();
+  private async hover(params: HoverParams): Promise<Hover | null> {
+    const doc = (await this.findNode(params))?.documentation();
     if (!doc) {
       return null;
     }
@@ -123,8 +123,8 @@ export class FeatureService {
     };
   }
 
-  private highlight(params: DocumentHighlightParams): DocumentHighlight[] | undefined {
-    const references = this.findNode(params)?.references();
+  private async highlight(params: DocumentHighlightParams): Promise<DocumentHighlight[] | undefined> {
+    const references = (await this.findNode(params))?.references();
     if (!references || !references.length) {
       return undefined;
     }
@@ -133,10 +133,10 @@ export class FeatureService {
     }));
   }
 
-  private findNode(params: TextDocumentPositionParams): Node<any> | undefined {
+  private async findNode(params: TextDocumentPositionParams): Promise<Node<any> | undefined> {
     const uri = params.textDocument.uri;
     const position = new Position(params.position.line + 1, params.position.character);
-    const unit = this.documentService.getAST(uri);
+    const unit = await this.documentService.getAST(uri);
     if (!unit) {
       return;
     }

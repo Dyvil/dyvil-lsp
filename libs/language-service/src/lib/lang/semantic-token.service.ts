@@ -29,8 +29,8 @@ export class SemanticTokenService {
     connectionService.connection.languages.semanticTokens.onRange(params => this.provideSemanticTokensRange(params));
   }
 
-  private provideSemanticTokens(params: SemanticTokensParams): SemanticTokens {
-    const unit = this.documentService.getAST(params.textDocument.uri);
+  private async provideSemanticTokens(params: SemanticTokensParams): Promise<SemanticTokens> {
+    const unit = await this.documentService.getAST(params.textDocument.uri);
     if (!unit) {
       return {data: []};
     }
@@ -76,8 +76,8 @@ export class SemanticTokenService {
     return {data: dataCollector.data};
   }
 
-  private provideSemanticTokensRange(params: SemanticTokensRangeParams): SemanticTokens {
-    const unit = this.documentService.getAST(params.textDocument.uri);
+  private async provideSemanticTokensRange(params: SemanticTokensRangeParams): Promise<SemanticTokens> {
+    const unit = await this.documentService.getAST(params.textDocument.uri);
     if (!unit) {
       return {data: []};
     }

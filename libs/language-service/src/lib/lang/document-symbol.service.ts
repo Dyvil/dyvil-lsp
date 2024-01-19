@@ -22,8 +22,8 @@ export class DocumentSymbolService {
     connectionService.connection.onDocumentSymbol(params => this.provideSymbols(params));
   }
 
-  private provideSymbols(params: DocumentSymbolParams): DocumentSymbol[] {
-    const unit = this.documentService.getAST(params.textDocument.uri);
+  private async provideSymbols(params: DocumentSymbolParams): Promise<DocumentSymbol[]> {
+    const unit = await this.documentService.getAST(params.textDocument.uri);
     if (!unit) {
       return [];
     }

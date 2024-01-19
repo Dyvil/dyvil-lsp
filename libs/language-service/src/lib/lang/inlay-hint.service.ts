@@ -12,8 +12,8 @@ export class InlayHintService {
     connectionService.connection.languages.inlayHint.on(params => this.provideInlayHints(params));
   }
 
-  private provideInlayHints(params: InlayHintParams): InlayHint[] {
-    const unit = this.documentService.getAST(params.textDocument.uri);
+  private async provideInlayHints(params: InlayHintParams): Promise<InlayHint[]> {
+    const unit = await this.documentService.getAST(params.textDocument.uri);
     const enclosing = unit?.findEnclosing(convertRangeFromLsp(params.range));
     if (!enclosing) {
       return [];

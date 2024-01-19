@@ -14,8 +14,8 @@ export class FormatService {
     connectionService.connection.onDocumentRangeFormatting(params => this.handleRangeFormatting(params));
   }
 
-  private handleFormatting(params: DocumentFormattingParams): TextEdit[] {
-    const ast = this.documentService.getAST(params.textDocument.uri);
+  private async handleFormatting(params: DocumentFormattingParams): Promise<TextEdit[]> {
+    const ast = await this.documentService.getAST(params.textDocument.uri);
     if (!ast) {
       return [];
     }
@@ -23,8 +23,8 @@ export class FormatService {
     return this.provideEdits(ast);
   }
 
-  private handleRangeFormatting(params: DocumentRangeFormattingParams): TextEdit[] {
-    const ast = this.documentService.getAST(params.textDocument.uri);
+  private async handleRangeFormatting(params: DocumentRangeFormattingParams): Promise<TextEdit[]> {
+    const ast = await this.documentService.getAST(params.textDocument.uri);
     const node = ast?.findEnclosing(convertRangeFromLsp(params.range));
     if (!node) {
       return [];

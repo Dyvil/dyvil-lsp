@@ -12,8 +12,8 @@ export class ActionService {
     connectionService.connection.onCodeAction(params => this.provideActions(params));
   }
 
-  private provideActions(params: CodeActionParams): CodeAction[] {
-    const unit = this.documentService.getAST(params.textDocument.uri);
+  private async provideActions(params: CodeActionParams): Promise<CodeAction[]> {
+    const unit = await this.documentService.getAST(params.textDocument.uri);
     if (!unit) {
       return [];
     }
