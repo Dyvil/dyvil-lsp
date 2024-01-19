@@ -12,12 +12,20 @@ import {
   WorkspaceFolder,
 } from 'vscode-languageserver-protocol';
 
+class FileMetadata {
+  uri: string;
+  path?: string;
+  signature?: Signature;
+  ast?: CompilationUnit;
+}
+
 export class DocumentService {
   documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
 
-  signatures = new Map<string, Signature>();
-  astCache = new Map<string, CompilationUnit>();
-  globalScope = new GlobalScope(() => this.astCache.values());
+  astCache = new Map<string, FileMetadata>();
+  globalScope = new GlobalScope(() => {
+    return [...this.astCache.values()].map(file => file.ast).filter(Boolean) as CompilationUnit[];
+  });
 
   constructor(
     private connectionService: ConnectionService,
@@ -44,35 +52,45 @@ export class DocumentService {
     this.connectionService.connection.onDidChangeWatchedFiles(params => this.onChanges(params));
   }
 
+  private getOrCreateFile(uri: string, path = this.parseFileUri(uri)) {
+    let file = this.astCache.get(uri);
+    if (!file) {
+      file = {uri, path};
+      this.astCache.set(uri, file);
+    }
+    return file;
+  }
+
   private async init(workspaceFolders: WorkspaceFolder[]) {
     const progress = await this.connectionService.connection.window.createWorkDoneProgress();
     progress.begin('Loading Dyvil workspace...');
 
     // 1. collect all files
     progress.report('Collecting files...');
-    const files: string[] = [];
+    const initialFiles: FileMetadata[] = [];
     for (let workspaceFolder of workspaceFolders ?? []) {
       const folder = this.parseFileUri(workspaceFolder.uri);
       if (folder) {
-        files.push(...await glob(`${folder}/**/*.dyv`));
+        for (const file of await glob(`${folder}/**/*.dyv`)) {
+          initialFiles.push(this.getOrCreateFile(`file://${file}`, file));
+        }
       }
     }
 
     // 2. parse all files
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      progress.report(i / files.length, `Reading ${file}...`);
+    for (let i = 0; i < initialFiles.length; i++) {
+      const file = initialFiles[i];
+      progress.report(i / initialFiles.length, `Reading ${file.uri}...`);
 
-      const doc = await this.loadDocument(file);
-      const unit = this.parse(doc);
-      this.astCache.set(doc.uri, unit);
+      const doc = await this.loadDocument(file.path!);
+      file.ast = this.parse(doc);
     }
 
     // 3. resolve all against global scope
-    let i = 0;
-    for (const unit of this.astCache.values()) {
-      progress.report(i / files.length, `Resolving ${unit.path}...`);
-      this.resolve(unit);
+    for (let i = 0; i < initialFiles.length; i++) {
+      const file = initialFiles[i];
+      progress.report(i / initialFiles.length, `Resolving ${file.uri}...`);
+      this.resolve(file.ast!);
     }
 
     progress.done();
@@ -111,8 +129,8 @@ export class DocumentService {
           await this.change(change.uri);
           break;
         case FileChangeType.Deleted:
-          const ast = this.astCache.get(change.uri);
-          ast?.unlink();
+          const file = this.astCache.get(change.uri);
+          file?.ast?.unlink();
           this.updateDependends(change.uri);
           this.astCache.delete(change.uri);
           break;
@@ -143,18 +161,19 @@ export class DocumentService {
 
     seen.add(path);
 
-    const oldUnit = this.astCache.get(path);
-    this.astCache.set(path, newUnit);
+    const file = this.getOrCreateFile(path);
+    const oldUnit = file?.ast;
+    file.ast = newUnit;
 
     oldUnit?.unlink();
     this.resolve(newUnit);
 
-    const oldSignature = this.signatures.get(path);
+    const oldSignature = file.signature;
 
     const newSigBuilder = new SignatureBuilder();
     newUnit.buildSignature(newSigBuilder);
     const newSignature = newSigBuilder.build();
-    this.signatures.set(path, newSignature);
+    file.signature = newSignature;
 
     if (oldUnit && oldSignature && newSignature.hash !== oldSignature.hash) {
       console.log('signature changed', path, oldSignature.signature, newSignature.signature);
@@ -170,12 +189,9 @@ export class DocumentService {
 
   dependends(onPath: string): CompilationUnit[] {
     const result: CompilationUnit[] = [];
-    for (const [path, sig] of this.signatures) {
-      if (sig.dependencies.has(onPath)) {
-        const unit = this.astCache.get(path);
-        if (unit) {
-          result.push(unit);
-        }
+    for (const file of this.astCache.values()) {
+      if (file.ast && file.signature?.dependencies.has(onPath)) {
+        result.push(file.ast);
       }
     }
     return result;
@@ -183,6 +199,6 @@ export class DocumentService {
 
   async getAST(uriOrDoc: string | TextDocument): Promise<CompilationUnit | undefined> {
     const uri = typeof uriOrDoc === 'string' ? uriOrDoc : uriOrDoc.uri;
-    return this.astCache.get(uri);
+    return this.getOrCreateFile(uri).ast;
   }
 }
