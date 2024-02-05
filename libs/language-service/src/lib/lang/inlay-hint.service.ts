@@ -24,17 +24,17 @@ export class InlayHintService {
       switch (node.kind) {
         case 'variable': {
           const variable = node as Variable;
-          if (!variable.type || variable.type.location) {
+          if (!variable.type || !variable.location || variable.type.location) {
             continue;
           }
           const text = `: ${variable.type}`;
           result.push({
             kind: InlayHintKind.Type,
-            position: convertPositionToLsp(variable.location!.end),
+            position: convertPositionToLsp(variable.location.end),
             label: text,
             paddingLeft: true,
             textEdits: [{
-              range: convertRangeToLsp(variable.location!),
+              range: convertRangeToLsp(variable.location),
               newText: variable.name + text,
             }],
           });

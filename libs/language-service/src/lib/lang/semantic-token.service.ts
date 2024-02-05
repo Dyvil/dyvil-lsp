@@ -41,34 +41,37 @@ export class SemanticTokenService {
   private collectSemanticTokens(root: Node<string>): SemanticTokens {
     const dataCollector = new TokenDataCollector();
     for (const node of recurse(root)) {
+      if (!node.location) {
+        continue;
+      }
       switch (node.kind) {
         case 'class':
-          dataCollector.addNode(node.location!, SemanticTokenTypes.class);
+          dataCollector.addNode(node.location, SemanticTokenTypes.class);
           break;
         case 'field':
         case 'expr:propertyAccess':
-          dataCollector.addNode(node.location!, SemanticTokenTypes.property);
+          dataCollector.addNode(node.location, SemanticTokenTypes.property);
           break;
         case 'method':
         case 'expr:methodCall':
         case 'expr:functionCall':
           if (node instanceof FunctionCall && node._constructor) {
-            dataCollector.addNode(node.location!, SemanticTokenTypes.class);
+            dataCollector.addNode(node.location, SemanticTokenTypes.class);
           } else {
-            dataCollector.addNode(node.location!, SemanticTokenTypes.method);
+            dataCollector.addNode(node.location, SemanticTokenTypes.method);
           }
           break;
         case 'parameter':
-          dataCollector.addNode(node.location!, SemanticTokenTypes.parameter);
+          dataCollector.addNode(node.location, SemanticTokenTypes.parameter);
           break;
         case 'variable':
-          dataCollector.addNode(node.location!, SemanticTokenTypes.variable);
+          dataCollector.addNode(node.location, SemanticTokenTypes.variable);
           break;
         case 'expr:variable':
           if (node instanceof VariableReference && node._variable instanceof Parameter) {
-            dataCollector.addNode(node.location!, SemanticTokenTypes.parameter);
+            dataCollector.addNode(node.location, SemanticTokenTypes.parameter);
           } else {
-            dataCollector.addNode(node.location!, SemanticTokenTypes.variable);
+            dataCollector.addNode(node.location, SemanticTokenTypes.variable);
           }
           break;
       }
