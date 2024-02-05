@@ -83,10 +83,9 @@ parameterList returns [ast.Parameter[] ps] @init { $ps = []; }:
 ;
 
 variable returns [ast.Variable v] @after { $v.range = makeRange($start, $stop); }:
-  attribute* 'var' ID { $v = new ast.Variable($ID.text); }
+  attribute* 'var' ID { $v = new ast.Variable($ID.text); $v.location = makeRange($ID); }
   (':' type { $v.type = $type.tn })?
   '=' expression { $expression.e && ($v.value = $expression.e); }
-  { $v.location = makeRange($ID); }
 ;
 
 type returns [ast.Type tn] @after { $tn.location = $tn.range = makeRange($start, $stop); }:
