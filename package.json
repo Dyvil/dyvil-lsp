@@ -6,6 +6,7 @@
     "ng": "nx",
     "serve:web": "nx serve web",
     "serve:compiler-service": "nx serve compiler-service",
+    "web:e2e:watch": "nx e2e web-e2e --watch",
     "compiler:main": "nx main compiler",
     "compiler:antlr": "nx antlr4ts compiler",
     "vs-code-client:watch": "nx build vs-code-client --watch --configuration=development",
