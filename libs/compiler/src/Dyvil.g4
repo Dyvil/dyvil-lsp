@@ -8,7 +8,7 @@ import { CommonTokenStream } from 'antlr4ts';
 
 file returns [ast.CompilationUnit cu]:
   { $cu = new ast.CompilationUnit(this._input.sourceName); }
-  (class { $cu.classes.push($class.cn); })*
+  (class { $class.cn && $cu.classes.push($class.cn); })*
   EOF { $cu.range = makeRange($start, $EOF); }
 ;
 
@@ -33,9 +33,9 @@ class returns [ast.Class cn] @after { $cn.range = makeRange($start, $stop); }:
     $cn.doc = cleanDoc($DOC);
   }
   '{' (
-  field { $cn.fields.push($field.fn) }
-  | ctor { $cn.constructors.push($ctor.cn) }
-  | method { $cn.methods.push($method.mn) }
+  field { $field.fn && $cn.fields.push($field.fn) }
+  | ctor { $ctor.cn && $cn.constructors.push($ctor.cn) }
+  | method { $method.mn && $cn.methods.push($method.mn) }
   | COMPLETION_ID { $cn.completion = new ast.ClassCompletion($COMPLETION_ID.text!); $cn.completion.location = makeRange($COMPLETION_ID); }
   )* '}'
 ;
@@ -65,7 +65,7 @@ method returns [ast.Method mn] @after { $mn.range = makeRange($start, $stop); }:
     $mn.doc = cleanDoc($DOC);
   }
   '(' (parameterList { $mn.parameters = $parameterList.ps; })? ')'
-  ':' type { $mn.returnType = $type.tn; }
+  ':' type { $type.tn && ($mn.returnType = $type.tn); }
   blockStatement { $mn.body = $blockStatement.bs; }
 ;
 parameter returns [ast.Parameter pn] @after { $pn.range = makeRange($start, $stop); }:
@@ -74,18 +74,18 @@ parameter returns [ast.Parameter pn] @after { $pn.range = makeRange($start, $sto
     $pn.location = makeRange($ID);
     $pn.doc = cleanDoc($DOC);
   }
-  ':' type { $pn.type = $type.tn; }
+  ':' type { $type.tn && ($pn.type = $type.tn); }
 ;
 parameterList returns [ast.Parameter[] ps] @init { $ps = []; }:
-  parameter { $ps.push($parameter.pn); }
-  (',' parameter { $ps.push($parameter.pn); })*
+  parameter { $parameter.pn && $ps.push($parameter.pn); }
+  (',' parameter { $parameter.pn && $ps.push($parameter.pn); })*
   ','?
 ;
 
 variable returns [ast.Variable v] @after { $v.range = makeRange($start, $stop); }:
   attribute* 'var' ID { $v = new ast.Variable($ID.text); }
   (':' type { $v.type = $type.tn })?
-  '=' expression { $v.value = $expression.e; }
+  '=' expression { $expression.e && ($v.value = $expression.e); }
   { $v.location = makeRange($ID); }
 ;
 
@@ -112,7 +112,7 @@ statement returns [ast.AnyStatement s] @after { $s.location = $s.range = makeRan
 ;
 blockStatement returns [ast.Block bs] @after { $bs.location = $bs.range = makeRange($start, $stop); }:
   '{' { $bs = new ast.Block(); }
-  (statement { $bs.statements.push($statement.s); })*
+  (statement { $statement.s && $bs.statements.push($statement.s); })*
   '}'
 ;
 
@@ -155,8 +155,8 @@ expression returns [ast.Expression e] @after { $e.range = makeRange($start, $sto
   literal=(NUMBER | STRING | 'true' | 'false') { $e = new ast.Literal($literal.text!); $e.location = makeRange($literal); }
 ;
 expressionList returns [ast.Expression[] es] @init { $es = []; }:
-  expression { $es.push($expression.e); }
-  (',' expression { $es.push($expression.e); })*
+  expression { $expression.e && $es.push($expression.e); }
+  (',' expression { $expression.e && $es.push($expression.e); })*
   ','?
 ;
 
