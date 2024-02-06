@@ -94,20 +94,20 @@ type returns [ast.Type tn] @after { $tn.location = $tn.range = makeRange($start,
   completableID { $tn = new ast.ClassType($completableID.text!) }
 ;
 
-statement returns [ast.AnyStatement s] @after { $s.location = $s.range = makeRange($start, $stop); }:
-  variable { $s = new ast.VarStatement($variable.v) }
+statement returns [ast.AnyStatement s] @after { $s && ($s.location = $s.range = makeRange($start, $stop)); }:
+  variable { $variable.v && ($s = new ast.VarStatement($variable.v)); }
   |
-  COMPLETION_ID { $s = new ast.CompletionStatement($COMPLETION_ID.text!) }
+  COMPLETION_ID { $s = new ast.CompletionStatement($COMPLETION_ID.text!); }
   |
-  expression { $s = new ast.ExpressionStatement($expression.e) }
+  expression { $expression.e && ($s = new ast.ExpressionStatement($expression.e)); }
   |
-  blockStatement {$s = $blockStatement.bs }
+  blockStatement { $s = $blockStatement.bs; }
   |
-  whileStatement {$s = $whileStatement.ws}
+  whileStatement { $s = $whileStatement.ws; }
   |
-  ifStatement {$s = $ifStatement.is}
+  ifStatement { $s = $ifStatement.is; }
   |
-  ';' { $s = ast.EmptyStatement }
+  ';' { $s = ast.EmptyStatement; }
 ;
 blockStatement returns [ast.Block bs] @after { $bs.location = $bs.range = makeRange($start, $stop); }:
   '{' { $bs = new ast.Block(); }
