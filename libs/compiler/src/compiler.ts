@@ -12,7 +12,7 @@ export function makeRange(start: Token, stop?: Token) {
 }
 
 export function cleanDoc(doc: Token | undefined): string | undefined {
-  return doc?.text?.replace(/^\/\*\*\n?|^\s*\*(?: |\/$)?/gm, '');
+  return doc?.text?.replace(/^\/\*\*\n?|^\s*\* ?|\s*\*\/$/gm, '');
 }
 
 export function compilationUnit(source: string, options?: {
