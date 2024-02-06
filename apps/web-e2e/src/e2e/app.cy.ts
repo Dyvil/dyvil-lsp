@@ -7,12 +7,17 @@ describe('web', () => {
 
   it('should not error when typing example', () => {
     // click on .monaco-mouse-cursor-text
-    cy.get('.view-lines.monaco-mouse-cursor-text').first().click();
+    const monacoSelector = '.view-lines.monaco-mouse-cursor-text';
+    cy.get(monacoSelector).first().click();
 
     // press ctrl/cmd + a
-    cy.get('.view-lines.monaco-mouse-cursor-text').first().type('{ctrl}a{cmd}a{backspace}');
+    if (Cypress.platform === 'darwin') {
+      cy.get(monacoSelector).first().type('{meta}a{backspace}');
+    } else {
+      cy.get(monacoSelector).first().type('{ctrl}a{backspace}');
+    }
 
-    cy.get('.view-lines.monaco-mouse-cursor-text').first().type(`
+    cy.get(monacoSelector).first().type(`
 class Greeter {
 var name: string = "World"
 var count: int = 0
