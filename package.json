@@ -4,14 +4,15 @@
   "license": "MIT",
   "scripts": {
     "ng": "nx",
-    "serve:web": "nx serve web",
-    "serve:compiler-service": "nx serve compiler-service",
+    "web:serve": "nx serve web",
+    "web:build": "nx build web",
     "web:e2e:watch": "nx e2e web-e2e --watch",
+    "compiler-service:serve": "nx serve compiler-service",
     "compiler:main": "nx main compiler",
     "compiler:antlr": "nx antlr4ts compiler",
     "vs-code-client:watch": "nx build vs-code-client --watch --configuration=development",
     "language-server:watch": "nx build language-server --watch --configuration=development",
-    "vscode-client": "code --extensionDevelopmentPath=$PWD/dist/apps/vs-code-client/ examples/ examples/Greeter.dyv",
+    "vscode:run": "code --extensionDevelopmentPath=$PWD/dist/apps/vs-code-client/ examples/ examples/Greeter.dyv",
     "vscode:publish": "nx run-many -t build -p vs-code-client language-server && cd dist/apps/vs-code-client && ovsx publish",
     "build": "nx build",
     "test": "nx test"
