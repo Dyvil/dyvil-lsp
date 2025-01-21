@@ -50,7 +50,7 @@
     "monaco-editor": "npm:@codingame/monaco-editor-treemended@~1.85.1",
     "monaco-editor-workers": "^0.45.0",
     "monaco-languageclient": "^7.3.0",
-    "mongoose": "^6.12.5",
+    "mongoose": "^6.13.6",
     "process": "^0.11.10",
     "reflect-metadata": "^0.1.14",
     "rxjs": "^7.8.1",
