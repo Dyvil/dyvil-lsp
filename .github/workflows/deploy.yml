@@ -27,11 +27,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       # https://github.com/pnpm/action-setup#use-cache-to-reduce-installation-time
-      - uses: pnpm/action-setup@v2
+      - uses: pnpm/action-setup@v4
         name: Install pnpm
         id: pnpm-install
         with:
-          version: 8
           run_install: false
       - name: Set up Node
         uses: actions/setup-node@v4
