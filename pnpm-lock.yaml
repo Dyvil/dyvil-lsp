@@ -5,8 +5,8 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  monaco-editor: npm:@codingame/monaco-editor-treemended@~1.85.1
-  vscode: npm:@codingame/monaco-vscode-api@~1.85.1
+  monaco-editor: npm:@codingame/monaco-editor-treemended@~1.85.6
+  vscode: npm:@codingame/monaco-vscode-api@~1.85.6
 
 importers:
 
