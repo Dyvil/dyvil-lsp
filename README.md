@@ -20,9 +20,9 @@ It is available at [dyvil.org](https://dyvil.org).
 - Editing
   - Code completion
   - Rename
-  - Code formatting
-    <img src="docs/format.gif" alt="Code formatting GIF" width="584">
-  - Code actions: specify type explicitly, simplify expression
+  - Code formatting  
+    <img src="docs/format.gif" alt="Code formatting GIF" width="292">
+  - Code actions: specify type explicitly, simplify expression  
     <img src="docs/quick-fix.gif" alt="Quick Fix GIF" width="328">
 - Information
   - Show references, definition, type definition
