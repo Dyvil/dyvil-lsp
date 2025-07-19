@@ -3,6 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/vs-code-client/src",
   "projectType": "application",
+  "tags": [],
   "targets": {
     "build": {
       "executor": "@nx/esbuild:esbuild",
@@ -65,6 +66,5 @@
         "jestConfig": "apps/vs-code-client/jest.config.ts"
       }
     }
-  },
-  "tags": []
+  }
 }

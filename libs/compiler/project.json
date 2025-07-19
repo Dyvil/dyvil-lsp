@@ -3,6 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/compiler/src",
   "projectType": "library",
+  "tags": [],
   "targets": {
     "main": {
       "executor": "@nx/js:node",
@@ -43,6 +44,5 @@
         "jestConfig": "libs/compiler/jest.config.ts"
       }
     }
-  },
-  "tags": []
+  }
 }
