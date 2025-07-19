@@ -12,7 +12,7 @@
     "vscode": "^1.69.0"
   },
   "scripts": {
-    "vscode:prepublish": "cpx ../language-server/main.js ./server/"
+    "vscode:prepublish": "cp ../language-server/main.js ./server.js"
   },
   "contributes": {
     "commands": [

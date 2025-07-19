@@ -82,7 +82,6 @@
     "@typescript-eslint/eslint-plugin": "7.18.0",
     "@typescript-eslint/parser": "7.18.0",
     "antlr4ts-cli": "0.5.0-alpha.4",
-    "cpx": "^1.5.0",
     "css-loader": "^6.11.0",
     "cypress": "14.5.2",
     "esbuild": "^0.25.7",
@@ -106,7 +105,8 @@
   "pnpm": {
     "overrides": {
       "monaco-editor": "npm:@codingame/monaco-editor-treemended@~1.85.6",
-      "vscode": "npm:@codingame/monaco-vscode-api@~1.85.6"
+      "vscode": "npm:@codingame/monaco-vscode-api@~1.85.6",
+      "vscode-semver": "npm:semver@^5.7.2"
     },
     "ignoredBuiltDependencies": [
       "keytar"
