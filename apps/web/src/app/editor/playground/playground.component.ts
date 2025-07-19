@@ -7,6 +7,7 @@ import {EditorComponent} from '../editor/editor.component';
   selector: 'stc-playground',
   templateUrl: './playground.component.html',
   styleUrls: ['./playground.component.scss'],
+  standalone: false,
 })
 export class PlaygroundComponent implements OnInit {
   @ViewChild('editor', {static: true}) editor: EditorComponent;
