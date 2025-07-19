@@ -7,7 +7,7 @@ export async function activate(context: ExtensionContext) {
   const devMode = context.extensionMode === ExtensionMode.Development;
   const module = context.asAbsolutePath(devMode
     ? '../language-server/main.js'
-    : './server/main.js',
+    : './server.js',
   );
   const transport = TransportKind.ipc;
   const serverOptions: ServerOptions = {

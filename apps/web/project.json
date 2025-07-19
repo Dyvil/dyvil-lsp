@@ -4,6 +4,7 @@
   "projectType": "application",
   "sourceRoot": "apps/web/src",
   "prefix": "stc",
+  "tags": [],
   "targets": {
     "build": {
       "executor": "@nx/angular:webpack-browser",
@@ -92,7 +93,8 @@
           "buildTarget": "web:build:development"
         }
       },
-      "defaultConfiguration": "development"
+      "defaultConfiguration": "development",
+      "continuous": true
     },
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
@@ -112,6 +114,5 @@
         "webWorkerTsConfig": "apps/web/tsconfig.worker.json"
       }
     }
-  },
-  "tags": []
+  }
 }
