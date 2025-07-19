@@ -1,5 +1,5 @@
 import {HttpClient} from '@angular/common/http';
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, inject, OnInit, ViewChild} from '@angular/core';
 import {debounceTime, Subject} from 'rxjs';
 import {EditorComponent} from '../editor/editor.component';
 
@@ -12,14 +12,11 @@ import {EditorComponent} from '../editor/editor.component';
 export class PlaygroundComponent implements OnInit {
   @ViewChild('editor', {static: true}) editor: EditorComponent;
 
+  private readonly http = inject(HttpClient);
+
   code = '';
   compiled = '';
   compile$ = new Subject<string>();
-
-  constructor(
-    private http: HttpClient,
-  ) {
-  }
 
   ngOnInit() {
     const loadCode = localStorage.getItem('playground/dyvil');

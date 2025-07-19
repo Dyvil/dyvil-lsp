@@ -1,3 +1,4 @@
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import * as extensionManifest from 'apps/vs-code-client/package.json';
 
 import getEditorServiceOverride from '@codingame/monaco-vscode-editor-service-override';
