@@ -11,8 +11,8 @@ updates:
     ignore:
       - dependency-name: "nx"
       - dependency-name: "@nx/*"
-      - dependency-name: "@nestjs/*"
       - dependency-name: "@angular/*"
+      - dependency-name: "@angular-eslint/*"
     groups:
       production:
         dependency-type: production
