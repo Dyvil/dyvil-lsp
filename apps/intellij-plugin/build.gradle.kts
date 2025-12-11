@@ -135,6 +135,10 @@ tasks {
       from("${rootDir}/../../dist/apps/language-server/main.js") {
         into("${project.name}/language-server")
       }
+      from("${rootDir}/../../apps/vs-code-client") {
+        into("${project.name}/textmate")
+        include("package.json", "assets/dyvil.tmGrammar.json")
+      }
     }
 
     publishPlugin {
