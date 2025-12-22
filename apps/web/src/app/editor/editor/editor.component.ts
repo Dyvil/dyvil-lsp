@@ -10,10 +10,17 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
-import {editor} from 'monaco-editor/esm/vs/editor/editor.api';
-import {MonacoLanguageClient} from 'monaco-languageclient';
-import {BrowserMessageReader, BrowserMessageWriter} from 'vscode-languageserver-protocol/browser';
-import {createLanguageClient, ready} from './monaco';
+import { editor } from 'monaco-editor/esm/vs/editor/editor.api';
+import { MonacoLanguageClient } from 'monaco-languageclient';
+import {
+  BrowserMessageReader,
+  BrowserMessageWriter,
+} from 'vscode-languageserver-protocol/browser';
+import { MonacoBinding } from 'y-monaco';
+import { WebsocketProvider } from 'y-websocket';
+
+import * as Y from 'yjs';
+import { createLanguageClient, ready } from './monaco';
 
 @Component({
   selector: 'stc-editor',
@@ -22,7 +29,7 @@ import {createLanguageClient, ready} from './monaco';
   standalone: false,
 })
 export class EditorComponent implements AfterViewInit, OnChanges, OnDestroy {
-  @ViewChild('container', {static: true}) container!: ElementRef;
+  @ViewChild('container', { static: true }) container!: ElementRef;
 
   @Input() language = 'dyvil';
 
@@ -33,13 +40,16 @@ export class EditorComponent implements AfterViewInit, OnChanges, OnDestroy {
   worker?: Worker;
   editor?: editor.IStandaloneCodeEditor;
   lspClient?: MonacoLanguageClient;
+  yjsBindung?: MonacoBinding;
 
   async ngAfterViewInit() {
     await ready;
 
+    const roomName = `monaco-demo-dyvil`; //TODO for studis: make configurable, i won't
+
     const domElement = this.container.nativeElement;
     this.editor = editor.create(domElement, {
-      value: this.code,
+      value: '', // will be set by yjs
       language: this.language,
       theme: 'vs-dark',
       glyphMargin: true,
@@ -47,20 +57,46 @@ export class EditorComponent implements AfterViewInit, OnChanges, OnDestroy {
         enabled: true,
       },
       automaticLayout: true,
-      "semanticHighlighting.enabled": true,
+      'semanticHighlighting.enabled': true,
     });
     this.editor.onDidChangeModelContent(() => {
       this.editor && this.codeChanged.next(this.editor.getValue());
     });
 
     if (this.language === 'dyvil') {
+      const doc = new Y.Doc();
+      const provider = new WebsocketProvider(
+        // start local server via 'HOST=localhost PORT=8080 npx y-websocket'
+        `ws://localhost:8080/ws`, //TODO make configurable and deploy on cluster
+        roomName,
+        doc
+      );
+      const text = doc.getText('monaco');
 
       this.worker = new Worker(new URL('./editor.worker.ts', import.meta.url));
       const reader = new BrowserMessageReader(this.worker);
       const writer = new BrowserMessageWriter(this.worker);
-      this.lspClient = createLanguageClient({reader, writer});
+      this.lspClient = createLanguageClient({ reader, writer });
       this.lspClient.start();
       reader.onClose(() => this.lspClient?.stop());
+
+      // Bind Yjs text to Monaco model, will overwrite model content
+      this.yjsBindung = new MonacoBinding(
+        text,
+        this.editor.getModel()!,
+        new Set([this.editor]),
+        provider.awareness
+      );
+
+      // Will be fired only once, when sync is done
+      provider.on('sync', (isSynced) => {
+        console.log('isSynced', isSynced);
+        if (text.toString().length === 0) {
+          doc.transact(() => {
+            text.insert(0, this.code);
+          });
+        }
+      });
     }
 
     this.ready.next();
@@ -83,5 +119,6 @@ export class EditorComponent implements AfterViewInit, OnChanges, OnDestroy {
     this.editor?.dispose();
     await this.lspClient?.stop();
     this.worker?.terminate();
+    this.yjsBindung?.destroy();
   }
 }
