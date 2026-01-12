@@ -10,18 +10,18 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
-import { editor } from 'monaco-editor/esm/vs/editor/editor.api';
-import { MonacoLanguageClient } from 'monaco-languageclient';
+import {editor} from 'monaco-editor/esm/vs/editor/editor.api';
+import {MonacoLanguageClient} from 'monaco-languageclient';
 import {
   BrowserMessageReader,
   BrowserMessageWriter,
 } from 'vscode-languageserver-protocol/browser';
-import { MonacoBinding } from 'y-monaco';
-import { WebsocketProvider } from 'y-websocket';
+import {MonacoBinding} from 'y-monaco';
+import {WebsocketProvider} from 'y-websocket';
 
 import * as Y from 'yjs';
-import { environment } from '../../../environments/environment';
-import { createLanguageClient, ready } from './monaco';
+import {environment} from '../../../environments/environment';
+import {createLanguageClient, ready} from './monaco';
 
 @Component({
   selector: 'stc-editor',
@@ -70,7 +70,7 @@ export class EditorComponent implements AfterViewInit, OnChanges, OnDestroy {
         // start local server via 'HOST=localhost PORT=8080 npx y-websocket'
         environment.yjsWebsocketUrl,
         roomName,
-        doc,
+        doc
       );
       const text = doc.getText('monaco');
 
