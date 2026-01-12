@@ -38,7 +38,9 @@ export class EditorComponent implements AfterViewInit, OnChanges, OnDestroy {
   worker?: Worker;
   editor?: editor.IStandaloneCodeEditor;
   lspClient?: MonacoLanguageClient;
-  yesBinding?: MonacoBinding;
+  yjsBinding?: MonacoBinding;
+  yjsDoc?: Y.Doc;
+  websocketProvider?: WebsocketProvider;
 
   async ngAfterViewInit() {
     await ready;
@@ -62,13 +64,13 @@ export class EditorComponent implements AfterViewInit, OnChanges, OnDestroy {
     });
 
     if (this.language === 'dyvil') {
-      const doc = new Y.Doc();
-      const provider = new WebsocketProvider(
+      this.yjsDoc = new Y.Doc();
+      this.websocketProvider = new WebsocketProvider(
         environment.yjsWebsocketUrl,
         roomName,
-        doc,
+        this.yjsDoc
       );
-      const text = doc.getText('monaco');
+      const text = this.yjsDoc.getText('monaco');
 
       this.worker = new Worker(new URL('./editor.worker.ts', import.meta.url));
       const reader = new BrowserMessageReader(this.worker);
@@ -78,18 +80,18 @@ export class EditorComponent implements AfterViewInit, OnChanges, OnDestroy {
       reader.onClose(() => this.lspClient?.stop());
 
       // Bind Yjs text to Monaco model, will overwrite model content
-      this.yesBinding = new MonacoBinding(
+      this.yjsBinding = new MonacoBinding(
         text,
         this.editor.getModel()!,
         new Set([this.editor]),
-        provider.awareness,
+        this.websocketProvider.awareness,
       );
 
       // Will be fired only once, when sync is done
-      provider.on('sync', (isSynced) => {
+      this.websocketProvider.on('sync', (isSynced) => {
         // If Yjs document is empty, insert demo code
         if (isSynced && text.toString().length === 0) {
-          doc.transact(() => {
+          this.yjsDoc?.transact(() => {
             text.insert(0, this.code);
           });
         }
@@ -116,6 +118,8 @@ export class EditorComponent implements AfterViewInit, OnChanges, OnDestroy {
     this.editor?.dispose();
     await this.lspClient?.stop();
     this.worker?.terminate();
-    this.yesBinding?.destroy();
+    this.yjsBinding?.destroy();
+    this.yjsDoc?.destroy();
+    this.websocketProvider?.destroy();
   }
 }

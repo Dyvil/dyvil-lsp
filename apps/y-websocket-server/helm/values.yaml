@@ -1,5 +1,3 @@
-replicaCount: 1
-
 image:
   repository: registry.uni-kassel.dev/y-websocket-server
   tag: latest
