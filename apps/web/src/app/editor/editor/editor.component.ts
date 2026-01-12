@@ -29,7 +29,7 @@ import {ActivatedRoute} from "@angular/router";
   standalone: false,
 })
 export class EditorComponent implements AfterViewInit, OnChanges, OnDestroy {
-  @ViewChild('container', { static: true }) container!: ElementRef;
+  @ViewChild('container', {static: true}) container!: ElementRef;
 
   @Input() language = 'dyvil';
 
@@ -70,7 +70,7 @@ export class EditorComponent implements AfterViewInit, OnChanges, OnDestroy {
       this.worker = new Worker(new URL('./editor.worker.ts', import.meta.url));
       const reader = new BrowserMessageReader(this.worker);
       const writer = new BrowserMessageWriter(this.worker);
-      this.lspClient = createLanguageClient({ reader, writer });
+      this.lspClient = createLanguageClient({reader, writer});
       this.lspClient.start();
       reader.onClose(() => this.lspClient?.stop());
 
