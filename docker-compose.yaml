@@ -6,8 +6,10 @@ services:
     volumes:
       - data:/data/db
   y-websocket:
-    image: registry.uni-kassel.dev/web-kraken/y-websocket-server:latest
-    build: ./apps/y-websocket-server
+    image: registry.uni-kassel.dev/y-websocket-server:latest
+    build:
+      platforms: [ linux/amd64, linux/arm64 ]
+      context:  ./apps/y-websocket-server
     ports:
       - "1234:1234"
     restart: unless-stopped

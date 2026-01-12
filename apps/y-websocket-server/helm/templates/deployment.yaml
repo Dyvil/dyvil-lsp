@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.common.name }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.common.name }}
+  template:
+    metadata:
+      annotations:
+        k8s.vs.uni-kassel.de/dummy: a
+      labels:
+        app: {{ .Values.common.name }}
+    spec:
+      imagePullSecrets:
+{{ toYaml $.Values.image.pullSecrets | indent 8 }}
+      containers:
+        - name: y-websocket
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.port }}
+          env:
+            - name: HOST
+              value: "0.0.0.0"
+            - name: PORT
+              value: "{{ .Values.service.port }}"
