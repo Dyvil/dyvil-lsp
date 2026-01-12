@@ -1,14 +1,14 @@
 import {
-    AfterViewInit,
-    Component,
-    ElementRef,
-    EventEmitter,
-    Input,
-    OnChanges,
-    OnDestroy,
-    Output,
-    SimpleChanges,
-    ViewChild,
+  AfterViewInit,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  Output,
+  SimpleChanges,
+  ViewChild,
 } from '@angular/core';
 import {editor} from 'monaco-editor/esm/vs/editor/editor.api';
 import {MonacoLanguageClient} from 'monaco-languageclient';
@@ -27,7 +27,7 @@ import {createLanguageClient, ready} from './monaco';
   standalone: false,
 })
 export class EditorComponent implements AfterViewInit, OnChanges, OnDestroy {
-  @ViewChild('container', { static: true }) container!: ElementRef;
+  @ViewChild('container', {static: true}) container!: ElementRef;
 
   @Input() language = 'dyvil';
 
@@ -64,7 +64,6 @@ export class EditorComponent implements AfterViewInit, OnChanges, OnDestroy {
     if (this.language === 'dyvil') {
       const doc = new Y.Doc();
       const provider = new WebsocketProvider(
-        // start local server via 'HOST=localhost PORT=8080 npx y-websocket'
         environment.yjsWebsocketUrl,
         roomName,
         doc,
@@ -74,7 +73,7 @@ export class EditorComponent implements AfterViewInit, OnChanges, OnDestroy {
       this.worker = new Worker(new URL('./editor.worker.ts', import.meta.url));
       const reader = new BrowserMessageReader(this.worker);
       const writer = new BrowserMessageWriter(this.worker);
-      this.lspClient = createLanguageClient({ reader, writer });
+      this.lspClient = createLanguageClient({reader, writer});
       this.lspClient.start();
       reader.onClose(() => this.lspClient?.stop());
 
