@@ -3,6 +3,7 @@ import {
   Component,
   ElementRef,
   EventEmitter,
+  inject,
   Input,
   OnChanges,
   OnDestroy,
@@ -19,6 +20,7 @@ import {WebsocketProvider} from 'y-websocket';
 import * as Y from 'yjs';
 import {environment} from '../../../environments/environment';
 import {createLanguageClient, ready} from './monaco';
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'stc-editor',
@@ -27,13 +29,15 @@ import {createLanguageClient, ready} from './monaco';
   standalone: false,
 })
 export class EditorComponent implements AfterViewInit, OnChanges, OnDestroy {
-  @ViewChild('container', {static: true}) container!: ElementRef;
+  @ViewChild('container', { static: true }) container!: ElementRef;
 
   @Input() language = 'dyvil';
 
   @Input() code: string;
   @Output() codeChanged = new EventEmitter<string>();
   @Output() ready = new EventEmitter<void>();
+
+  private activatedRoute = inject(ActivatedRoute);
 
   worker?: Worker;
   editor?: editor.IStandaloneCodeEditor;
@@ -44,8 +48,6 @@ export class EditorComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   async ngAfterViewInit() {
     await ready;
-
-    const roomName = `monaco-demo-dyvil`; //TODO for studis: make configurable, i won't
 
     const domElement = this.container.nativeElement;
     this.editor = editor.create(domElement, {
@@ -64,38 +66,46 @@ export class EditorComponent implements AfterViewInit, OnChanges, OnDestroy {
     });
 
     if (this.language === 'dyvil') {
-      this.yjsDoc = new Y.Doc();
-      this.websocketProvider = new WebsocketProvider(
-        environment.yjsWebsocketUrl,
-        roomName,
-        this.yjsDoc
-      );
-      const text = this.yjsDoc.getText('monaco');
 
       this.worker = new Worker(new URL('./editor.worker.ts', import.meta.url));
       const reader = new BrowserMessageReader(this.worker);
       const writer = new BrowserMessageWriter(this.worker);
-      this.lspClient = createLanguageClient({reader, writer});
+      this.lspClient = createLanguageClient({ reader, writer });
       this.lspClient.start();
       reader.onClose(() => this.lspClient?.stop());
 
-      // Bind Yjs text to Monaco model, will overwrite model content
-      this.yjsBinding = new MonacoBinding(
-        text,
-        this.editor.getModel()!,
-        new Set([this.editor]),
-        this.websocketProvider.awareness,
-      );
+      const room = this.activatedRoute.snapshot.queryParamMap.get('room');
+      if (room) {
+        // connect to the room and get the doc
+        this.yjsDoc = new Y.Doc();
+        this.websocketProvider = new WebsocketProvider(
+          environment.yjsWebsocketUrl,
+          room,
+          this.yjsDoc
+        );
+        const text = this.yjsDoc.getText('monaco');
 
-      // Will be fired only once, when sync is done
-      this.websocketProvider.on('sync', (isSynced) => {
-        // If Yjs document is empty, insert demo code
-        if (isSynced && text.toString().length === 0) {
-          this.yjsDoc?.transact(() => {
-            text.insert(0, this.code);
-          });
-        }
-      });
+        // Bind Yjs text to Monaco model, will overwrite model content
+        this.yjsBinding = new MonacoBinding(
+          text,
+          this.editor.getModel()!,
+          new Set([this.editor]),
+          this.websocketProvider.awareness
+        );
+
+        // Will be fired only once, when sync is done
+        this.websocketProvider.on('sync', (isSynced) => {
+          // If Yjs document is empty, insert demo code
+          if (isSynced && text.toString().length === 0) {
+            this.yjsDoc?.transact(() => {
+              text.insert(0, this.code);
+            });
+          }
+        });
+      } else {
+        // No room specified, use default code
+        this.editor.setValue(this.code);
+      }
     }
 
     this.ready.next();
