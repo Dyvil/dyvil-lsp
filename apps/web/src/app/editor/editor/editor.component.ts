@@ -20,6 +20,7 @@ import { MonacoBinding } from 'y-monaco';
 import { WebsocketProvider } from 'y-websocket';
 
 import * as Y from 'yjs';
+import { environment } from '../../../environments/environment';
 import { createLanguageClient, ready } from './monaco';
 
 @Component({
@@ -40,7 +41,7 @@ export class EditorComponent implements AfterViewInit, OnChanges, OnDestroy {
   worker?: Worker;
   editor?: editor.IStandaloneCodeEditor;
   lspClient?: MonacoLanguageClient;
-  yjsBindung?: MonacoBinding;
+  yesBinding?: MonacoBinding;
 
   async ngAfterViewInit() {
     await ready;
@@ -67,9 +68,9 @@ export class EditorComponent implements AfterViewInit, OnChanges, OnDestroy {
       const doc = new Y.Doc();
       const provider = new WebsocketProvider(
         // start local server via 'HOST=localhost PORT=8080 npx y-websocket'
-        `ws://localhost:8080/ws`, //TODO make configurable and deploy on cluster
+        environment.yjsWebsocketUrl,
         roomName,
-        doc
+        doc,
       );
       const text = doc.getText('monaco');
 
@@ -81,7 +82,7 @@ export class EditorComponent implements AfterViewInit, OnChanges, OnDestroy {
       reader.onClose(() => this.lspClient?.stop());
 
       // Bind Yjs text to Monaco model, will overwrite model content
-      this.yjsBindung = new MonacoBinding(
+      this.yesBinding = new MonacoBinding(
         text,
         this.editor.getModel()!,
         new Set([this.editor]),
@@ -90,8 +91,8 @@ export class EditorComponent implements AfterViewInit, OnChanges, OnDestroy {
 
       // Will be fired only once, when sync is done
       provider.on('sync', (isSynced) => {
-        console.log('isSynced', isSynced);
-        if (text.toString().length === 0) {
+        // If Yjs document is empty, insert demo code
+        if (isSynced && text.toString().length === 0) {
           doc.transact(() => {
             text.insert(0, this.code);
           });
@@ -119,6 +120,6 @@ export class EditorComponent implements AfterViewInit, OnChanges, OnDestroy {
     this.editor?.dispose();
     await this.lspClient?.stop();
     this.worker?.terminate();
-    this.yjsBindung?.destroy();
+    this.yesBinding?.destroy();
   }
 }
