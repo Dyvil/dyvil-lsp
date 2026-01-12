@@ -76,32 +76,8 @@ export class EditorComponent implements AfterViewInit, OnChanges, OnDestroy {
 
       const room = this.activatedRoute.snapshot.queryParamMap.get('room');
       if (room) {
-        // connect to the room and get the doc
-        this.yjsDoc = new Y.Doc();
-        this.websocketProvider = new WebsocketProvider(
-          environment.yjsWebsocketUrl,
-          room,
-          this.yjsDoc
-        );
-        const text = this.yjsDoc.getText('monaco');
-
-        // Bind Yjs text to Monaco model, will overwrite model content
-        this.yjsBinding = new MonacoBinding(
-          text,
-          this.editor.getModel()!,
-          new Set([this.editor]),
-          this.websocketProvider.awareness
-        );
-
-        // Will be fired only once, when sync is done
-        this.websocketProvider.on('sync', (isSynced) => {
-          // If Yjs document is empty, insert demo code
-          if (isSynced && text.toString().length === 0) {
-            this.yjsDoc?.transact(() => {
-              text.insert(0, this.code);
-            });
-          }
-        });
+        // Use Yjs collaborative editing
+        this.initYjs(room);
       } else {
         // No room specified, use default code
         this.editor.setValue(this.code);
@@ -109,6 +85,36 @@ export class EditorComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
 
     this.ready.next();
+  }
+
+  private initYjs(room: string) {
+    // connect to the room and get the doc
+    this.yjsDoc = new Y.Doc();
+    this.websocketProvider = new WebsocketProvider(
+      environment.yjsWebsocketUrl,
+      room,
+      this.yjsDoc
+    );
+    const text = this.yjsDoc.getText('monaco');
+
+    // Bind Yjs text to Monaco model, will overwrite model content
+    this.yjsBinding = new MonacoBinding(
+      text,
+      // editor model is non-null as editor is created before
+      this.editor!.getModel()!,
+      new Set([this.editor!]),
+      this.websocketProvider.awareness
+    );
+
+    // Will be fired only once, when sync is done
+    this.websocketProvider.on('sync', (isSynced) => {
+      // If Yjs document is empty, insert demo code
+      if (isSynced && text.toString().length === 0) {
+        this.yjsDoc?.transact(() => {
+          text.insert(0, this.code);
+        });
+      }
+    });
   }
 
   ngOnChanges(changes: SimpleChanges) {

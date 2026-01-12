@@ -47,20 +47,4 @@ export class PlaygroundComponent implements OnInit {
     }
   }
 
-  async setRoom() {
-    await this.router.navigate([], {
-      relativeTo: this.activatedRoute,
-      queryParams: {room: "demo"},
-    });
-    window.location.reload();
-  }
-
-  async removeRoom() {
-    await this.router.navigate([], {
-      relativeTo: this.activatedRoute,
-      queryParams: {},
-    });
-    window.location.reload();
-  }
-
 }
