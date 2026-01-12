@@ -86,7 +86,7 @@
     "@swc/helpers": "~0.5.18",
     "@types/crypto-js": "^4.2.2",
     "@types/jest": "30.0.0",
-    "@types/node": "^22.19.5",
+    "@types/node": "^24.10.7",
     "@types/vscode": "~1.85.0",
     "@typescript-eslint/eslint-plugin": "^8.40.0",
     "@typescript-eslint/parser": "^8.40.0",
