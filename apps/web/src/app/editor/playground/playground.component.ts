@@ -2,7 +2,6 @@ import {HttpClient} from '@angular/common/http';
 import {Component, inject, OnInit, ViewChild} from '@angular/core';
 import {debounceTime, Subject} from 'rxjs';
 import {EditorComponent} from '../editor/editor.component';
-import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'stc-playground',
@@ -14,8 +13,6 @@ export class PlaygroundComponent implements OnInit {
   @ViewChild('editor', {static: true}) editor: EditorComponent;
 
   private readonly http = inject(HttpClient);
-  private readonly activatedRoute = inject(ActivatedRoute);
-  private readonly router = inject(Router);
 
   code = '';
   compiled = '';
@@ -46,5 +43,4 @@ export class PlaygroundComponent implements OnInit {
       this.compiled = compiled;
     }
   }
-
 }

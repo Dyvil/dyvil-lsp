@@ -11,16 +11,16 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
 import {editor} from 'monaco-editor/esm/vs/editor/editor.api';
 import {MonacoLanguageClient} from 'monaco-languageclient';
 import {BrowserMessageReader, BrowserMessageWriter} from 'vscode-languageserver-protocol/browser';
 import {MonacoBinding} from 'y-monaco';
 import {WebsocketProvider} from 'y-websocket';
+import {Doc as YDoc} from 'yjs';
 
-import * as Y from 'yjs';
 import {environment} from '../../../environments/environment';
 import {createLanguageClient, ready} from './monaco';
-import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'stc-editor',
@@ -43,7 +43,7 @@ export class EditorComponent implements AfterViewInit, OnChanges, OnDestroy {
   editor?: editor.IStandaloneCodeEditor;
   lspClient?: MonacoLanguageClient;
   yjsBinding?: MonacoBinding;
-  yjsDoc?: Y.Doc;
+  yjsDoc?: YDoc;
   websocketProvider?: WebsocketProvider;
 
   async ngAfterViewInit() {
@@ -89,7 +89,7 @@ export class EditorComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   private initYjs(room: string) {
     // connect to the room and get the doc
-    this.yjsDoc = new Y.Doc();
+    this.yjsDoc = new YDoc();
     this.websocketProvider = new WebsocketProvider(
       environment.yjsWebsocketUrl,
       room,
