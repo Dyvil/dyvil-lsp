@@ -1,17 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.common.name }}
+  name: {{ .Release.Name }}
 spec:
   selector:
     matchLabels:
-      app: {{ .Values.common.name }}
+      app: {{ .Release.Name }}
   template:
     metadata:
       annotations:
         k8s.vs.uni-kassel.de/dummy: a
       labels:
-        app: {{ .Values.common.name }}
+        app: {{ .Release.Name }}
     spec:
       imagePullSecrets:
 {{ toYaml $.Values.image.pullSecrets | indent 8 }}

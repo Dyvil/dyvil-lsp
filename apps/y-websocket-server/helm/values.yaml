@@ -5,16 +5,13 @@ image:
   pullSecrets:
     - name: vs-registry
 
-common:
-  name: y-websocket-server
-  issuer: letsencrypt-prod
-
 service:
   type: ClusterIP
   port: 1234
 
 ingress:
   enabled: true
+  issuer: letsencrypt-prod
   hosts:
     - host: yjs.uni-kassel.dev
       paths:
