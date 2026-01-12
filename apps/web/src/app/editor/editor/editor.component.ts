@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 import {editor} from 'monaco-editor/esm/vs/editor/editor.api';
 import {MonacoLanguageClient} from 'monaco-languageclient';
-import {BrowserMessageReader, BrowserMessageWriter,} from 'vscode-languageserver-protocol/browser';
+import {BrowserMessageReader, BrowserMessageWriter} from 'vscode-languageserver-protocol/browser';
 import {MonacoBinding} from 'y-monaco';
 import {WebsocketProvider} from 'y-websocket';
 
