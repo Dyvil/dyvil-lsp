@@ -87,7 +87,7 @@ export function log(diagnostic: Diagnostic): void {
       break;
   }
   if (diagnostic.expected) {
-    for (let completionItem of diagnostic.expected) {
+    for (const completionItem of diagnostic.expected) {
       console.log(`- [${completionItem.kind}] ${completionItem.label} ${completionItem.signature || ''} - ${completionItem.description || ''}`);
     }
   }
