@@ -1,6 +1,6 @@
 <!-- Keep a Changelog guide -> https://keepachangelog.com -->
 
-# intellij-plugin-example Changelog
+# Dyvil IntelliJ Plugin Changelog
 
 ## [Unreleased]
 ### Added

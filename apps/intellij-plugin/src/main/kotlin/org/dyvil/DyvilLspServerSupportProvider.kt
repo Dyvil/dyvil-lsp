@@ -41,7 +41,9 @@ class DyvilLspServerSupportProvider : LspServerSupportProvider {
 }
 
 private class DyvilLspServerDescriptor(project: Project) : ProjectWideLspServerDescriptor(project, "Dyvil") {
-  override fun isSupportedFile(file: VirtualFile) = true
+  override fun isSupportedFile(file: VirtualFile): Boolean {
+    return file.extension == "dyvil" || file.extension == "dyv" || file.extension == "dyh"
+  }
 
   /**
   override fun getWorkspaceConfiguration(item: ConfigurationItem): Any? {

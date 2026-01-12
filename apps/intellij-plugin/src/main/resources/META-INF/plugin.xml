@@ -9,8 +9,6 @@
     <depends>JavaScript</depends>
     <depends>org.jetbrains.plugins.textmate</depends>
 
-    <resource-bundle>messages.MyBundle</resource-bundle>
-
     <extensions defaultExtensionNs="com.intellij">
       <platform.lsp.serverSupportProvider implementation="org.dyvil.DyvilLspServerSupportProvider"/>
       <textmate.bundleProvider implementation="org.dyvil.DyvilTextmateBundleProvider"/>
