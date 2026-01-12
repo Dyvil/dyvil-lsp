@@ -47,7 +47,7 @@ export class EditorComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     const domElement = this.container.nativeElement;
     this.editor = editor.create(domElement, {
-      value: '', // will be set by yjs
+      value: '', // will be set by yjs in order: server -> local storage -> default code
       language: this.language,
       theme: 'vs-dark',
       glyphMargin: true,
