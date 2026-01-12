@@ -75,7 +75,7 @@ export class Class extends Declaration<'class'> implements Scope {
   completion?: ClassCompletion;
 
   constructor(
-    name: string = '<anonymous>',
+    name = '<anonymous>',
     public fields: Field[] = [],
     public constructors: Constructor[] = [],
     public methods: Method[] = [],
@@ -99,7 +99,7 @@ export class Class extends Declaration<'class'> implements Scope {
 
   buildSignature(builder: SignatureBuilder) {
     builder.addSignature(`class ${this.name} { `);
-    for (let decl of [
+    for (const decl of [
       this.fields,
       this.constructors,
       this.methods,
@@ -208,7 +208,7 @@ export class Constructor extends MethodLike<'constructor'> {
 
   buildSignature(builder: SignatureBuilder) {
     builder.addSignature('init(');
-    for (let parameter of this.parameters) {
+    for (const parameter of this.parameters) {
       parameter.buildSignature(builder);
     }
     builder.addSignature(')');
@@ -246,7 +246,7 @@ export class Field extends Declaration<'field'> {
   static parser: ParserMethod = 'field';
 
   constructor(
-    name: string = '<unknown>',
+    name = '<unknown>',
     public type: Type = ErrorType,
     public value?: Expression,
   ) {
@@ -290,7 +290,7 @@ export class Method extends MethodLike<'method'> {
   static parser: ParserMethod = 'method';
 
   constructor(
-    name: string = '<unknown>',
+    name = '<unknown>',
     parameters: Parameter[] = [],
     public returnType: Type = ErrorType,
     body: Block = new Block(),
@@ -324,7 +324,7 @@ export class Method extends MethodLike<'method'> {
 
   buildSignature(builder: SignatureBuilder) {
     builder.addSignature(`${this.name}(`);
-    for (let parameter of this.parameters) {
+    for (const parameter of this.parameters) {
       parameter.buildSignature(builder);
     }
     builder.addSignature(`):${this.returnType}`);
@@ -393,7 +393,7 @@ export class VariableLike<K extends string> extends Declaration<K> {
 
 export class Parameter extends VariableLike<'parameter'> {
   constructor(
-    name: string = '<unknown>',
+    name = '<unknown>',
     public type: Type = ErrorType,
   ) {
     super('parameter', name, type);
@@ -423,7 +423,7 @@ export class Parameter extends VariableLike<'parameter'> {
 
 export class Variable extends VariableLike<'variable'> {
   constructor(
-    name: string = '<unknown>',
+    name = '<unknown>',
     type?: Type,
     public value: Expression = ErrorExpression,
   ) {

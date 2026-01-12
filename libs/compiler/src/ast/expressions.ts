@@ -44,7 +44,7 @@ export class VariableReference extends BaseExpression<'variable'> {
   _variable?: VariableLike<string>;
 
   constructor(
-    public name: string = '<unknown>',
+    public name = '<unknown>',
   ) {
     super('variable');
   }
@@ -77,7 +77,7 @@ export class FunctionCall extends BaseExpression<'functionCall'> {
   _class?: Class;
 
   constructor(
-    public name: string = '<unknown>',
+    public name = '<unknown>',
     public args: Expression[] = [],
   ) {
     super('functionCall');
@@ -121,7 +121,7 @@ export class PropertyAccess extends BaseExpression<'propertyAccess'> {
 
   constructor(
     public receiver: Expression = ErrorExpression,
-    public property: string = '<unknown>',
+    public property = '<unknown>',
   ) {
     super('propertyAccess');
   }
@@ -157,7 +157,7 @@ export class MethodCall extends BaseExpression<'methodCall'> {
 
   constructor(
     public receiver: Expression = ErrorExpression,
-    public method: string = '<unknown>',
+    public method = '<unknown>',
     public args: Expression[] = [],
   ) {
     super('methodCall');
@@ -191,7 +191,7 @@ export class MethodCall extends BaseExpression<'methodCall'> {
 export class BinaryOperation extends BaseExpression<'binary'> {
   constructor(
     public lhs: Expression = ErrorExpression,
-    public operator: string = '<unknown>',
+    public operator = '<unknown>',
     public rhs: Expression = ErrorExpression,
   ) {
     super('binary');

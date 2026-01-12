@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
   displayName: 'compiler',
   preset: '../../jest.preset.js',
