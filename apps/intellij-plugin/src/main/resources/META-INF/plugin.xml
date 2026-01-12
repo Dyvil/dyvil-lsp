@@ -1,0 +1,16 @@
+<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<idea-plugin>
+    <id>org.dyvil.intellij-plugin</id>
+    <name>Dyvil</name>
+    <vendor>Dyvil</vendor>
+
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.ultimate</depends>
+    <depends>JavaScript</depends>
+    <depends>org.jetbrains.plugins.textmate</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+      <platform.lsp.serverSupportProvider implementation="org.dyvil.DyvilLspServerSupportProvider"/>
+      <textmate.bundleProvider implementation="org.dyvil.DyvilTextmateBundleProvider"/>
+    </extensions>
+</idea-plugin>
