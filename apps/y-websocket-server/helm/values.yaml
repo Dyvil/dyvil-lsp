@@ -1,0 +1,23 @@
+image:
+  repository: registry.uni-kassel.dev/y-websocket-server
+  tag: latest
+  pullPolicy: Always
+  pullSecrets:
+    - name: vs-registry
+
+service:
+  type: ClusterIP
+  port: 1234
+
+ingress:
+  enabled: true
+  issuer: letsencrypt-prod
+  hosts:
+    - host: yjs.uni-kassel.dev
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - yjs.uni-kassel.dev
+      secretName: y-websocket-tls
