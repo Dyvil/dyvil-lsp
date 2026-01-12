@@ -1,21 +1,18 @@
 import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnDestroy,
-  Output,
-  SimpleChanges,
-  ViewChild,
+    AfterViewInit,
+    Component,
+    ElementRef,
+    EventEmitter,
+    Input,
+    OnChanges,
+    OnDestroy,
+    Output,
+    SimpleChanges,
+    ViewChild,
 } from '@angular/core';
 import {editor} from 'monaco-editor/esm/vs/editor/editor.api';
 import {MonacoLanguageClient} from 'monaco-languageclient';
-import {
-  BrowserMessageReader,
-  BrowserMessageWriter,
-} from 'vscode-languageserver-protocol/browser';
+import {BrowserMessageReader, BrowserMessageWriter,} from 'vscode-languageserver-protocol/browser';
 import {MonacoBinding} from 'y-monaco';
 import {WebsocketProvider} from 'y-websocket';
 
@@ -70,7 +67,7 @@ export class EditorComponent implements AfterViewInit, OnChanges, OnDestroy {
         // start local server via 'HOST=localhost PORT=8080 npx y-websocket'
         environment.yjsWebsocketUrl,
         roomName,
-        doc
+        doc,
       );
       const text = doc.getText('monaco');
 
@@ -86,7 +83,7 @@ export class EditorComponent implements AfterViewInit, OnChanges, OnDestroy {
         text,
         this.editor.getModel()!,
         new Set([this.editor]),
-        provider.awareness
+        provider.awareness,
       );
 
       // Will be fired only once, when sync is done
