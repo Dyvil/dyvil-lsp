@@ -243,8 +243,8 @@ importers:
         specifier: ^10.1.8
         version: 10.1.8(eslint@9.39.3(jiti@2.6.1))
       eslint-plugin-cypress:
-        specifier: ^6.0.0
-        version: 6.0.0(eslint@9.39.3(jiti@2.6.1))
+        specifier: ^5.4.0
+        version: 5.4.0(eslint@9.39.3(jiti@2.6.1))
       jest:
         specifier: 30.2.0
         version: 30.2.0(@types/node@24.10.13)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.19))(@types/node@24.10.13)(typescript@5.9.3))
@@ -5509,8 +5509,9 @@ packages:
     peerDependencies:
       eslint: '>=7.0.0'
 
-  eslint-plugin-cypress@6.0.0:
-    resolution: {integrity: sha512-J96t5BLt8lYSiQ5b4vZ2IpUcsAc3XOw9Esy5sFSvgbx4Od/MIwlbXM8QazrcbEKrKKsynOnyXzZwiAQTtGCEyA==}
+  eslint-plugin-cypress@5.4.0:
+    resolution: {integrity: sha512-XAQYuzMpLWJdFRQorPO3GDx4XHqI362qr1/XIp0N6SNTAa8lyzmpTA26qNRc99I53NnqX9l0SHwbHXX7TAKIkg==}
+    deprecated: 'deprecate: accidentally includes breaking changes from 6.0.0'
     peerDependencies:
       eslint: '>=9'
 
@@ -16436,7 +16437,7 @@ snapshots:
     dependencies:
       eslint: 9.39.3(jiti@2.6.1)
 
-  eslint-plugin-cypress@6.0.0(eslint@9.39.3(jiti@2.6.1)):
+  eslint-plugin-cypress@5.4.0(eslint@9.39.3(jiti@2.6.1)):
     dependencies:
       eslint: 9.39.3(jiti@2.6.1)
       globals: 17.3.0
