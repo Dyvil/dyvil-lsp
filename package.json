@@ -37,7 +37,7 @@
     "@codingame/monaco-vscode-theme-service-override": "~1.85.6",
     "@nx/angular": "22.5.2",
     "@swc-node/register": "1.11.1",
-    "@swc/core": "1.15.13",
+    "@swc/core": "1.15.18",
     "@y/websocket-server": "^0.1.5",
     "antlr4ts": "0.5.0-alpha.4",
     "assert": "^2.1.0",
