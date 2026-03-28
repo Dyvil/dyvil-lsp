@@ -1,22 +1,23 @@
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import * as extensionManifest from 'apps/vs-code-client/package.json';
-
+import {initialize} from '@codingame/monaco-vscode-api';
+import 'vscode/localExtensionHost';
 import getEditorServiceOverride from '@codingame/monaco-vscode-editor-service-override';
 import getExtensionsServiceOverride from '@codingame/monaco-vscode-extensions-service-override';
+import {whenReady as jsReady} from '@codingame/monaco-vscode-javascript-default-extension';
 import getLanguageServiceOverride from '@codingame/monaco-vscode-languages-service-override';
 import getTextmateServiceOverride from '@codingame/monaco-vscode-textmate-service-override';
-import getThemeServiceOverride from '@codingame/monaco-vscode-theme-service-override';
 import {whenReady as themesReady} from '@codingame/monaco-vscode-theme-defaults-default-extension';
-import {whenReady as jsReady} from '@codingame/monaco-vscode-javascript-default-extension';
+import getThemeServiceOverride from '@codingame/monaco-vscode-theme-service-override';
 
-import {CloseAction, ErrorAction, MessageTransports} from "vscode-languageclient";
-import {ExtensionHostKind, registerExtension} from 'vscode/extensions'
-import {buildWorkerDefinition} from 'monaco-editor-workers';
-import {initServices, MonacoLanguageClient, useOpenEditorStub} from 'monaco-languageclient';
-import 'vscode/localExtensionHost';
+import * as extensionManifest from 'apps/vs-code-client/package.json';
 import * as monaco from 'monaco-editor';
+import {buildWorkerDefinition} from 'monaco-editor-workers';
+import {MonacoLanguageClient} from 'monaco-languageclient';
+import {useOpenEditorStub} from 'monaco-languageclient/vscodeApiWrapper';
+import {CloseAction, ErrorAction, MessageTransports} from 'vscode-languageclient';
+import {ExtensionHostKind, registerExtension} from 'vscode/extensions';
 
-export const ready = initServices({
+export const ready = initialize({
   userServices: {
     ...getExtensionsServiceOverride(),
     ...getThemeServiceOverride(),
@@ -52,9 +53,7 @@ export function createLanguageClient(transports: MessageTransports): MonacoLangu
         closed: () => ({action: CloseAction.DoNotRestart}),
       },
     },
-    connectionProvider: {
-      get: async () => transports,
-    },
+    messageTransports: transports,
   });
 }
 

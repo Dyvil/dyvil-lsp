@@ -21,6 +21,7 @@ import {Doc as YDoc} from 'yjs';
 
 import {environment} from '../../../environments/environment';
 import {createLanguageClient, ready} from './monaco';
+import { ShowLightbulbIconMode } from 'vscode/vscode/vs/editor/common/config/editorOptions';
 
 @Component({
   selector: 'stc-editor',
@@ -56,7 +57,7 @@ export class EditorComponent implements AfterViewInit, OnChanges, OnDestroy {
       theme: 'vs-dark',
       glyphMargin: true,
       lightbulb: {
-        enabled: true,
+        enabled: ShowLightbulbIconMode.OnCode,
       },
       automaticLayout: true,
       'semanticHighlighting.enabled': true,
