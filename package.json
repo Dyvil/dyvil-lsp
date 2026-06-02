@@ -37,7 +37,7 @@
     "@codingame/monaco-vscode-theme-service-override": "~1.85.6",
     "@nx/angular": "22.5.2",
     "@swc-node/register": "1.11.1",
-    "@swc/core": "1.15.33",
+    "@swc/core": "1.15.40",
     "@y/websocket-server": "^0.1.5",
     "antlr4ts": "0.5.0-alpha.4",
     "assert": "^2.1.0",
@@ -56,7 +56,7 @@
     "vscode-languageserver-textdocument": "^1.0.12",
     "y-monaco": "^0.1.6",
     "y-websocket": "^3.0.0",
-    "yjs": "^13.6.30",
+    "yjs": "^13.6.31",
     "zone.js": "~0.16.2"
   },
   "devDependencies": {
